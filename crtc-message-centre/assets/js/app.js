@@ -56,6 +56,26 @@ const MESSAGES = [
     }
   },
   {
+    id: "offer-bonus-data",
+    subject: "An exclusive offer: 5 GB of bonus data at no extra cost",
+    received: "Sep. 12, 2026",
+    unread: true,
+    time: "1:45 PM",
+    type: "Offer",
+    sentTo: { kind: "sms", value: "(666) 780-1194" },
+    kind: "in-app",
+    detail: {
+      label: "Marketing Offer",
+      mkt: {
+        chip: "NEW OFFER",
+        headline: "More data. Same price.",
+        body: "For a limited time, get 5 GB of bonus data added to your plan at no extra cost for the next 6 months. Stay connected to what matters, for less.",
+        cta: "View offer",
+        graphicImg: "assets/img/mkt-offer.png"
+      }
+    }
+  },
+  {
     id: "welcome-postpaid",
     subject: "Welcome to Freedom Mobile - Postpaid service has been activated",
     received: "Sep. 10, 2026",
@@ -82,7 +102,7 @@ const MESSAGES = [
     unread: true,
     time: "6:00 AM",
     type: "Activation",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "sms", value: "(666) 780-1194" },
     kind: "pdf",
     pdf: "assets/docs/welcome-prepaid.pdf"
   },
@@ -95,6 +115,35 @@ const MESSAGES = [
     sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/crtc-tos-update.pdf"
+  },
+  {
+    id: "promo-data-expiry",
+    subject: "Your 6 GB bonus data promotion ends on March 31, 2027",
+    received: "Jul. 21, 2026",
+    time: "3:26 PM",
+    type: "Promotion expiry",
+    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    kind: "in-app",
+    detail: {
+      label: "Regulatory Notification",
+      reg: {
+        title: "Your 6 GB bonus data promotion ends on March 31, 2027",
+        badge: { month: "MAR", day: "31" },
+        lead: "Your bonus data was offered for a 12-month period.",
+        paragraphs: [
+          "Your plan includes 6 GB of bonus data per month. This bonus was applied starting April 1, 2026 for a 12-month period, which ends on March 31, 2027.",
+          "After March 31, 2027, the bonus data will no longer be included in your plan and your monthly data allowance will return to your plan's regular amount. No action is required on your part — your services will continue without interruption."
+        ],
+        bulletsTitle: "Promotion ending",
+        bullets: [
+          "6 GB bonus data per month — applied since April 1, 2026 — ends March 31, 2027"
+        ],
+        paragraphs2: [
+          "You can see all the promotions currently applied to your account, including their end dates, in My Account at any time."
+        ],
+        footnote: "Reference: PROMO-2027-0331."
+      }
+    }
   },
   {
     id: "roaming-us",
@@ -139,7 +188,7 @@ const MESSAGES = [
     received: "May 12, 2026",
     time: "2:40 PM",
     type: "Promotion expiry",
-    sentTo: { kind: "sms", value: "(438) 555-2210" },
+    sentTo: { kind: "sms", value: "(666) 780-1194" },
     kind: "in-app",
     detail: {
       label: "Regulatory Notification",
@@ -179,14 +228,36 @@ const MESSAGES = [
     pdf: "assets/docs/agreement-amendment.pdf"
   },
   {
-    id: "welcome-postpaid-2",
-    subject: "Welcome to Freedom Mobile - Postpaid service has been activated",
+    id: "contract-expiry",
+    subject: "Your service agreement ends on February 20, 2027",
     received: "Feb. 20, 2026",
     time: "10:00 AM",
-    type: "Activation",
+    type: "Contract expiry",
     sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
-    kind: "pdf",
-    pdf: "assets/docs/welcome-postpaid-feb.pdf"
+    kind: "in-app",
+    detail: {
+      label: "Service Agreement Notice",
+      reg: {
+        title: "Your service agreement ends on February 20, 2027",
+        badge: { month: "FEB", day: "20" },
+        lead: "We're reminding you that your 2-year service agreement will end on February 20, 2027.",
+        paragraphs: [
+          "When your agreement ends, your services continue on a month-to-month basis at your current plan price. Any remaining balance on your device, if applicable, will appear on your final statement.",
+          "Because some of the promotions on your account were offered as part of your service agreement, they cannot continue once the agreement ends. The following promotions will be affected:"
+        ],
+        bulletsTitle: "Promotions that will end on February 20, 2027",
+        bullets: [
+          "$5/month loyalty credit on your mobile plan",
+          "Unlimited Canada-wide talk add-on included at no charge"
+        ],
+        paragraphs2: [
+          "Your base plan is not affected: the price of your plan stays the same, and you keep every promotion that isn't tied to your agreement.",
+          "To keep your promotional pricing going, you can sign a new 2-year service agreement before February 20, 2027, or switch to one of our current plans — several include equivalent promotional offers.",
+          "If you have questions about your agreement or the promotions on your account, you can review them in My Account or contact us."
+        ],
+        footnote: "This notice is provided in accordance with the Terms of Service applicable to your service agreement. Reference: SA-2027-0220."
+      }
+    }
   }
 ];
 
@@ -214,7 +285,7 @@ function rowHtml(m) {
   const sentIcon = m.sentTo.kind === "sms" ? icon("phone", "ic-14") : icon("mail", "ic-14");
   return (
     '<li class="message-row"><a class="row-link' + (m.unread ? " is-unread" : "") + '" data-id="' + m.id + '" ' + attrs + ">" +
-    '<span class="row-received">' + m.received + "</span>" +
+    '<span class="row-received"><span class="unread-dot" aria-hidden="true"></span>' + m.received + "</span>" +
     '<span class="row-subject-cell"><span class="row-subject">' + m.subject + "</span>" + newTabIcon + "</span>" +
     '<span class="row-type">' + m.type + "</span>" +
     '<span class="row-sentto" title="Sent by ' + (m.sentTo.kind === "sms" ? "SMS" : "email") + '">' + sentIcon + "<span>" + m.sentTo.value + "</span></span>" +

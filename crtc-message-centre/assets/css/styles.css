@@ -450,6 +450,20 @@ button {
   font-weight: 700;
 }
 
+.unread-dot {
+  display: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--freedom-blue-mid);
+  flex: none;
+  margin-right: 8px;
+}
+
+.row-link.is-unread .unread-dot {
+  display: inline-block;
+}
+
 .row-link:hover .row-subject {
   text-decoration: underline;
   color: var(--freedom-blue-mid);

@@ -24,13 +24,15 @@ Then open <http://localhost:8123> (hub) or
 - The Message Centre opens first: Freedom account header (black utility strip + white main bar),
   account strip ("Hi, Jennifer" + line number), account tabs, centered page title.
 - The message list uses the existing UI columns: **Received On: | Subject: | Type: | Sent To:**.
-- Clicking a message opens it based on its type: **Promotion expiry** and **Roaming** messages
-  open **inside the Message Centre** (header stays on top, "< Message Centre" back link); all
-  other messages open a **PDF in a new browser tab** (`assets/docs/*.pdf`).
-- **Filter** (per `Filter.png`): "Filter by: [All types ▾]" — Activation, Plan Change,
-  Promotion expiry, Roaming, Regulatory.
+- Clicking a message opens it based on its type: **Promotion expiry**, **Roaming**,
+  **Contract expiry** and **Offer** messages open **inside the Message Centre** (header stays on
+  top, "< Message Centre" back link); all other messages open a **PDF in a new browser tab**
+  (`assets/docs/*.pdf`).
+- **Filter** (per `Filter.png`): "Filter by: [All types ▾]" — Activation, Contract expiry,
+  Offer, Plan Change, Promotion expiry, Roaming, Regulatory.
 - The **Sent To** column shows delivery channels: email address or **SMS phone number**.
-- New types **Promotion expiry** and **Roaming** appear on messages in the list.
+- Types **Promotion expiry**, **Roaming**, **Contract expiry** and **Offer** appear on messages
+  in the list.
 - The **Tab is ending** message (`#/message/tab-ending`) shows the extended regulatory section
   (longer copy, larger than the marketing section, no image) with the DEC 28 date badge, followed
   by the NEW OFFER marketing card and "The Freedom Mobile Team" sign-off.
@@ -90,9 +92,10 @@ Alternatives: GitHub Pages, or internal hosting.
   render digits correctly — remove the `unicode-range` lines when swapping it in.
 - **Routing**: hash-based (`#/` and `#/message/:id`) so both screens live in one page and can be
   deep-linked or imported into Figma separately.
-- **Read/unread**: unread rows render bold; opening a message does **not** mark it read — this is
-  intentional for demos. The mark-as-read feature is deferred; to enable it later, set
-  `m.unread = false` at the top of `showDetail()` in `assets/js/app.js`.
+- **Read/unread**: unread rows render bold with a blue dot left of the subject. Clicking a
+  message marks it read (bold and dot disappear) for the current session only — nothing is
+  persisted, so refreshing the page restores the original unread set. This is intentional for
+  presentations.
 - **PDFs**: `tools/generate-pdfs.ps1` regenerates `assets/docs/*.pdf` (PowerShell, no
   dependencies).
 - The new-tab icon is an inline SVG (feather-style external link), matching `New tab icon.png`.
