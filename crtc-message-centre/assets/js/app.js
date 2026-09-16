@@ -21,7 +21,7 @@ const MESSAGES = [
     unread: true,
     time: "10:24 AM",
     type: "Promotion expiry",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "in-app",
     detail: {
       label: "Regulatory Notification",
@@ -61,7 +61,7 @@ const MESSAGES = [
     received: "Sep. 10, 2026",
     time: "8:02 AM",
     type: "Activation",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/welcome-postpaid.pdf"
   },
@@ -71,7 +71,7 @@ const MESSAGES = [
     received: "Sep. 10, 2026",
     time: "8:05 AM",
     type: "Activation",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/device-shipment.pdf"
   },
@@ -82,7 +82,7 @@ const MESSAGES = [
     unread: true,
     time: "6:00 AM",
     type: "Activation",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/welcome-prepaid.pdf"
   },
@@ -92,7 +92,7 @@ const MESSAGES = [
     received: "Aug. 30, 2026",
     time: "9:12 AM",
     type: "Regulatory",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/crtc-tos-update.pdf"
   },
@@ -174,7 +174,7 @@ const MESSAGES = [
     received: "Mar. 24, 2026",
     time: "11:30 AM",
     type: "Plan Change",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/agreement-amendment.pdf"
   },
@@ -184,7 +184,7 @@ const MESSAGES = [
     received: "Feb. 20, 2026",
     time: "10:00 AM",
     type: "Activation",
-    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    sentTo: { kind: "email", value: "sregulapati@freedommobile.ca" },
     kind: "pdf",
     pdf: "assets/docs/welcome-postpaid-feb.pdf"
   }
