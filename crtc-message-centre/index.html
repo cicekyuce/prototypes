@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message Centre | Freedom Mobile</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a href="#/">Find a Store</a>
+      <a href="#/">Contact Us</a>
+      <a href="#/">EN
+        <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="mainbar-inner">
+      <a class="brand" href="#/" aria-label="Freedom Mobile home">freedom</a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#/">Mobile
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/">Internet + TV
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/">Network
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/" class="nav-promo">Back to school offers</a>
+      </nav>
+      <a class="my-freedom" href="#/">My Freedom
+        <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="account-strip">
+  <div class="account-strip-inner">
+    <p class="greeting">Hi, Jennifer</p>
+    <p class="account-phone">(666) 780-1194</p>
+  </div>
+</div>
+
+<nav class="account-tabs" aria-label="Account sections">
+  <div class="account-tabs-inner">
+    <a href="#/">Overview</a>
+    <a href="#/">Add-Ons & Passes</a>
+    <a href="#/">Usage Details</a>
+    <a href="#/">Manage Features</a>
+    <a href="#/">My Plan & Device</a>
+    <a href="#/">Billing Details</a>
+    <a href="#/" class="is-active">My Profile</a>
+  </div>
+</nav>
+
+<main id="app" class="page">
+  <div class="mc-hero">
+    <h1 class="mc-title">Message Centre</h1>
+    <p class="mc-subtitle">View your messages regarding changes to your plans, coverage or device.</p>
+  </div>
+
+  <section id="view-list" class="view" aria-label="Message Centre">
+    <div class="list-toolbar">
+      <div class="filter" id="filter">
+        <span class="filter-label" id="filter-by">Filter by:</span>
+        <button class="filter-btn" type="button" id="filter-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="filter-menu">
+          <span id="filter-label">All types</span>
+          <svg class="ic-14 caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-menu" id="filter-menu" role="menu" aria-label="Filter messages by type" hidden>
+          <button class="filter-option is-selected" type="button" role="menuitemradio" aria-checked="true" data-filter="all">All types</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Activation">Activation</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Plan Change">Plan Change</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Promotion expiry">Promotion expiry</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Roaming">Roaming</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Regulatory">Regulatory</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-card">
+      <div class="list-header-row" aria-hidden="true">
+        <span class="col-received">Received On:</span>
+        <span class="col-subject">Subject:</span>
+        <span class="col-type">Type:</span>
+        <span class="col-sentto">Sent To:</span>
+      </div>
+      <ul class="message-list" id="message-list"></ul>
+      <div class="list-empty" id="list-empty" hidden>
+        <p>No messages match this filter.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-detail" class="view" aria-label="Message preview" hidden>
+    <div class="detail-wrap">
+      <button class="back-btn" type="button" id="back-btn">
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Message Centre</span>
+      </button>
+      <article class="detail-card" id="detail-card"></article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#/">Contact Us</a>
+      <a href="#/">Find a Store</a>
+      <a href="#/">Report a network issue</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#/">All</a>
+      <a href="#/">Account & Billing</a>
+      <a href="#/">Network & Coverage</a>
+      <a href="#/">Phones & Devices</a>
+      <a href="#/">Plans & Services</a>
+      <a href="#/">Home Internet</a>
+      <a href="#/">Device Repair</a>
+      <a href="#/">Network service status</a>
+    </div>
+    <div class="footer-col">
+      <h4>About Us</h4>
+      <a href="#/">Freedom</a>
+      <a href="#/">News Room</a>
+    </div>
+    <div class="footer-col">
+      <h4>More</h4>
+      <a href="#/">Terms of Service</a>
+      <a href="#/">Terms and Conditions</a>
+      <a href="#/">Privacy Policy</a>
+      <a href="#/">Wireless Code of Conduct</a>
+      <a href="#/">Internet Code</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Videotron Ltd. doing business as Freedom Mobile</p>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
