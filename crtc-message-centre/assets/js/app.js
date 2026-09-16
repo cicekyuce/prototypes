@@ -213,7 +213,7 @@ function rowHtml(m) {
     : 'href="#/message/' + m.id + '" aria-label="' + m.subject + '. Opens in the Message Centre"';
   const sentIcon = m.sentTo.kind === "sms" ? icon("phone", "ic-14") : icon("mail", "ic-14");
   return (
-    '<li class="message-row"><a class="row-link' + (m.unread ? " is-unread" : "") + '" ' + attrs + ">" +
+    '<li class="message-row"><a class="row-link' + (m.unread ? " is-unread" : "") + '" data-id="' + m.id + '" ' + attrs + ">" +
     '<span class="row-received">' + m.received + "</span>" +
     '<span class="row-subject-cell"><span class="row-subject">' + m.subject + "</span>" + newTabIcon + "</span>" +
     '<span class="row-type">' + m.type + "</span>" +
@@ -276,6 +276,16 @@ document.addEventListener("click", function (e) {
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") closeMenu();
+});
+
+listEl.addEventListener("click", function (e) {
+  const row = e.target.closest(".row-link");
+  if (!row) return;
+  const m = MESSAGES.find(function (msg) { return msg.id === row.dataset.id; });
+  if (m && m.unread) {
+    m.unread = false;
+    row.classList.remove("is-unread");
+  }
 });
 
 function regBadgeHtml(badge) {
