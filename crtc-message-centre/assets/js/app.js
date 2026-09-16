@@ -261,7 +261,7 @@ const MESSAGES = [
   }
 ];
 
-const state = { filter: "all" };
+const state = { filter: "all", search: "" };
 
 const listEl = document.getElementById("message-list");
 const emptyEl = document.getElementById("list-empty");
@@ -275,6 +275,7 @@ const filterToggleEl = document.getElementById("filter-toggle");
 const filterMenuEl = document.getElementById("filter-menu");
 const filterLabelEl = document.getElementById("filter-label");
 const backBtnEl = document.getElementById("back-btn");
+const searchInputEl = document.getElementById("search-input");
 
 function rowHtml(m) {
   const isPdf = m.kind === "pdf";
@@ -295,9 +296,35 @@ function rowHtml(m) {
   );
 }
 
-function matchesFilter(m) {
-  if (state.filter === "all") return true;
-  return m.type === state.filter;
+function messageSearchText(m) {
+  const d = m.detail || {};
+  const parts = [m.subject, m.type, m.received, m.sentTo.value, d.label];
+  if (d.reg) {
+    parts.push(
+      d.reg.title, d.reg.lead, d.reg.footnote, d.reg.bulletsTitle,
+      (d.reg.paragraphs || []).join(" "),
+      (d.reg.bullets || []).join(" "),
+      (d.reg.paragraphs2 || []).join(" ")
+    );
+  }
+  if (d.mkt) {
+    parts.push(d.mkt.chip, d.mkt.headline, d.mkt.body);
+  }
+  return parts.join(" ").toLowerCase();
+}
+
+const SEARCH_TEXTS = MESSAGES.map(messageSearchText);
+
+function matchesFilter(m, i) {
+  if (state.filter === "Read") return !m.unread;
+  if (state.filter === "Unread") return !!m.unread;
+  if (state.filter !== "all" && m.type !== state.filter) return false;
+  if (state.search) {
+    const words = state.search.toLowerCase().split(/\s+/).filter(Boolean);
+    const text = SEARCH_TEXTS[i] || "";
+    if (!words.every(function (w) { return text.indexOf(w) !== -1; })) return false;
+  }
+  return true;
 }
 
 function renderList() {
@@ -359,6 +386,11 @@ listEl.addEventListener("click", function (e) {
     m.unread = false;
     row.classList.remove("is-unread");
   }
+});
+
+searchInputEl.addEventListener("input", function () {
+  state.search = searchInputEl.value;
+  renderList();
 });
 
 function regBadgeHtml(badge) {

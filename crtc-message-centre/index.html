@@ -66,6 +66,10 @@
       <p class="mc-subtitle">View your messages regarding changes to your plans, coverage or device.</p>
     </div>
     <div class="list-toolbar">
+      <div class="search" id="search">
+        <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search messages" aria-label="Search messages">
+      </div>
       <div class="filter" id="filter">
         <span class="filter-label" id="filter-by">Filter by:</span>
         <button class="filter-btn" type="button" id="filter-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="filter-menu">
@@ -74,13 +78,16 @@
         </button>
         <div class="filter-menu" id="filter-menu" role="menu" aria-label="Filter messages by type" hidden>
           <button class="filter-option is-selected" type="button" role="menuitemradio" aria-checked="true" data-filter="all">All types</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Read">Read</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Unread">Unread</button>
+          <div class="filter-sep" role="separator"></div>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Activation">Activation</button>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Contract expiry">Contract expiry</button>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Offer">Offer</button>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Plan Change">Plan Change</button>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Promotion expiry">Promotion expiry</button>
-          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Roaming">Roaming</button>
           <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Regulatory">Regulatory</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Roaming">Roaming</button>
         </div>
       </div>
     </div>

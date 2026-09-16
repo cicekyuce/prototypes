@@ -28,8 +28,12 @@ Then open <http://localhost:8123> (hub) or
   **Contract expiry** and **Offer** messages open **inside the Message Centre** (header stays on
   top, "< Message Centre" back link); all other messages open a **PDF in a new browser tab**
   (`assets/docs/*.pdf`).
-- **Filter** (per `Filter.png`): "Filter by: [All types ▾]" — Activation, Contract expiry,
-  Offer, Plan Change, Promotion expiry, Roaming, Regulatory.
+- **Filter**: "Filter by: [All types ▾]" — **Read** / **Unread** status filters right below
+  "All types", then a divider and the type options in alphabetical order (Activation, Contract
+  expiry, Offer, Plan Change, Promotion expiry, Regulatory, Roaming).
+- **Search**: the search bar filters messages live as you type, matching words in the subject,
+  type, date, recipient and the full in-app message content (regulatory and marketing blocks).
+  It combines with the type/status filter.
 - The **Sent To** column shows delivery channels: email address or **SMS phone number**.
 - Types **Promotion expiry**, **Roaming**, **Contract expiry** and **Offer** appear on messages
   in the list.
