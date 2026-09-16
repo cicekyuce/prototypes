@@ -90,12 +90,19 @@ Alternatives: GitHub Pages, or internal hosting.
   in browsers (verified via headless-browser screenshot), so digits are excluded from the
   `@font-face` via `unicode-range` and render in the system font. The licensed full font should
   render digits correctly — remove the `unicode-range` lines when swapping it in.
-- **Routing**: hash-based (`#/` and `#/message/:id`) so both screens live in one page and can be
-  deep-linked or imported into Figma separately.
-- **Read/unread**: unread rows render bold with a blue dot left of the subject. Clicking a
+- **Routing**: hash-based (`#/`, `#/message/:id`, `#/profile`, `#/preferences`) so all screens live
+  in one page and can be deep-linked or imported into Figma separately. The account tabs (page
+  tiles) stay visible on every screen.
+- **Read/unread**: unread rows render bold with a blue dot left of the date. Clicking a
   message marks it read (bold and dot disappear) for the current session only — nothing is
   persisted, so refreshing the page restores the original unread set. This is intentional for
   presentations.
+- **My Profile menu** (`#/profile`): the "My Profile" account tab links here; menu with
+  **Notification Preferences** and **Message Centre** options.
+- **Notification Preferences** (`#/preferences`): per the feedback mockup — marketing
+  communications and regulatory alert method rendered as radio button groups, a My Account
+  inbox section with a "View Message Centre" link, and Save/Cancel actions (visual only, no
+  persistence).
 - **PDFs**: `tools/generate-pdfs.ps1` regenerates `assets/docs/*.pdf` (PowerShell, no
   dependencies).
 - The new-tab icon is an inline SVG (feather-style external link), matching `New tab icon.png`.

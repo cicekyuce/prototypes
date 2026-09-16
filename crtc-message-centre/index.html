@@ -54,17 +54,17 @@
     <a href="#/">Manage Features</a>
     <a href="#/">My Plan & Device</a>
     <a href="#/">Billing Details</a>
-    <a href="#/" class="is-active">My Profile</a>
+    <a href="#/profile" class="is-active">My Profile</a>
   </div>
 </nav>
 
 <main id="app" class="page">
-  <div class="mc-hero">
-    <h1 class="mc-title">Message Centre</h1>
-    <p class="mc-subtitle">View your messages regarding changes to your plans, coverage or device.</p>
-  </div>
 
   <section id="view-list" class="view" aria-label="Message Centre">
+    <div class="mc-hero">
+      <h1 class="mc-title">Message Centre</h1>
+      <p class="mc-subtitle">View your messages regarding changes to your plans, coverage or device.</p>
+    </div>
     <div class="list-toolbar">
       <div class="filter" id="filter">
         <span class="filter-label" id="filter-by">Filter by:</span>
@@ -106,6 +106,63 @@
         <span>Message Centre</span>
       </button>
       <article class="detail-card" id="detail-card"></article>
+    </div>
+  </section>
+
+  <section id="view-profile" class="view" aria-label="My Profile" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">My Profile</h1>
+      <p class="mc-subtitle">Manage your profile and notification settings.</p>
+    </div>
+    <div class="profile-card">
+      <a class="profile-item" href="#/preferences">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences</span>
+          <span class="profile-item-desc">Choose how you receive marketing communications and regulatory alerts.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="profile-item" href="#/">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Message Centre</span>
+          <span class="profile-item-desc">View your messages regarding changes to your plans, coverage or device.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section id="view-preferences" class="view" aria-label="Notification preferences" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <h2 class="pref-section-title">Marketing communications</h2>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option"><input type="radio" name="mkt-pref" value="all" checked><span>Alerts, announcements & exclusive offers</span></label>
+        <label class="pref-option"><input type="radio" name="mkt-pref" value="required"><span>Only required notifications</span></label>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices.</p>
+        <p class="pref-label">Preferred alert method:</p>
+        <label class="pref-option"><input type="radio" name="reg-method" value="email" checked><span>Email</span></label>
+        <label class="pref-option"><input type="radio" name="reg-method" value="sms"><span>SMS</span></label>
+        <p class="pref-note">Your selected method will be used for eligible regulatory alerts.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">My Account inbox</h2>
+        <p class="pref-question">Your detailed notifications are also available in your My Account Inbox / Message Centre.</p>
+        <a class="pref-link" href="#/">View Message Centre
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </section>
+      <div class="pref-actions">
+        <button class="btn-save" type="button">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
     </div>
   </section>
 </main>

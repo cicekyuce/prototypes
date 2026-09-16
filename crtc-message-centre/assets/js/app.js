@@ -267,6 +267,8 @@ const listEl = document.getElementById("message-list");
 const emptyEl = document.getElementById("list-empty");
 const viewListEl = document.getElementById("view-list");
 const viewDetailEl = document.getElementById("view-detail");
+const viewProfileEl = document.getElementById("view-profile");
+const viewPrefEl = document.getElementById("view-preferences");
 const detailCardEl = document.getElementById("detail-card");
 const filterEl = document.getElementById("filter");
 const filterToggleEl = document.getElementById("filter-toggle");
@@ -431,6 +433,8 @@ function detailHtml(m) {
 
 function showList() {
   viewDetailEl.hidden = true;
+  viewProfileEl.hidden = true;
+  viewPrefEl.hidden = true;
   viewListEl.hidden = false;
   document.title = "Message Centre | Freedom Mobile";
   renderList();
@@ -444,8 +448,28 @@ function showDetail(id) {
   }
   detailCardEl.innerHTML = detailHtml(m);
   viewListEl.hidden = true;
+  viewProfileEl.hidden = true;
+  viewPrefEl.hidden = true;
   viewDetailEl.hidden = false;
   document.title = m.subject + " | Freedom Mobile";
+  window.scrollTo(0, 0);
+}
+
+function showProfile() {
+  viewListEl.hidden = true;
+  viewDetailEl.hidden = true;
+  viewPrefEl.hidden = true;
+  viewProfileEl.hidden = false;
+  document.title = "My Profile | Freedom Mobile";
+  window.scrollTo(0, 0);
+}
+
+function showPreferences() {
+  viewListEl.hidden = true;
+  viewDetailEl.hidden = true;
+  viewProfileEl.hidden = true;
+  viewPrefEl.hidden = false;
+  document.title = "Notification Preferences | Freedom Mobile";
   window.scrollTo(0, 0);
 }
 
@@ -458,6 +482,10 @@ function route() {
   const match = hash.match(/^\/message\/([\w-]+)/);
   if (match) {
     showDetail(match[1]);
+  } else if (hash === "/profile") {
+    showProfile();
+  } else if (hash === "/preferences") {
+    showPreferences();
   } else {
     showList();
   }
