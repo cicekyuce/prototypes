@@ -291,13 +291,11 @@ function rowHtml(m) {
   const attrs = isPdf
     ? 'href="' + m.pdf + '" target="_blank" rel="noopener" title="Opens in a new tab (PDF)" aria-label="' + m.subject + '. Opens in a new tab as a PDF"'
     : 'href="#/message/' + m.id + '" aria-label="' + m.subject + '. Opens in the Message Centre"';
-  const sentIcon = m.sentTo.kind === "sms" ? icon("phone", "ic-14") : icon("mail", "ic-14");
   return (
     '<li class="message-row"><a class="row-link' + (m.unread ? " is-unread" : "") + '" data-id="' + m.id + '" ' + attrs + ">" +
     '<span class="row-received"><span class="unread-dot" aria-hidden="true"></span>' + m.received + "</span>" +
     '<span class="row-subject-cell"><span class="row-subject">' + m.subject + "</span>" + newTabIcon + "</span>" +
     '<span class="row-type">' + m.type + "</span>" +
-    '<span class="row-sentto" title="Sent by ' + (m.sentTo.kind === "sms" ? "SMS" : "email") + '">' + sentIcon + "<span>" + m.sentTo.value + "</span></span>" +
     "</a></li>"
   );
 }
@@ -465,6 +463,10 @@ function detailHtml(m) {
     (d.mkt ? mktCardHtml(d.mkt) : "") +
     (d.simple ? simpleCardHtml(d.simple) : "") +
     '<p class="signoff">Thanks for being a valued customer.<br>The Freedom Mobile Team</p>' +
+    '<div class="detail-sent">' +
+    icon(m.sentTo.kind === "sms" ? "phone" : "mail", "ic-16") +
+    "<p>This message has been sent to: <strong>" + m.sentTo.value + "</strong></p>" +
+    "</div>" +
     '<p class="template-note"><strong>Dev annotation:</strong> the regulatory block uses a reusable template — fields: <code>label</code>, <code>date</code>, <code>title</code>, <code>date badge</code>, <code>lead</code>, <code>body</code>, <code>list</code>, <code>footnote</code>. Marketing block fields: <code>chip</code>, <code>headline</code>, <code>body</code>, <code>cta</code>. Not shown to customers.</p>'
   );
 }
