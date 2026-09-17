@@ -1092,6 +1092,33 @@ button {
   flex: none;
 }
 
+.pref-option input[type="checkbox"] {
+  accent-color: var(--cta-blue);
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex: none;
+}
+
+.pref-channels {
+  margin: 4px 0 10px;
+  padding: 0;
+  border: 0;
+}
+
+.pref-channels[hidden] {
+  display: none;
+}
+
+.pref-channels legend {
+  padding: 0;
+}
+
+.pref-hint {
+  font-weight: 400;
+  color: var(--body-text);
+}
+
 .pref-option:has(input:checked) {
   border-color: var(--cta-blue);
   background: #eaf2fb;
@@ -1122,6 +1149,45 @@ button {
   justify-content: center;
   gap: 28px;
   padding: 28px 0 26px;
+}
+
+.pref-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 8px;
+  padding: 14px 18px;
+  background: #eaf6ec;
+  border: 1px solid #bfe0c6;
+  border-radius: 10px;
+}
+
+.pref-confirm[hidden] {
+  display: none;
+}
+
+.pref-confirm > svg {
+  color: #2e9e4f;
+  flex: none;
+  margin-top: 2px;
+}
+
+.pref-confirm-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e5c2e;
+}
+
+.pref-confirm-sub {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  color: #356b45;
+}
+
+.pref-confirm:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .btn-save {

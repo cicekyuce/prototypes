@@ -276,6 +276,12 @@ const filterMenuEl = document.getElementById("filter-menu");
 const filterLabelEl = document.getElementById("filter-label");
 const backBtnEl = document.getElementById("back-btn");
 const searchInputEl = document.getElementById("search-input");
+const prefSaveEl = document.getElementById("pref-save");
+const prefConfirmEl = document.getElementById("pref-confirm");
+const viewPref2El = document.getElementById("view-preferences2");
+const pref2SaveEl = document.getElementById("pref2-save");
+const pref2ConfirmEl = document.getElementById("pref2-confirm");
+const prefChannelsEl = document.getElementById("pref-channels");
 
 function rowHtml(m) {
   const isPdf = m.kind === "pdf";
@@ -467,6 +473,7 @@ function showList() {
   viewDetailEl.hidden = true;
   viewProfileEl.hidden = true;
   viewPrefEl.hidden = true;
+  viewPref2El.hidden = true;
   viewListEl.hidden = false;
   document.title = "Message Centre | Freedom Mobile";
   renderList();
@@ -482,6 +489,7 @@ function showDetail(id) {
   viewListEl.hidden = true;
   viewProfileEl.hidden = true;
   viewPrefEl.hidden = true;
+  viewPref2El.hidden = true;
   viewDetailEl.hidden = false;
   document.title = m.subject + " | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -491,6 +499,7 @@ function showProfile() {
   viewListEl.hidden = true;
   viewDetailEl.hidden = true;
   viewPrefEl.hidden = true;
+  viewPref2El.hidden = true;
   viewProfileEl.hidden = false;
   document.title = "My Profile | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -500,13 +509,57 @@ function showPreferences() {
   viewListEl.hidden = true;
   viewDetailEl.hidden = true;
   viewProfileEl.hidden = true;
+  viewPref2El.hidden = true;
   viewPrefEl.hidden = false;
+  prefConfirmEl.hidden = true;
   document.title = "Notification Preferences | Freedom Mobile";
+  window.scrollTo(0, 0);
+}
+
+function showPreferences2() {
+  viewListEl.hidden = true;
+  viewDetailEl.hidden = true;
+  viewProfileEl.hidden = true;
+  viewPrefEl.hidden = true;
+  viewPref2El.hidden = false;
+  pref2ConfirmEl.hidden = true;
+  syncMarketingChannels();
+  document.title = "Notification Preferences (Option 2) | Freedom Mobile";
   window.scrollTo(0, 0);
 }
 
 backBtnEl.addEventListener("click", function () {
   location.hash = "#/";
+});
+
+prefSaveEl.addEventListener("click", function () {
+  prefConfirmEl.hidden = false;
+  prefConfirmEl.focus();
+});
+
+viewPrefEl.addEventListener("change", function (e) {
+  if (e.target.matches('input[type="radio"]') && !prefConfirmEl.hidden) {
+    prefConfirmEl.hidden = true;
+  }
+});
+
+function syncMarketingChannels() {
+  const optOut = viewPref2El.querySelector('input[name="mkt-pref-2"][value="no"]');
+  prefChannelsEl.hidden = !!(optOut && optOut.checked);
+}
+
+pref2SaveEl.addEventListener("click", function () {
+  pref2ConfirmEl.hidden = false;
+  pref2ConfirmEl.focus();
+});
+
+viewPref2El.addEventListener("change", function (e) {
+  if (e.target.name === "mkt-pref-2") {
+    syncMarketingChannels();
+  }
+  if (!pref2ConfirmEl.hidden) {
+    pref2ConfirmEl.hidden = true;
+  }
 });
 
 function route() {
@@ -518,6 +571,8 @@ function route() {
     showProfile();
   } else if (hash === "/preferences") {
     showPreferences();
+  } else if (hash === "/preferences2") {
+    showPreferences2();
   } else {
     showList();
   }

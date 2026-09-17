@@ -129,6 +129,13 @@
         </span>
         <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
+      <a class="profile-item" href="#/preferences2">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences (Option 2)</span>
+          <span class="profile-item-desc">Review an alternative version of the notification preferences.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
       <a class="profile-item" href="#/">
         <span class="profile-item-text">
           <span class="profile-item-title">Message Centre</span>
@@ -166,8 +173,63 @@
         <a class="pref-link" href="#/">View Message Centre
           <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
       </section>
+      <div class="pref-confirm" id="pref-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
       <div class="pref-actions">
-        <button class="btn-save" type="button">Save</button>
+        <button class="btn-save" type="button" id="pref-save">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-preferences2" class="view" aria-label="Notification preferences (Option 2)" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <h2 class="pref-section-title">Marketing communications</h2>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option"><input type="radio" name="mkt-pref-2" value="yes" checked><span>Yes</span></label>
+        <label class="pref-option"><input type="radio" name="mkt-pref-2" value="no"><span>No — only service notifications</span></label>
+        <fieldset class="pref-channels" id="pref-channels">
+          <legend class="pref-label">How would you like to receive them? <span class="pref-hint">(Select all that apply)</span></legend>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="email" checked><span>Email</span></label>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="sms"><span>SMS</span></label>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="push"><span>Mobile push notifications</span></label>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="inbox" checked><span>My Account Inbox</span></label>
+        </fieldset>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices.</p>
+        <p class="pref-label">Preferred alert method:</p>
+        <label class="pref-option"><input type="radio" name="reg-method-2" value="email" checked><span>Email</span></label>
+        <label class="pref-option"><input type="radio" name="reg-method-2" value="sms"><span>SMS</span></label>
+        <p class="pref-note">Your selected method will be used for eligible regulatory alerts.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">My Account inbox</h2>
+        <p class="pref-question">Your detailed notifications are also available in your My Account Inbox / Message Centre.</p>
+        <a class="pref-link" href="#/">View Message Centre
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </section>
+      <div class="pref-confirm" id="pref2-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
+      <div class="pref-actions">
+        <button class="btn-save" type="button" id="pref2-save">Save</button>
         <a class="btn-cancel" href="#/profile">Cancel</a>
       </div>
     </div>
