@@ -120,7 +120,7 @@ const MESSAGES = [
     id: "promo-data-expiry",
     subject: "Your 6 GB bonus data promotion ends on March 31, 2027",
     received: "Jul. 21, 2026",
-    time: "3:26 PM",
+    time: "9:48 AM",
     type: "Promotion expiry",
     sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
     kind: "in-app",
@@ -129,19 +129,25 @@ const MESSAGES = [
       reg: {
         title: "Your 6 GB bonus data promotion ends on March 31, 2027",
         badge: { month: "MAR", day: "31" },
-        lead: "Your bonus data was offered for a 12-month period.",
+        lead: "A promotional bonus on your account is scheduled to end on March 31, 2027.",
         paragraphs: [
-          "Your plan includes 6 GB of bonus data per month. This bonus was applied starting April 1, 2026 for a 12-month period, which ends on March 31, 2027.",
-          "After March 31, 2027, the bonus data will no longer be included in your plan and your monthly data allowance will return to your plan's regular amount. No action is required on your part — your services will continue without interruption."
+          "Your plan currently includes a 6 GB bonus data promotion. This promotion was applied on March 31, 2025 for a 24-month period, which ends on March 31, 2027.",
+          "After March 31, 2027, the bonus data will no longer be included in your plan and your monthly data allowance will return to the amount included in your base plan. The price of your plan is not affected."
         ],
         bulletsTitle: "Promotion ending",
         bullets: [
-          "6 GB bonus data per month — applied since April 1, 2026 — ends March 31, 2027"
+          "6 GB bonus data per month — applied since March 31, 2025 — ends March 31, 2027"
         ],
         paragraphs2: [
           "You can see all the promotions currently applied to your account, including their end dates, in My Account at any time."
         ],
-        footnote: "Reference: PROMO-2027-0331."
+        footnote: "Reference: PROMO-DATA-2027-0331."
+      },
+      mkt: {
+        chip: "NEW OFFER",
+        headline: "Keep your bonus data",
+        body: "Switch to a current plan and keep 6 GB of bonus data for 24 months, plus enjoy more data than your plan includes today.",
+        cta: "View offer"
       }
     }
   },
@@ -231,31 +237,36 @@ const MESSAGES = [
     id: "contract-expiry",
     subject: "Your service agreement ends on February 20, 2027",
     received: "Feb. 20, 2026",
-    time: "10:00 AM",
+    time: "8:30 AM",
     type: "Contract expiry",
     sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
     kind: "in-app",
     detail: {
-      label: "Service Agreement Notice",
+      label: "Regulatory Notification",
       reg: {
         title: "Your service agreement ends on February 20, 2027",
         badge: { month: "FEB", day: "20" },
-        lead: "We're reminding you that your 2-year service agreement will end on February 20, 2027.",
+        lead: "As required by the CRTC, we're reminding you that your service agreement will end on February 20, 2027.",
         paragraphs: [
-          "When your agreement ends, your services continue on a month-to-month basis at your current plan price. Any remaining balance on your device, if applicable, will appear on your final statement.",
-          "Because some of the promotions on your account were offered as part of your service agreement, they cannot continue once the agreement ends. The following promotions will be affected:"
+          "Your current service agreement started on February 20, 2025 for a 24-month period. When your agreement ends, your services will continue on a month-to-month basis at the same rate — no action is required on your part.",
+          "If your agreement includes promotional credits or bonuses tied to the 24-month term, the following will be affected:"
         ],
-        bulletsTitle: "Promotions that will end on February 20, 2027",
+        bulletsTitle: "Agreement details",
         bullets: [
-          "$5/month loyalty credit on your mobile plan",
-          "Unlimited Canada-wide talk add-on included at no charge"
+          "Service agreement period: February 20, 2025 – February 20, 2027",
+          "Promotions tied to the agreement, if any, end on February 20, 2027"
         ],
         paragraphs2: [
-          "Your base plan is not affected: the price of your plan stays the same, and you keep every promotion that isn't tied to your agreement.",
-          "To keep your promotional pricing going, you can sign a new 2-year service agreement before February 20, 2027, or switch to one of our current plans — several include equivalent promotional offers.",
-          "If you have questions about your agreement or the promotions on your account, you can review them in My Account or contact us."
+          "Your base plan is not affected: the price of your plan stays the same, and your services continue without interruption.",
+          "If you'd like to start a new agreement with current promotions, you can explore our available plans in My Account or contact us."
         ],
-        footnote: "This notice is provided in accordance with the Terms of Service applicable to your service agreement. Reference: SA-2027-0220."
+        footnote: "This notice is provided in accordance with the Terms of Service applicable to your service agreement. Reference: AGREEMENT-2027-0220."
+      },
+      mkt: {
+        chip: "NEW OFFER",
+        headline: "Ready for something new?",
+        body: "Upgrade to a new device on a new agreement and get up to $25/month in bill credits for 24 months, plus keep all your current plan features.",
+        cta: "View offer"
       }
     }
   }
@@ -282,6 +293,10 @@ const viewPref2El = document.getElementById("view-preferences2");
 const pref2SaveEl = document.getElementById("pref2-save");
 const pref2ConfirmEl = document.getElementById("pref2-confirm");
 const prefChannelsEl = document.getElementById("pref-channels");
+const viewPref3El = document.getElementById("view-preferences3");
+const pref3SaveEl = document.getElementById("pref3-save");
+const pref3ConfirmEl = document.getElementById("pref3-confirm");
+const pref3OptoutEl = document.getElementById("pref3-optout");
 
 function rowHtml(m) {
   const isPdf = m.kind === "pdf";
@@ -332,7 +347,7 @@ function matchesFilter(m, i) {
 }
 
 function renderList() {
-  const rows = MESSAGES.filter(matchesFilter);
+  const rows = MESSAGES.filter(function (m, i) { return matchesFilter(m, i); });
   listEl.innerHTML = rows.map(rowHtml).join("");
   emptyEl.hidden = rows.length > 0;
 }
@@ -476,6 +491,7 @@ function showList() {
   viewProfileEl.hidden = true;
   viewPrefEl.hidden = true;
   viewPref2El.hidden = true;
+  viewPref3El.hidden = true;
   viewListEl.hidden = false;
   document.title = "Message Centre | Freedom Mobile";
   renderList();
@@ -492,6 +508,7 @@ function showDetail(id) {
   viewProfileEl.hidden = true;
   viewPrefEl.hidden = true;
   viewPref2El.hidden = true;
+  viewPref3El.hidden = true;
   viewDetailEl.hidden = false;
   document.title = m.subject + " | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -502,6 +519,7 @@ function showProfile() {
   viewDetailEl.hidden = true;
   viewPrefEl.hidden = true;
   viewPref2El.hidden = true;
+  viewPref3El.hidden = true;
   viewProfileEl.hidden = false;
   document.title = "My Profile | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -512,6 +530,7 @@ function showPreferences() {
   viewDetailEl.hidden = true;
   viewProfileEl.hidden = true;
   viewPref2El.hidden = true;
+  viewPref3El.hidden = true;
   viewPrefEl.hidden = false;
   prefConfirmEl.hidden = true;
   document.title = "Notification Preferences | Freedom Mobile";
@@ -523,10 +542,24 @@ function showPreferences2() {
   viewDetailEl.hidden = true;
   viewProfileEl.hidden = true;
   viewPrefEl.hidden = true;
+  viewPref3El.hidden = true;
   viewPref2El.hidden = false;
   pref2ConfirmEl.hidden = true;
   syncMarketingChannels();
   document.title = "Notification Preferences (Option 2) | Freedom Mobile";
+  window.scrollTo(0, 0);
+}
+
+function showPreferences3() {
+  viewListEl.hidden = true;
+  viewDetailEl.hidden = true;
+  viewProfileEl.hidden = true;
+  viewPrefEl.hidden = true;
+  viewPref2El.hidden = true;
+  viewPref3El.hidden = false;
+  pref3ConfirmEl.hidden = true;
+  syncOptoutNote();
+  document.title = "Notification Preferences (Option 3) | Freedom Mobile";
   window.scrollTo(0, 0);
 }
 
@@ -564,6 +597,26 @@ viewPref2El.addEventListener("change", function (e) {
   }
 });
 
+function syncOptoutNote() {
+  const boxes = viewPref3El.querySelectorAll('input[name="mkt-channel-3"]');
+  const anyChecked = Array.prototype.some.call(boxes, function (b) { return b.checked; });
+  pref3OptoutEl.hidden = anyChecked;
+}
+
+pref3SaveEl.addEventListener("click", function () {
+  pref3ConfirmEl.hidden = false;
+  pref3ConfirmEl.focus();
+});
+
+viewPref3El.addEventListener("change", function (e) {
+  if (e.target.name === "mkt-channel-3") {
+    syncOptoutNote();
+  }
+  if (!pref3ConfirmEl.hidden) {
+    pref3ConfirmEl.hidden = true;
+  }
+});
+
 function route() {
   const hash = location.hash.replace(/^#/, "");
   const match = hash.match(/^\/message\/([\w-]+)/);
@@ -575,6 +628,8 @@ function route() {
     showPreferences();
   } else if (hash === "/preferences2") {
     showPreferences2();
+  } else if (hash === "/preferences3") {
+    showPreferences3();
   } else {
     showList();
   }

@@ -24,19 +24,13 @@ Then open <http://localhost:8123> (hub) or
 - The Message Centre opens first: Freedom account header (black utility strip + white main bar),
   account strip ("Hi, Jennifer" + line number), account tabs, centered page title.
 - The message list uses the existing UI columns: **Received On: | Subject: | Type: | Sent To:**.
-- Clicking a message opens it based on its type: **Promotion expiry**, **Roaming**,
-  **Contract expiry** and **Offer** messages open **inside the Message Centre** (header stays on
-  top, "< Message Centre" back link); all other messages open a **PDF in a new browser tab**
-  (`assets/docs/*.pdf`).
-- **Filter**: "Filter by: [All types ▾]" — **Read** / **Unread** status filters right below
-  "All types", then a divider and the type options in alphabetical order (Activation, Contract
-  expiry, Offer, Plan Change, Promotion expiry, Regulatory, Roaming).
-- **Search**: the search bar filters messages live as you type, matching words in the subject,
-  type, date, recipient and the full in-app message content (regulatory and marketing blocks).
-  It combines with the type/status filter.
+- Clicking a message opens it based on its type: **Promotion expiry** and **Roaming** messages
+  open **inside the Message Centre** (header stays on top, "< Message Centre" back link); all
+  other messages open a **PDF in a new browser tab** (`assets/docs/*.pdf`).
+- **Filter** (per `Filter.png`): "Filter by: [All types ▾]" — Activation, Plan Change,
+  Promotion expiry, Roaming, Regulatory.
 - The **Sent To** column shows delivery channels: email address or **SMS phone number**.
-- Types **Promotion expiry**, **Roaming**, **Contract expiry** and **Offer** appear on messages
-  in the list.
+- New types **Promotion expiry** and **Roaming** appear on messages in the list.
 - The **Tab is ending** message (`#/message/tab-ending`) shows the extended regulatory section
   (longer copy, larger than the marketing section, no image) with the DEC 28 date badge, followed
   by the NEW OFFER marketing card and "The Freedom Mobile Team" sign-off.
@@ -94,19 +88,11 @@ Alternatives: GitHub Pages, or internal hosting.
   in browsers (verified via headless-browser screenshot), so digits are excluded from the
   `@font-face` via `unicode-range` and render in the system font. The licensed full font should
   render digits correctly — remove the `unicode-range` lines when swapping it in.
-- **Routing**: hash-based (`#/`, `#/message/:id`, `#/profile`, `#/preferences`) so all screens live
-  in one page and can be deep-linked or imported into Figma separately. The account tabs (page
-  tiles) stay visible on every screen.
-- **Read/unread**: unread rows render bold with a blue dot left of the date. Clicking a
-  message marks it read (bold and dot disappear) for the current session only — nothing is
-  persisted, so refreshing the page restores the original unread set. This is intentional for
-  presentations.
-- **My Profile menu** (`#/profile`): the "My Profile" account tab links here; menu with
-  **Notification Preferences** and **Message Centre** options.
-- **Notification Preferences** (`#/preferences`): per the feedback mockup — marketing
-  communications and regulatory alert method rendered as radio button groups, a My Account
-  inbox section with a "View Message Centre" link, and Save/Cancel actions (visual only, no
-  persistence).
+- **Routing**: hash-based (`#/` and `#/message/:id`) so both screens live in one page and can be
+  deep-linked or imported into Figma separately.
+- **Read/unread**: unread rows render bold; opening a message does **not** mark it read — this is
+  intentional for demos. The mark-as-read feature is deferred; to enable it later, set
+  `m.unread = false` at the top of `showDetail()` in `assets/js/app.js`.
 - **PDFs**: `tools/generate-pdfs.ps1` regenerates `assets/docs/*.pdf` (PowerShell, no
   dependencies).
 - The new-tab icon is an inline SVG (feather-style external link), matching `New tab icon.png`.

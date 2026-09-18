@@ -75,6 +75,48 @@ h1 {
   font-weight: 700;
   color: #1970c3;
 }
+.deeplinks {
+  margin: 28px 0 0;
+  padding: 20px 24px;
+  background: #fff;
+  border: 1px solid #e2e4e7;
+  border-radius: 12px;
+}
+.deeplinks h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1f2430;
+}
+.deeplinks p {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  color: #4e5a66;
+}
+.deeplinks ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+.deeplinks a {
+  display: inline-block;
+  padding: 7px 13px;
+  border: 1px solid #d4d8dd;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1970c3;
+  text-decoration: none;
+}
+.deeplinks a:hover {
+  border-color: #1768ad;
+  background: #f2f8fd;
+}
 </style>
 </head>
 <body>
@@ -85,9 +127,23 @@ h1 {
     <a class="card" href="crtc-message-centre/">
       <span class="card-tag">Freedom Mobile</span>
       <h2>CRTC Notifications — Message Centre</h2>
-      <p>Message centre with in-app message preview for Promotion expiry and Roaming messages, PDF messages opening in a new tab, type filter, and the regulatory + marketing message template.</p>
+      <p>Message centre with 11 messages, keyword search, read/unread and type filters, in-app message preview, PDF messages opening in a new tab, the regulatory + marketing message template, and three notification preference options.</p>
       <span class="card-open">Open prototype →</span>
     </a>
+  </section>
+
+  <section class="deeplinks">
+    <h3>Direct links</h3>
+    <p>Jump straight to a specific screen of the Message Centre prototype.</p>
+    <ul>
+      <li><a href="crtc-message-centre/#/">Message list</a></li>
+      <li><a href="crtc-message-centre/#/message/tab-ending">Message preview (Tab ending)</a></li>
+      <li><a href="crtc-message-centre/#/message/offer-bonus-data">Message preview (Offer)</a></li>
+      <li><a href="crtc-message-centre/#/profile">My Profile</a></li>
+      <li><a href="crtc-message-centre/#/preferences">Preferences — Option 1</a></li>
+      <li><a href="crtc-message-centre/#/preferences2">Preferences — Option 2</a></li>
+      <li><a href="crtc-message-centre/#/preferences3">Preferences — Option 3</a></li>
+    </ul>
   </section>
 </main>
 </body>

@@ -277,26 +277,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 14px;
-}
-
-.filter {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.filter-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--body-text);
 }
 
 .search {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   flex: 1;
   max-width: 340px;
@@ -315,19 +302,33 @@ button {
   background: #fff;
   border: 1px solid #c9cdd2;
   border-radius: 8px;
-  font: inherit;
   font-size: 14px;
   color: var(--ink);
 }
 
-.search-input::placeholder {
-  color: #76797e;
-}
-
-.search-input:focus {
+.search-input:focus-visible {
   outline: none;
   border-color: var(--freedom-blue-mid);
   box-shadow: var(--focus-ring);
+}
+
+.filter-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+.filter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--body-text);
 }
 
 .filter-btn {
@@ -404,12 +405,6 @@ button {
   content: "✓";
   margin-left: auto;
   color: var(--freedom-blue-mid);
-}
-
-.filter-sep {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 4px;
 }
 
 .list-card {
@@ -816,27 +811,6 @@ button {
   color: var(--body-text);
 }
 
-.detail-sent {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 26px;
-  padding-top: 22px;
-  border-top: 1px solid var(--border);
-  font-size: 13.5px;
-  color: var(--body-text);
-}
-
-.detail-sent svg {
-  color: var(--freedom-blue-mid);
-  flex: none;
-}
-
-.detail-sent strong {
-  color: var(--ink);
-  font-weight: 700;
-}
-
 .template-note {
   margin: 24px 0 0;
   padding: 10px 14px;
@@ -943,6 +917,14 @@ button {
     display: none;
   }
 
+  .search {
+    max-width: none;
+  }
+
+  .pref-card {
+    padding: 4px 18px 12px;
+  }
+
   .reg-card {
     padding: 22px 18px;
   }
@@ -968,7 +950,7 @@ button {
   }
 }
 
-/* My Profile menu */
+/* My Profile */
 .profile-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -981,10 +963,11 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px 24px;
-  text-decoration: none;
+  gap: 16px;
+  padding: 22px 28px;
   border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
   transition: background 0.12s ease;
 }
 
@@ -996,26 +979,17 @@ button {
   background: var(--row-hover);
 }
 
-.profile-item:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
 .profile-item-text {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
 
 .profile-item-title {
-  font-size: 16.5px;
-  font-weight: 700;
+  font-size: 15.5px;
+  font-weight: 600;
   color: var(--ink);
-}
-
-.profile-item:hover .profile-item-title {
-  color: var(--freedom-blue-mid);
-  text-decoration: underline;
 }
 
 .profile-item-desc {
@@ -1099,6 +1073,11 @@ button {
   flex: none;
 }
 
+.pref-option:has(input:checked) {
+  border-color: var(--cta-blue);
+  background: #eaf2fb;
+}
+
 .pref-channels {
   margin: 4px 0 10px;
   padding: 0;
@@ -1118,9 +1097,50 @@ button {
   color: var(--body-text);
 }
 
-.pref-option:has(input:checked) {
-  border-color: var(--cta-blue);
-  background: #eaf2fb;
+.pref-method {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pref-method-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+.pref-method-contact {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--body-text);
+}
+
+.pref-optout {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin: 4px 0 14px;
+  padding: 13px 16px;
+  background: #fdf3e3;
+  border: 1px solid #f0d5a8;
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #7a5417;
+}
+
+.pref-optout[hidden] {
+  display: none;
+}
+
+.pref-optout p {
+  margin: 0;
+}
+
+.pref-optout svg {
+  color: #c07c1a;
+  flex: none;
+  margin-top: 1px;
 }
 
 .pref-note {
@@ -1129,25 +1149,49 @@ button {
   color: var(--body-text);
 }
 
-.pref-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  color: var(--cta-blue);
-  text-decoration: none;
-}
-
-.pref-link:hover {
-  text-decoration: underline;
-}
-
 .pref-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 28px;
   padding: 28px 0 26px;
+}
+
+.btn-save {
+  background: var(--accent-orange-bright);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 48px;
+  font-size: 15.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--body-text);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pref-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--freedom-blue-mid);
+  text-decoration: none;
+}
+
+.pref-link:hover {
+  text-decoration: underline;
 }
 
 .pref-confirm {
@@ -1189,52 +1233,23 @@ button {
   box-shadow: var(--focus-ring);
 }
 
-.btn-save {
-  background: var(--accent-orange-bright);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 48px;
-  font-size: 15.5px;
+.detail-sent {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--body-text);
+}
+
+.detail-sent svg {
+  color: var(--freedom-blue-mid);
+  flex: none;
+}
+
+.detail-sent strong {
+  color: var(--ink);
   font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-save:hover {
-  background: #d95f14;
-}
-
-.btn-save:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.btn-cancel {
-  font-size: 15.5px;
-  font-weight: 700;
-  color: var(--cta-blue);
-  text-decoration: none;
-}
-
-.btn-cancel:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 640px) {
-  .list-toolbar {
-    flex-wrap: wrap;
-  }
-
-  .pref-card {
-    padding: 4px 18px 8px;
-  }
-
-  .pref-actions {
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .profile-item {
-    padding: 16px 18px;
-  }
 }

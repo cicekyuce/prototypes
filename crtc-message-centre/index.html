@@ -54,12 +54,11 @@
     <a href="#/">Manage Features</a>
     <a href="#/">My Plan & Device</a>
     <a href="#/">Billing Details</a>
-    <a href="#/profile" class="is-active">My Profile</a>
+    <a href="#/" class="is-active">My Profile</a>
   </div>
 </nav>
 
 <main id="app" class="page">
-
   <section id="view-list" class="view" aria-label="Message Centre">
     <div class="mc-hero">
       <h1 class="mc-title">Message Centre</h1>
@@ -135,6 +134,13 @@
         </span>
         <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
+      <a class="profile-item" href="#/preferences3">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences (Option 3)</span>
+          <span class="profile-item-desc">Review a third version of the notification preferences.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
       <a class="profile-item" href="#/">
         <span class="profile-item-text">
           <span class="profile-item-title">Message Centre</span>
@@ -202,7 +208,6 @@
           <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="email" checked><span>Email</span></label>
           <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="sms"><span>SMS</span></label>
           <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="push"><span>Mobile push notifications</span></label>
-          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="inbox" checked><span>My Account Inbox</span></label>
         </fieldset>
         <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
       </section>
@@ -229,6 +234,57 @@
       </div>
       <div class="pref-actions">
         <button class="btn-save" type="button" id="pref2-save">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-preferences3" class="view" aria-label="Notification preferences (Option 3)" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <h2 class="pref-section-title">Marketing communications</h2>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option">
+          <input type="checkbox" name="mkt-channel-3" value="email" checked>
+          <span class="pref-method"><span class="pref-method-name">Email</span><span class="pref-method-contact">cyucezeytinci@freedommobile.ca</span></span>
+        </label>
+        <label class="pref-option">
+          <input type="checkbox" name="mkt-channel-3" value="sms">
+          <span class="pref-method"><span class="pref-method-name">SMS</span><span class="pref-method-contact">(666) 780-1194</span></span>
+        </label>
+        <label class="pref-option">
+          <input type="checkbox" name="mkt-channel-3" value="push">
+          <span class="pref-method"><span class="pref-method-name">Mobile push notifications</span></span>
+        </label>
+        <div class="pref-optout" id="pref3-optout" role="status" hidden>
+          <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          <p>You've opted out of marketing communications — you'll no longer receive alerts, announcements or exclusive offers. Select a method above to opt back in.</p>
+        </div>
+        <a class="pref-link" href="#/profile">Update your contact information in My Profile
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices.</p>
+        <p class="pref-label">Preferred alert method:</p>
+        <label class="pref-option"><input type="radio" name="reg-method-3" value="email" checked><span>Email</span></label>
+        <label class="pref-option"><input type="radio" name="reg-method-3" value="sms"><span>SMS</span></label>
+        <p class="pref-note">Your selected method will be used for eligible regulatory alerts.</p>
+      </section>
+      <div class="pref-confirm" id="pref3-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
+      <div class="pref-actions">
+        <button class="btn-save" type="button" id="pref3-save">Save</button>
         <a class="btn-cancel" href="#/profile">Cancel</a>
       </div>
     </div>
