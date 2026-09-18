@@ -54,7 +54,7 @@
     <a href="#/">Manage Features</a>
     <a href="#/">My Plan & Device</a>
     <a href="#/">Billing Details</a>
-    <a href="#/" class="is-active">My Profile</a>
+    <a href="#/profile" class="is-active">My Profile</a>
   </div>
 </nav>
 
@@ -120,6 +120,13 @@
       <p class="mc-subtitle">Manage your profile and notification settings.</p>
     </div>
     <div class="profile-card">
+      <a class="profile-item" href="#/">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Message Centre</span>
+          <span class="profile-item-desc">View your messages regarding changes to your plans, coverage or device.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
       <a class="profile-item" href="#/preferences">
         <span class="profile-item-text">
           <span class="profile-item-title">Notification Preferences</span>
@@ -138,13 +145,6 @@
         <span class="profile-item-text">
           <span class="profile-item-title">Notification Preferences (Option 3)</span>
           <span class="profile-item-desc">Review a third version of the notification preferences.</span>
-        </span>
-        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-      <a class="profile-item" href="#/">
-        <span class="profile-item-text">
-          <span class="profile-item-title">Message Centre</span>
-          <span class="profile-item-desc">View your messages regarding changes to your plans, coverage or device.</span>
         </span>
         <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -255,17 +255,16 @@
           <input type="checkbox" name="mkt-channel-3" value="sms">
           <span class="pref-method"><span class="pref-method-name">SMS</span><span class="pref-method-contact">(666) 780-1194</span></span>
         </label>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
         <a class="pref-link" href="#/profile">Update your contact information in My Profile
           <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
       </section>
       <section class="pref-section">
         <h2 class="pref-section-title">Regulatory alerts</h2>
-        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices.</p>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices. Your selected method will be used for eligible regulatory alerts.</p>
         <p class="pref-label">Preferred alert method:</p>
         <label class="pref-option"><input type="radio" name="reg-method-3" value="email" checked><span>Email</span></label>
         <label class="pref-option"><input type="radio" name="reg-method-3" value="sms"><span>SMS</span></label>
-        <p class="pref-note">Your selected method will be used for eligible regulatory alerts.</p>
       </section>
       <div class="pref-confirm" id="pref3-confirm" role="status" tabindex="-1" hidden>
         <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
