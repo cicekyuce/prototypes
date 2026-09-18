@@ -557,8 +557,7 @@ function showPreferences3() {
   viewPrefEl.hidden = true;
   viewPref2El.hidden = true;
   viewPref3El.hidden = false;
-  pref3ConfirmEl.hidden = true;
-  syncOptoutNote();
+  hidePref3Banners();
   document.title = "Notification Preferences (Option 3) | Freedom Mobile";
   window.scrollTo(0, 0);
 }
@@ -597,24 +596,22 @@ viewPref2El.addEventListener("change", function (e) {
   }
 });
 
-function syncOptoutNote() {
-  const boxes = viewPref3El.querySelectorAll('input[name="mkt-channel-3"]');
-  const anyChecked = Array.prototype.some.call(boxes, function (b) { return b.checked; });
-  pref3OptoutEl.hidden = anyChecked;
+function hidePref3Banners() {
+  pref3ConfirmEl.hidden = true;
+  pref3OptoutEl.hidden = true;
 }
 
 pref3SaveEl.addEventListener("click", function () {
-  pref3ConfirmEl.hidden = false;
-  pref3ConfirmEl.focus();
+  const boxes = viewPref3El.querySelectorAll('input[name="mkt-channel-3"]');
+  const optedOut = !Array.prototype.some.call(boxes, function (b) { return b.checked; });
+  const banner = optedOut ? pref3OptoutEl : pref3ConfirmEl;
+  hidePref3Banners();
+  banner.hidden = false;
+  banner.focus();
 });
 
-viewPref3El.addEventListener("change", function (e) {
-  if (e.target.name === "mkt-channel-3") {
-    syncOptoutNote();
-  }
-  if (!pref3ConfirmEl.hidden) {
-    pref3ConfirmEl.hidden = true;
-  }
+viewPref3El.addEventListener("change", function () {
+  hidePref3Banners();
 });
 
 function route() {

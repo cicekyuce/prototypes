@@ -1118,29 +1118,40 @@ button {
 .pref-optout {
   display: flex;
   align-items: flex-start;
-  gap: 11px;
-  margin: 4px 0 14px;
-  padding: 13px 16px;
+  gap: 12px;
+  margin: 0 0 8px;
+  padding: 14px 18px;
   background: #fdf3e3;
   border: 1px solid #f0d5a8;
   border-radius: 10px;
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: #7a5417;
 }
 
 .pref-optout[hidden] {
   display: none;
 }
 
-.pref-optout p {
-  margin: 0;
-}
-
-.pref-optout svg {
+.pref-optout > svg {
   color: #c07c1a;
   flex: none;
-  margin-top: 1px;
+  margin-top: 2px;
+}
+
+.pref-optout-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #7a5417;
+}
+
+.pref-optout-sub {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  color: #8a6526;
+}
+
+.pref-optout:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .pref-note {
