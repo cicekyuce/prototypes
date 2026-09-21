@@ -494,7 +494,7 @@ function showList() {
   viewPref2El.hidden = true;
   viewPref3El.hidden = true;
   viewListEl.hidden = false;
-  document.title = "Message Centre | Freedom Mobile";
+  document.title = "Message Centre (For Launch) | Freedom Mobile";
   renderList();
 }
 
@@ -535,7 +535,7 @@ function showPreferences() {
   viewPrefEl.hidden = false;
   prefRegChanged = false;
   hidePrefBanners();
-  document.title = "Notification Preferences | Freedom Mobile";
+  document.title = "Notification Preferences (For Launch) | Freedom Mobile";
   window.scrollTo(0, 0);
 }
 
