@@ -289,6 +289,7 @@ const backBtnEl = document.getElementById("back-btn");
 const searchInputEl = document.getElementById("search-input");
 const prefSaveEl = document.getElementById("pref-save");
 const prefConfirmEl = document.getElementById("pref-confirm");
+const prefOptoutEl = document.getElementById("pref-optout");
 const viewPref2El = document.getElementById("view-preferences2");
 const pref2SaveEl = document.getElementById("pref2-save");
 const pref2ConfirmEl = document.getElementById("pref2-confirm");
@@ -532,7 +533,8 @@ function showPreferences() {
   viewPref2El.hidden = true;
   viewPref3El.hidden = true;
   viewPrefEl.hidden = false;
-  prefConfirmEl.hidden = true;
+  prefRegChanged = false;
+  hidePrefBanners();
   document.title = "Notification Preferences | Freedom Mobile";
   window.scrollTo(0, 0);
 }
@@ -545,6 +547,7 @@ function showPreferences2() {
   viewPref3El.hidden = true;
   viewPref2El.hidden = false;
   pref2ConfirmEl.hidden = true;
+  setPrefActionsSaved(viewPref2El, pref2SaveEl, false);
   syncMarketingChannels();
   document.title = "Notification Preferences (Option 2) | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -557,6 +560,7 @@ function showPreferences3() {
   viewPrefEl.hidden = true;
   viewPref2El.hidden = true;
   viewPref3El.hidden = false;
+  pref3RegChanged = false;
   hidePref3Banners();
   document.title = "Notification Preferences (Option 3) | Freedom Mobile";
   window.scrollTo(0, 0);
@@ -566,15 +570,40 @@ backBtnEl.addEventListener("click", function () {
   location.hash = "#/";
 });
 
+function setPrefActionsSaved(viewEl, saveBtn, saved) {
+  const cancel = viewEl.querySelector(".pref-actions .btn-cancel");
+  saveBtn.textContent = saved ? "Back to Overview" : "Save";
+  saveBtn.dataset.state = saved ? "saved" : "editing";
+  if (cancel) cancel.hidden = saved;
+}
+
+let prefRegChanged = false;
+
+function hidePrefBanners() {
+  prefConfirmEl.hidden = true;
+  prefOptoutEl.hidden = true;
+  setPrefActionsSaved(viewPrefEl, prefSaveEl, false);
+}
+
 prefSaveEl.addEventListener("click", function () {
-  prefConfirmEl.hidden = false;
-  prefConfirmEl.focus();
+  if (prefSaveEl.dataset.state === "saved") {
+    location.hash = "#/";
+    return;
+  }
+  const optOut = viewPrefEl.querySelector('input[name="mkt-pref"][value="required"]');
+  const optedOut = !!(optOut && optOut.checked);
+  prefOptoutEl.hidden = !optedOut;
+  prefConfirmEl.hidden = optedOut && !prefRegChanged;
+  (prefConfirmEl.hidden ? prefOptoutEl : prefConfirmEl).focus();
+  prefRegChanged = false;
+  setPrefActionsSaved(viewPrefEl, prefSaveEl, true);
 });
 
 viewPrefEl.addEventListener("change", function (e) {
-  if (e.target.matches('input[type="radio"]') && !prefConfirmEl.hidden) {
-    prefConfirmEl.hidden = true;
+  if (e.target.name === "reg-method") {
+    prefRegChanged = true;
   }
+  hidePrefBanners();
 });
 
 function syncMarketingChannels() {
@@ -583,34 +612,49 @@ function syncMarketingChannels() {
 }
 
 pref2SaveEl.addEventListener("click", function () {
+  if (pref2SaveEl.dataset.state === "saved") {
+    location.hash = "#/";
+    return;
+  }
   pref2ConfirmEl.hidden = false;
   pref2ConfirmEl.focus();
+  setPrefActionsSaved(viewPref2El, pref2SaveEl, true);
 });
 
 viewPref2El.addEventListener("change", function (e) {
   if (e.target.name === "mkt-pref-2") {
     syncMarketingChannels();
   }
-  if (!pref2ConfirmEl.hidden) {
-    pref2ConfirmEl.hidden = true;
-  }
+  pref2ConfirmEl.hidden = true;
+  setPrefActionsSaved(viewPref2El, pref2SaveEl, false);
 });
+
+let pref3RegChanged = false;
 
 function hidePref3Banners() {
   pref3ConfirmEl.hidden = true;
   pref3OptoutEl.hidden = true;
+  setPrefActionsSaved(viewPref3El, pref3SaveEl, false);
 }
 
 pref3SaveEl.addEventListener("click", function () {
+  if (pref3SaveEl.dataset.state === "saved") {
+    location.hash = "#/";
+    return;
+  }
   const boxes = viewPref3El.querySelectorAll('input[name="mkt-channel-3"]');
   const optedOut = !Array.prototype.some.call(boxes, function (b) { return b.checked; });
-  const banner = optedOut ? pref3OptoutEl : pref3ConfirmEl;
-  hidePref3Banners();
-  banner.hidden = false;
-  banner.focus();
+  pref3OptoutEl.hidden = !optedOut;
+  pref3ConfirmEl.hidden = optedOut && !pref3RegChanged;
+  (pref3ConfirmEl.hidden ? pref3OptoutEl : pref3ConfirmEl).focus();
+  pref3RegChanged = false;
+  setPrefActionsSaved(viewPref3El, pref3SaveEl, true);
 });
 
-viewPref3El.addEventListener("change", function () {
+viewPref3El.addEventListener("change", function (e) {
+  if (e.target.name === "reg-method-3") {
+    pref3RegChanged = true;
+  }
   hidePref3Banners();
 });
 
