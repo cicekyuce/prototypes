@@ -5,6 +5,9 @@ const ICONS = {
   phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
   external: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
   chevronRight: '<polyline points="9 18 15 12 9 6"/>',
+  chevronLeft: '<polyline points="15 18 9 12 15 6"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
   sparkle: '<path d="M12 3l1.9 5.8L20 10.7l-5 3.8 1.6 6L12 17l-4.6 3.5 1.6-6-5-3.8 6.1-1.9z"/>'
 };
@@ -53,6 +56,91 @@ const MESSAGES = [
         cta: "View offer",
         graphicImg: "assets/img/mkt-offer.png"
       }
+    }
+  },
+  {
+    id: "plan-price-change",
+    subject: "A change is coming to your plan on November 1, 2026",
+    received: "Sep. 14, 2026",
+    unread: true,
+    time: "9:10 AM",
+    type: "Regulatory",
+    sentTo: { kind: "email", value: "cyucezeytinci@freedommobile.ca" },
+    kind: "in-app",
+    detail: {
+      label: "Regulatory Notification",
+      reg: {
+        title: "A change is coming to your plan on November 1, 2026",
+        badge: { month: "NOV", day: "01" },
+        lead: "As required by the CRTC, we're giving you advance notice that the price of your current mobile plan will change on November 1, 2026.",
+        paragraphs: [
+          "Starting with your November statement, your monthly plan price will increase by $5. This change applies to the plan itself and does not affect any device balance or add-ons you may have.",
+          "The following details summarize what is changing on your account:"
+        ],
+        bulletsTitle: "Summary of changes effective November 1, 2026",
+        bullets: [
+          "Monthly plan price increases from $45 to $50",
+          "Included data, talk and text remain unchanged",
+          "Your existing add-ons and their prices are not affected"
+        ],
+        paragraphs2: [
+          "You are free to change or cancel your plan at any time without an early cancellation fee related to this change. If you decide to move to a different plan before November 1, 2026, the new plan's price will apply instead.",
+          "If you have questions about this change or would like to review other plans available to you, you can compare options in My Account or contact us."
+        ],
+        footnote: "This notice is provided in accordance with the CRTC Wireless Code, which requires advance notice of changes to the terms of your plan. Reference: PLN-2026-1101."
+      },
+      mkts: [
+        {
+          chip: "NEW OFFER",
+          headline: "Lock in your price for 24 months.",
+          body: "Move to a Freedom Ultimate plan before November 1 and we'll hold your monthly price for two full years — no increases, guaranteed.",
+          cta: "View offer",
+          graphicImg: "assets/img/mkt-offer.png"
+        },
+        {
+          chip: "BUNDLE & SAVE",
+          headline: "Save $15/month with Home Internet.",
+          body: "Add Freedom Home Internet to your mobile plan and save $15 every month on your combined bill, plus get free installation.",
+          cta: "View offer",
+          graphicImg: "assets/img/mkt-offer.png"
+        },
+        {
+          chip: "DEVICE UPGRADE",
+          headline: "Upgrade and get $200 off.",
+          body: "You're eligible for an early upgrade. Choose a new device on a MyTab agreement and receive a $200 credit toward your purchase.",
+          cta: "View offer",
+          graphicImg: "assets/img/mkt-offer.png"
+        }
+      ]
+    }
+  },
+  {
+    id: "offer-double-up",
+    subject: "Two offers picked for you: bonus data and roaming savings",
+    received: "Sep. 13, 2026",
+    unread: true,
+    time: "11:30 AM",
+    type: "Offer",
+    sentTo: { kind: "sms", value: "(666) 780-1194" },
+    kind: "in-app",
+    detail: {
+      label: "Marketing Offer",
+      mkts: [
+        {
+          chip: "NEW OFFER",
+          headline: "10 GB of bonus data, on us.",
+          body: "Add 10 GB of bonus data to your plan at no extra cost for the next 3 months. Stream, scroll and share without watching your usage.",
+          cta: "View offer",
+          graphicImg: "assets/img/mkt-offer.png"
+        },
+        {
+          chip: "TRAVEL READY",
+          headline: "Roam the U.S. for $5/day.",
+          body: "Heading south? Use your plan's data, talk and text in the United States for just $5 a day — half the regular rate until the end of the year.",
+          cta: "View offer",
+          graphicImg: "assets/img/mkt-offer.png"
+        }
+      ]
     }
   },
   {
@@ -298,6 +386,11 @@ const viewPref3El = document.getElementById("view-preferences3");
 const pref3SaveEl = document.getElementById("pref3-save");
 const pref3ConfirmEl = document.getElementById("pref3-confirm");
 const pref3OptoutEl = document.getElementById("pref3-optout");
+const drawerEl = document.getElementById("info-drawer");
+const drawerScrimEl = document.getElementById("drawer-scrim");
+const drawerBodyEl = document.getElementById("drawer-body");
+const drawerDismissEl = document.getElementById("drawer-dismiss");
+let drawerReturnFocusEl = null;
 
 function rowHtml(m) {
   const isPdf = m.kind === "pdf";
@@ -327,9 +420,10 @@ function messageSearchText(m) {
       (d.reg.paragraphs2 || []).join(" ")
     );
   }
-  if (d.mkt) {
-    parts.push(d.mkt.chip, d.mkt.headline, d.mkt.body);
-  }
+  const offers = d.mkts && d.mkts.length ? d.mkts : d.mkt ? [d.mkt] : [];
+  offers.forEach(function (o) {
+    parts.push(o.chip, o.headline, o.body);
+  });
   return parts.join(" ").toLowerCase();
 }
 
@@ -413,6 +507,18 @@ searchInputEl.addEventListener("input", function () {
   renderList();
 });
 
+detailCardEl.addEventListener("click", function (e) {
+  const carousel = e.target.closest(".mkt-carousel");
+  if (!carousel) return;
+  const arrow = e.target.closest("[data-step]");
+  const dot = e.target.closest("[data-goto]");
+  if (arrow) {
+    showOffer(carousel, Number(carousel.dataset.index) + Number(arrow.dataset.step));
+  } else if (dot) {
+    showOffer(carousel, Number(dot.dataset.goto));
+  }
+});
+
 function regBadgeHtml(badge) {
   if (!badge) return "";
   return (
@@ -456,6 +562,54 @@ function mktCardHtml(mk) {
   );
 }
 
+function mktCarouselHtml(offers) {
+  const slides = offers.map(function (mk, i) {
+    return '<div class="mkt-slide" data-slide="' + i + '"' + (i === 0 ? "" : " hidden") + ">" + mktCardHtml(mk) + "</div>";
+  }).join("");
+  const dots = offers.map(function (mk, i) {
+    return (
+      '<button class="mkt-dot' + (i === 0 ? " is-active" : "") + '" type="button" data-goto="' + i +
+      '" aria-label="Show offer ' + (i + 1) + " of " + offers.length + '"></button>'
+    );
+  }).join("");
+  return (
+    '<section class="mkt-carousel" id="mkt-carousel" data-index="0" data-count="' + offers.length + '" aria-roledescription="carousel" aria-label="Offers for you">' +
+    '<div class="mkt-carousel-head">' +
+    '<h3 class="mkt-carousel-title">' + offers.length + " offers for you</h3>" +
+    '<div class="mkt-carousel-nav">' +
+    '<button class="mkt-arrow" type="button" data-step="-1" aria-label="Previous offer">' + icon("chevronLeft", "ic-20") + "</button>" +
+    '<span class="mkt-counter" id="mkt-counter" aria-live="polite">1 of ' + offers.length + "</span>" +
+    '<button class="mkt-arrow" type="button" data-step="1" aria-label="Next offer">' + icon("chevronRight", "ic-20") + "</button>" +
+    "</div>" +
+    "</div>" +
+    '<div class="mkt-slides">' + slides + "</div>" +
+    '<div class="mkt-dots" role="tablist" aria-label="Choose an offer">' + dots + "</div>" +
+    "</section>"
+  );
+}
+
+function marketingHtml(d) {
+  const offers = d.mkts && d.mkts.length ? d.mkts : d.mkt ? [d.mkt] : [];
+  if (!offers.length) return "";
+  return offers.length > 1 ? mktCarouselHtml(offers) : mktCardHtml(offers[0]);
+}
+
+function showOffer(carousel, index) {
+  const count = Number(carousel.dataset.count);
+  const next = (index + count) % count;
+  carousel.dataset.index = String(next);
+  carousel.querySelectorAll(".mkt-slide").forEach(function (slide) {
+    slide.hidden = Number(slide.dataset.slide) !== next;
+  });
+  carousel.querySelectorAll(".mkt-dot").forEach(function (dot) {
+    const active = Number(dot.dataset.goto) === next;
+    dot.classList.toggle("is-active", active);
+    dot.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  const counter = carousel.querySelector(".mkt-counter");
+  if (counter) counter.textContent = next + 1 + " of " + count;
+}
+
 function simpleCardHtml(s) {
   return (
     '<section class="simple-card">' +
@@ -476,7 +630,7 @@ function detailHtml(m) {
     "</div>" +
     "</header>" +
     (d.reg ? regCardHtml(d.reg) : "") +
-    (d.mkt ? mktCardHtml(d.mkt) : "") +
+    marketingHtml(d) +
     (d.simple ? simpleCardHtml(d.simple) : "") +
     '<p class="signoff">Thanks for being a valued customer.<br>The Freedom Mobile Team</p>' +
     '<div class="detail-sent">' +
@@ -658,7 +812,83 @@ viewPref3El.addEventListener("change", function (e) {
   hidePref3Banners();
 });
 
+const DRAWER_CONTENT = {
+  marketing: {
+    title: "What are marketing communications?",
+    paragraphs: [
+      "Marketing communications are optional messages about offers, promotions and products we think you'll find useful. They are not required to keep your service running, so you choose whether to receive them.",
+      "You can change your choice at any time, and opting out never affects your plan, your billing or the required notices we have to send you."
+    ],
+    listTitle: "Examples",
+    list: [
+      "Exclusive discounts and limited-time promotions",
+      "Bundle offers, such as adding Home Internet",
+      "Device upgrade and trade-in offers",
+      "New product and feature announcements"
+    ]
+  },
+  regulatory: {
+    title: "What are regulatory alerts?",
+    paragraphs: [
+      "Regulatory alerts are important notices about your account that we are required to send you under CRTC rules, such as the Wireless Code. Because they are required, you cannot opt out of them — you only choose how you receive them.",
+      "These notices help you avoid surprises on your bill by telling you in advance when something about your agreement or pricing is changing."
+    ],
+    listTitle: "Examples",
+    list: [
+      "Your contract or Tab agreement is ending",
+      "A promotional credit or discount is expiring",
+      "A change to your plan price or terms of service",
+      "Data or roaming usage that may lead to extra charges"
+    ]
+  }
+};
+
+function drawerBodyHtml(c) {
+  return (
+    '<h2 class="drawer-title" id="drawer-title">' + c.title + "</h2>" +
+    c.paragraphs.map(function (p) { return "<p>" + p + "</p>"; }).join("") +
+    '<p class="drawer-subtitle">' + c.listTitle + "</p>" +
+    '<ul class="drawer-list">' + c.list.map(function (li) { return "<li>" + li + "</li>"; }).join("") + "</ul>"
+  );
+}
+
+function openDrawer(key) {
+  const content = DRAWER_CONTENT[key];
+  if (!content) return;
+  drawerBodyEl.innerHTML = drawerBodyHtml(content);
+  drawerScrimEl.hidden = false;
+  drawerEl.hidden = false;
+  drawerEl.focus();
+}
+
+function closeDrawer() {
+  if (drawerEl.hidden) return;
+  drawerEl.hidden = true;
+  drawerScrimEl.hidden = true;
+  if (drawerReturnFocusEl && document.contains(drawerReturnFocusEl)) {
+    drawerReturnFocusEl.focus();
+  }
+  drawerReturnFocusEl = null;
+}
+
+document.addEventListener("click", function (e) {
+  const trigger = e.target.closest("[data-drawer]");
+  if (trigger) {
+    drawerReturnFocusEl = trigger;
+    openDrawer(trigger.dataset.drawer);
+    return;
+  }
+  if (e.target === drawerScrimEl) closeDrawer();
+});
+
+drawerDismissEl.addEventListener("click", closeDrawer);
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") closeDrawer();
+});
+
 function route() {
+  closeDrawer();
   const hash = location.hash.replace(/^#/, "");
   const match = hash.match(/^\/message\/([\w-]+)/);
   if (match) {

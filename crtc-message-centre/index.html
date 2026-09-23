@@ -158,23 +158,32 @@
     </div>
     <div class="pref-card">
       <section class="pref-section">
-        <h2 class="pref-section-title">Marketing communications</h2>
+        <div class="pref-section-head">
+          <h2 class="pref-section-title">Marketing communications</h2>
+          <button class="info-btn" type="button" data-drawer="marketing" aria-label="What are marketing communications?" title="What are marketing communications?">
+            <svg class="ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+        </div>
         <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
         <label class="pref-option"><input type="radio" name="mkt-pref" value="all" checked><span>Alerts, announcements & exclusive offers</span></label>
         <label class="pref-option"><input type="radio" name="mkt-pref" value="required"><span>Only required notifications</span></label>
         <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
       </section>
       <section class="pref-section">
-        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <div class="pref-section-head">
+          <h2 class="pref-section-title">Regulatory alerts</h2>
+          <button class="info-btn" type="button" data-drawer="regulatory" aria-label="What are regulatory alerts?" title="What are regulatory alerts?">
+            <svg class="ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+        </div>
         <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices. Your selected method will be used for eligible regulatory alerts.</p>
-        <p class="pref-label">Preferred alert method:</p>
         <label class="pref-option">
           <input type="radio" name="reg-method" value="email" checked>
           <span class="pref-method"><span class="pref-method-name">Email</span><span class="pref-method-contact">cyucezeytinci@freedommobile.ca</span></span>
         </label>
         <label class="pref-option">
           <input type="radio" name="reg-method" value="sms">
-          <span class="pref-method"><span class="pref-method-name">SMS</span><span class="pref-method-contact">(666) 780-1194</span></span>
+          <span class="pref-method"><span class="pref-method-name">SMS</span></span>
         </label>
         <a class="pref-link" href="#/profile">Update your contact information in My Profile
           <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
@@ -300,6 +309,17 @@
     </div>
   </section>
 </main>
+
+<div class="drawer-scrim" id="drawer-scrim" hidden></div>
+<aside class="drawer" id="info-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1" hidden>
+  <div class="drawer-head">
+    <button class="drawer-dismiss" type="button" id="drawer-dismiss">
+      <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span>Close</span>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
 
 <footer class="site-footer">
   <div class="footer-inner">
