@@ -360,10 +360,12 @@ const MESSAGES = [
   }
 ];
 
-const state = { filter: "all", search: "" };
+const PAGE_SIZE = 10;
+const state = { filter: "all", search: "", page: 1 };
 
 const listEl = document.getElementById("message-list");
 const emptyEl = document.getElementById("list-empty");
+const paginationEl = document.getElementById("list-pagination");
 const viewListEl = document.getElementById("view-list");
 const viewDetailEl = document.getElementById("view-detail");
 const viewProfileEl = document.getElementById("view-profile");
@@ -441,14 +443,45 @@ function matchesFilter(m, i) {
   return true;
 }
 
+function paginationHtml(page, pageCount) {
+  const pages = [];
+  for (let p = 1; p <= pageCount; p++) {
+    pages.push(
+      '<button class="page-num' + (p === page ? " is-current" : "") + '" type="button" data-page="' + p +
+      '" aria-label="Go to page ' + p + '"' + (p === page ? ' aria-current="page"' : "") + ">" + p + "</button>"
+    );
+  }
+  return (
+    '<nav class="pagination" aria-label="Message list pages">' +
+    '<button class="page-arrow" type="button" data-page-step="-1" aria-label="Previous page"' + (page === 1 ? " disabled" : "") + ">" +
+    icon("chevronLeft", "ic-16") + "<span>Previous</span></button>" +
+    '<div class="page-nums">' + pages.join("") + "</div>" +
+    '<button class="page-arrow" type="button" data-page-step="1" aria-label="Next page"' + (page === pageCount ? " disabled" : "") + ">" +
+    '<span>Next</span>' + icon("chevronRight", "ic-16") + "</button>" +
+    "</nav>"
+  );
+}
+
 function renderList() {
   const rows = MESSAGES.filter(function (m, i) { return matchesFilter(m, i); });
-  listEl.innerHTML = rows.map(rowHtml).join("");
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  if (state.page > pageCount) state.page = pageCount;
+  const start = (state.page - 1) * PAGE_SIZE;
+  listEl.innerHTML = rows.slice(start, start + PAGE_SIZE).map(rowHtml).join("");
   emptyEl.hidden = rows.length > 0;
+  paginationEl.innerHTML = pageCount > 1 ? paginationHtml(state.page, pageCount) : "";
+  paginationEl.hidden = pageCount <= 1;
+}
+
+function goToPage(page) {
+  state.page = Math.max(1, page);
+  renderList();
+  viewListEl.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function setFilter(value) {
   state.filter = value;
+  state.page = 1;
   const options = filterMenuEl.querySelectorAll("[data-filter]");
   options.forEach(function (opt) {
     const selected = opt.dataset.filter === value;
@@ -504,7 +537,18 @@ listEl.addEventListener("click", function (e) {
 
 searchInputEl.addEventListener("input", function () {
   state.search = searchInputEl.value;
+  state.page = 1;
   renderList();
+});
+
+paginationEl.addEventListener("click", function (e) {
+  const step = e.target.closest("[data-page-step]");
+  const num = e.target.closest("[data-page]");
+  if (step && !step.disabled) {
+    goToPage(state.page + Number(step.dataset.pageStep));
+  } else if (num) {
+    goToPage(Number(num.dataset.page));
+  }
 });
 
 detailCardEl.addEventListener("click", function (e) {
