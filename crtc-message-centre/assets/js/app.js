@@ -54,6 +54,7 @@ const MESSAGES = [
         headline: "Better value. More data.",
         body: "We have a new offer just for you! Get 20% more data on select plans for the next 12 months. Stay connected to what matters, for less.",
         cta: "View offer",
+        cta2: "Message an agent",
         graphicImg: "assets/img/mkt-offer.png"
       }
     }
@@ -599,7 +600,10 @@ function mktCardHtml(mk) {
     '<span class="mkt-chip">' + icon("sparkle", "ic-12") + "<span>" + mk.chip + "</span></span>" +
     '<h3 class="mkt-headline">' + mk.headline + "</h3>" +
     '<p class="mkt-body">' + mk.body + "</p>" +
+    '<div class="mkt-ctas">' +
     '<a class="mkt-cta" href="#/">' + mk.cta + icon("chevronRight", "ic-14") + "</a>" +
+    (mk.cta2 ? '<a class="mkt-cta-secondary" href="#/">' + mk.cta2 + "</a>" : "") +
+    "</div>" +
     "</div>" +
     (mk.graphicImg ? '<img class="mkt-graphic-img" src="' + mk.graphicImg + '" alt="New offer graphic">' : "") +
     "</section>"

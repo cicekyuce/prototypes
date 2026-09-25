@@ -761,11 +761,42 @@ button {
   color: #3f4a55;
 }
 
+.mkt-ctas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.mkt-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 26px;
+  border: 2px solid var(--cta-blue);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cta-blue);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.mkt-cta-secondary:hover {
+  background: rgba(23, 92, 167, 0.08);
+  color: var(--cta-blue);
+}
+
+.mkt-cta-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .mkt-cta {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 18px;
   padding: 12px 26px;
   border-radius: 8px;
   background: var(--cta-blue);
