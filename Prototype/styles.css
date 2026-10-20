@@ -1,0 +1,502 @@
+/* Design tokens taken from the Figma file "App Architecture"
+   (page: ✨ Navigation 2 (final) ✨, frame 1282:2824 "Noification inbox"). */
+:root {
+  --greyscale-200: #303030;
+  --greyscale-400: #525252;
+  --greyscale-500: #666666;
+  --greyscale-700: #989898;
+  --greyscale-900: #e4e4e4;
+  --greyscale-999: #ffffff;
+  --brand-orange: #db5c05;
+  --freedom-blue: #2f7dc1;
+  --focus-blue: #c5dcf2;
+  --tag-usage: #fadac7;
+  --tag-billing: #bfdfbf;
+  --chip-selected: linear-gradient(94.43deg, #00598e 0.23%, #000000 100%);
+
+  /* Placeholder: the Colour collection has an Error Red ramp, but the hex
+     values were not resolvable through the MCP variable search. */
+  --error-red: #d0021b;
+
+  --font-stack: "Ambra Sans Text", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --screen-width: 393px;
+  --content-width: 354px;
+  --swipe-action-width: 88px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 24px;
+  background: #f1f1f1;
+  font-family: var(--font-stack);
+  color: var(--greyscale-200);
+  -webkit-font-smoothing: antialiased;
+}
+
+.device {
+  position: relative;
+  width: var(--screen-width);
+  height: 852px;
+  overflow: hidden;
+  background: var(--greyscale-999);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.screen {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--greyscale-999);
+}
+
+.screen[hidden] {
+  display: none;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: 0;
+  background: none;
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.icon-button:disabled {
+  cursor: default;
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--freedom-blue);
+  outline-offset: 2px;
+}
+
+/* ---------- Home ---------- */
+.home-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 20px 11px;
+}
+
+.home-logo {
+  display: block;
+  line-height: 0;
+}
+
+.home-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 3px;
+}
+
+.home-body {
+  padding: 24px 16px;
+}
+
+.home-greeting {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+.home-hint {
+  margin: 8px 0 24px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--greyscale-400);
+}
+
+.home-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  padding: 0 24px;
+  border: 1px dashed var(--greyscale-900);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--greyscale-700);
+}
+
+/* ---------- Notifications inbox ---------- */
+.inbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 0 16px;
+}
+
+.section-title {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 118px;
+  padding-bottom: 10px;
+  background: var(--greyscale-999);
+}
+
+.section-title .back {
+  padding: 0;
+}
+
+/* The exported icon-chevron-left asset draws a right-pointing chevron and is
+   mirrored in the design (rotate 180 + flip Y). */
+.section-title .back img {
+  transform: scaleX(-1);
+}
+
+.section-title-main {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.section-title-text {
+  flex: 1 0 0;
+  margin: 0;
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: center;
+  color: #000;
+}
+
+.section-title .settings {
+  padding: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: var(--content-width);
+}
+
+/* Search field (not in the Figma file) */
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--greyscale-900);
+  border-radius: 8px;
+  background: var(--greyscale-999);
+}
+
+.search-field:focus-within {
+  border-color: var(--freedom-blue);
+}
+
+.search-icon {
+  flex: 0 0 auto;
+  color: var(--greyscale-500);
+}
+
+.search-input {
+  flex: 1 0 0;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--greyscale-200);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-input::placeholder {
+  color: var(--greyscale-700);
+}
+
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-clear {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--greyscale-500);
+  cursor: pointer;
+}
+
+/* Filter chips */
+.tabs {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  padding: 3px 16px;
+  border: 0;
+  border-radius: 30px;
+  background: var(--greyscale-900);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--greyscale-500);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip[aria-selected="true"] {
+  background: var(--chip-selected);
+  color: #fff;
+}
+
+/* List */
+.notifications {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 0;
+}
+
+.group-title {
+  margin: 0;
+  padding-top: 16px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 1.2px;
+  color: var(--greyscale-500);
+}
+
+.notifications .group-title:first-child {
+  padding-top: 0;
+}
+
+/* Swipe-to-delete wrapper (not in the Figma file). */
+.swipe {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--greyscale-900);
+}
+
+.swipe.removing {
+  transition: height 180ms ease, opacity 180ms ease;
+  opacity: 0;
+}
+
+.swipe-action {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  width: var(--swipe-action-width);
+}
+
+.delete-button {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--error-red);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 0 18px;
+  border: 0;
+  background: var(--greyscale-999);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: pan-y;
+  transform: translateX(0);
+}
+
+.row.settling {
+  transition: transform 200ms ease;
+}
+
+.row-message {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.row-status {
+  display: flex;
+  align-items: center;
+  padding-top: 6px;
+}
+
+.row-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50px;
+  background: var(--brand-orange);
+}
+
+.row[data-unread="false"] .row-dot {
+  opacity: 0;
+}
+
+.row-body {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.row-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--greyscale-200);
+}
+
+.row-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+}
+
+.sticker {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--greyscale-400);
+  white-space: nowrap;
+}
+
+.sticker img {
+  flex: 0 0 auto;
+}
+
+.sticker[data-category="offer"] {
+  background: var(--focus-blue);
+}
+
+.sticker[data-category="rewards"] {
+  background: var(--focus-blue);
+}
+
+.sticker[data-category="usage"] {
+  background: var(--tag-usage);
+}
+
+.sticker[data-category="billing"] {
+  background: var(--tag-billing);
+}
+
+.sticker[data-category="network"] {
+  background: var(--greyscale-900);
+}
+
+.timestamp {
+  flex: 1 0 0;
+  min-width: 0;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: right;
+  color: var(--greyscale-700);
+}
+
+/* Empty state (frame 1282:2389) */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--greyscale-200);
+}
+
+.empty-copy {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--greyscale-400);
+}
+
+.swipe-hint {
+  margin: 0;
+  padding-top: 8px;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--greyscale-700);
+}
+
+.text-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--freedom-blue);
+  cursor: pointer;
+}
