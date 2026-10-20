@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Freedom Mobile — Notifications inbox prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="device" role="application" aria-label="Mobile app prototype">
+      <!-- Screen: Home (entry point for the notifications journey) -->
+      <section class="screen" id="screen-home" data-node-id="780:13546">
+        <header class="home-header" data-node-id="1359:2065">
+          <a class="home-logo" href="#" aria-label="Freedom">
+            <img src="assets/freedom-logo.svg" alt="" />
+          </a>
+          <div class="home-actions">
+            <button class="icon-button" id="bell-button" aria-label="Notifications" data-node-id="2435:3783">
+              <img src="assets/icon-bell.svg" width="20" height="20" alt="" />
+            </button>
+            <button class="icon-button" aria-label="Profile" data-node-id="1359:2082" disabled>
+              <img src="assets/icon-profile.svg" alt="" />
+            </button>
+          </div>
+        </header>
+        <div class="home-body">
+          <h1 class="home-greeting">Hi, Bartholomew</h1>
+          <p class="home-hint">Tap the bell icon to open the notifications inbox.</p>
+          <div class="home-placeholder">Overview content is out of scope for this prototype.</div>
+        </div>
+      </section>
+
+      <!-- Screen: Notifications inbox -->
+      <section class="screen" id="screen-inbox" data-node-id="1282:2824" hidden>
+        <div class="inbox">
+          <header class="section-title" data-node-id="1282:2920">
+            <button class="icon-button back" id="back-button" aria-label="Back" data-node-id="1282:2921">
+              <img src="assets/icon-chevron-left.svg" width="24" height="24" alt="" />
+            </button>
+            <div class="section-title-main" data-node-id="1282:2922">
+              <p class="section-title-text" data-node-id="1282:2928">Notifications</p>
+              <button class="icon-button settings" id="settings-button" aria-label="Notification preferences"
+                      title="Notification preferences — not in scope" data-node-id="2246:3653">
+                <img src="assets/icon-settings.svg" alt="" />
+              </button>
+            </div>
+          </header>
+
+          <div class="body" data-node-id="1282:2825">
+            <!-- Search is not in the Figma file yet; icons below are placeholders. -->
+            <div class="search-field">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.5" />
+                <path d="M11 11L14.25 14.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              <input
+                type="search"
+                id="search-input"
+                class="search-input"
+                placeholder="Search notifications"
+                aria-label="Search notifications"
+                autocomplete="off"
+              />
+              <button type="button" id="search-clear" class="search-clear" aria-label="Clear search" hidden>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div class="tabs" id="filters" role="tablist" aria-label="Filter notifications" data-node-id="1282:2945"></div>
+            <div class="notifications" id="notification-list" data-node-id="1282:2840"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
