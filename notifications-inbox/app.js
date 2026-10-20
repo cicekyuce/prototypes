@@ -96,6 +96,27 @@ function showScreen(name) {
   });
 }
 
+// Hash routing so the prototype hub can deep-link individual screens:
+// #/ = overview, #/inbox = inbox, #/inbox/<category> = inbox with a filter.
+function applyRoute() {
+  const parts = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  const isInbox = parts[0] === "inbox";
+  const category = parts[1];
+
+  activeFilter = FILTERS.some((filter) => filter.id === category) ? category : "all";
+  showScreen(isInbox ? "inbox" : "home");
+  renderFilters();
+  renderList();
+}
+
+function navigate(hash) {
+  if (window.location.hash === hash) {
+    applyRoute();
+    return;
+  }
+  window.location.hash = hash;
+}
+
 function closeOpenRow() {
   if (!openRow) return;
   setRowOffset(openRow, 0, true);
@@ -130,9 +151,7 @@ function renderFilters() {
       chip.setAttribute("role", "tab");
       chip.setAttribute("aria-selected", String(filter.id === activeFilter));
       chip.addEventListener("click", () => {
-        activeFilter = filter.id;
-        renderFilters();
-        renderList();
+        navigate(filter.id === "all" ? "#/inbox" : `#/inbox/${filter.id}`);
       });
       return chip;
     })
@@ -350,11 +369,9 @@ function createNoResultsState() {
   reset.textContent = "Clear search and filters";
   reset.addEventListener("click", () => {
     searchTerm = "";
-    activeFilter = "all";
     searchInput.value = "";
     searchClear.hidden = true;
-    renderFilters();
-    renderList();
+    navigate("#/inbox");
   });
 
   wrapper.append(title, copy, reset);
@@ -407,8 +424,8 @@ searchClear.addEventListener("click", () => {
 listEl.addEventListener("scroll", closeOpenRow);
 screens.inbox.addEventListener("scroll", closeOpenRow);
 
-document.getElementById("bell-button").addEventListener("click", () => showScreen("inbox"));
-document.getElementById("back-button").addEventListener("click", () => showScreen("home"));
+document.getElementById("bell-button").addEventListener("click", () => navigate("#/inbox"));
+document.getElementById("back-button").addEventListener("click", () => navigate("#/"));
 
-renderFilters();
-renderList();
+window.addEventListener("hashchange", applyRoute);
+applyRoute();
