@@ -478,6 +478,42 @@ body {
   color: var(--greyscale-400);
 }
 
+/* Undo bar (not in the Figma file) */
+.undo-bar {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--greyscale-200);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--greyscale-999);
+}
+
+.undo-bar[hidden] {
+  display: none;
+}
+
+.undo-button {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--greyscale-999);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .swipe-hint {
   margin: 0;
   padding-top: 8px;

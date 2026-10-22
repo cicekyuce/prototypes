@@ -69,6 +69,9 @@ const SEED_NOTIFICATIONS = [
   },
 ];
 
+// Length of the undo window after a deletion. Duration to be confirmed.
+const UNDO_WINDOW_MS = 5000;
+
 // Swipe geometry — keep in sync with --swipe-action-width in styles.css.
 const ACTION_WIDTH = 88;
 const OPEN_THRESHOLD = 40;
@@ -79,6 +82,7 @@ let notifications = SEED_NOTIFICATIONS.map((notification) => ({ ...notification 
 let activeFilter = "all";
 let searchTerm = "";
 let openRow = null;
+let pendingUndo = null;
 
 const screens = {
   home: document.getElementById("screen-home"),
@@ -88,6 +92,8 @@ const filtersEl = document.getElementById("filters");
 const listEl = document.getElementById("notification-list");
 const searchInput = document.getElementById("search-input");
 const searchClear = document.getElementById("search-clear");
+const undoBar = document.getElementById("undo-bar");
+const undoButton = document.getElementById("undo-button");
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, el]) => {
@@ -104,6 +110,7 @@ function applyRoute() {
   const category = parts[1];
 
   activeFilter = FILTERS.some((filter) => filter.id === category) ? category : "all";
+  if (!isInbox) dismissUndo();
   showScreen(isInbox ? "inbox" : "home");
   renderFilters();
   renderList();
@@ -188,11 +195,37 @@ function trashIcon() {
   return svg;
 }
 
+// Dismissing the bar makes the previous deletion final; the notification is
+// only restored while its undo window is still open.
+function dismissUndo() {
+  if (!pendingUndo) return;
+  window.clearTimeout(pendingUndo.timer);
+  pendingUndo = null;
+  undoBar.hidden = true;
+}
+
+function undoDelete() {
+  if (!pendingUndo) return;
+  const { notification, index } = pendingUndo;
+  window.clearTimeout(pendingUndo.timer);
+  pendingUndo = null;
+  undoBar.hidden = true;
+  notifications.splice(index, 0, notification);
+  renderList();
+}
+
 function deleteNotification(id, wrapper) {
   if (openRow) openRow = null;
   const index = notifications.findIndex((notification) => notification.id === id);
   if (index === -1) return;
-  notifications.splice(index, 1);
+  dismissUndo();
+  const [removed] = notifications.splice(index, 1);
+  pendingUndo = {
+    notification: removed,
+    index,
+    timer: window.setTimeout(dismissUndo, UNDO_WINDOW_MS),
+  };
+  undoBar.hidden = false;
 
   wrapper.style.height = `${wrapper.offsetHeight}px`;
   wrapper.classList.add("removing");
@@ -412,6 +445,8 @@ searchInput.addEventListener("input", () => {
   searchClear.hidden = searchInput.value.length === 0;
   renderList();
 });
+
+undoButton.addEventListener("click", undoDelete);
 
 searchClear.addEventListener("click", () => {
   searchInput.value = "";
