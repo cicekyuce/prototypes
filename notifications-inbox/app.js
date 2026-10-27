@@ -83,6 +83,10 @@ let activeFilter = "all";
 let searchTerm = "";
 let openRow = null;
 let pendingUndo = null;
+// Deletions fail on the #/inbox/delete-error route so the error state can be
+// demonstrated; a real client would fail when the backend call fails.
+let deleteFailureMode = false;
+let failedDeleteId = null;
 
 const screens = {
   home: document.getElementById("screen-home"),
@@ -94,6 +98,8 @@ const searchInput = document.getElementById("search-input");
 const searchClear = document.getElementById("search-clear");
 const undoBar = document.getElementById("undo-bar");
 const undoButton = document.getElementById("undo-button");
+const errorBar = document.getElementById("error-bar");
+const retryButton = document.getElementById("retry-button");
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, el]) => {
@@ -103,13 +109,16 @@ function showScreen(name) {
 }
 
 // Hash routing so the prototype hub can deep-link individual screens:
-// #/ = overview, #/inbox = inbox, #/inbox/<category> = inbox with a filter.
+// #/ = overview, #/inbox = inbox, #/inbox/<category> = inbox with a filter,
+// #/inbox/delete-error = inbox where deletions fail.
 function applyRoute() {
   const parts = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   const isInbox = parts[0] === "inbox";
   const category = parts[1];
 
+  deleteFailureMode = isInbox && category === "delete-error";
   activeFilter = FILTERS.some((filter) => filter.id === category) ? category : "all";
+  dismissDeleteError();
   if (!isInbox) dismissUndo();
   showScreen(isInbox ? "inbox" : "home");
   renderFilters();
@@ -214,10 +223,36 @@ function undoDelete() {
   renderList();
 }
 
+function dismissDeleteError() {
+  failedDeleteId = null;
+  errorBar.hidden = true;
+}
+
+// The notification is left in the list and the customer can try again.
+function showDeleteError(id) {
+  dismissUndo();
+  failedDeleteId = id;
+  errorBar.hidden = false;
+  renderList();
+}
+
+function retryDelete() {
+  if (!failedDeleteId) return;
+  const id = failedDeleteId;
+  const wrapper = listEl.querySelector(`.swipe[data-id="${id}"]`);
+  dismissDeleteError();
+  if (wrapper) deleteNotification(id, wrapper);
+}
+
 function deleteNotification(id, wrapper) {
   if (openRow) openRow = null;
   const index = notifications.findIndex((notification) => notification.id === id);
   if (index === -1) return;
+  if (deleteFailureMode) {
+    showDeleteError(id);
+    return;
+  }
+  dismissDeleteError();
   dismissUndo();
   const [removed] = notifications.splice(index, 1);
   pendingUndo = {
@@ -308,6 +343,7 @@ function attachSwipe(row, notification, wrapper) {
 function createRow(notification) {
   const wrapper = document.createElement("div");
   wrapper.className = "swipe";
+  wrapper.dataset.id = notification.id;
 
   const action = document.createElement("div");
   action.className = "swipe-action";
@@ -447,6 +483,7 @@ searchInput.addEventListener("input", () => {
 });
 
 undoButton.addEventListener("click", undoDelete);
+retryButton.addEventListener("click", retryDelete);
 
 searchClear.addEventListener("click", () => {
   searchInput.value = "";

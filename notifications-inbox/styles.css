@@ -500,6 +500,10 @@ body {
   display: none;
 }
 
+.error-bar {
+  background: var(--error-red);
+}
+
 .undo-button {
   flex: 0 0 auto;
   padding: 0;

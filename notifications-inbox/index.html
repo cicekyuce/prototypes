@@ -78,6 +78,12 @@
         <span>Notification deleted</span>
         <button type="button" class="undo-button" id="undo-button">Undo</button>
       </div>
+
+      <!-- Delete failure message (UI not designed in Figma yet). -->
+      <div class="undo-bar error-bar" id="error-bar" role="alert" hidden>
+        <span>Notification couldn't be deleted</span>
+        <button type="button" class="undo-button" id="retry-button">Try again</button>
+      </div>
     </div>
 
     <script src="app.js"></script>
