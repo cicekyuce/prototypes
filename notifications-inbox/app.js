@@ -83,9 +83,6 @@ let activeFilter = "all";
 let searchTerm = "";
 let openRow = null;
 let pendingUndo = null;
-// Deletions fail on the #/inbox/delete-error route so the error state can be
-// demonstrated; a real client would fail when the backend call fails.
-let deleteFailureMode = false;
 let failedDeleteId = null;
 
 const screens = {
@@ -109,14 +106,12 @@ function showScreen(name) {
 }
 
 // Hash routing so the prototype hub can deep-link individual screens:
-// #/ = overview, #/inbox = inbox, #/inbox/<category> = inbox with a filter,
-// #/inbox/delete-error = inbox where deletions fail.
+// #/ = overview, #/inbox = inbox, #/inbox/<category> = inbox with a filter.
 function applyRoute() {
   const parts = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   const isInbox = parts[0] === "inbox";
   const category = parts[1];
 
-  deleteFailureMode = isInbox && category === "delete-error";
   activeFilter = FILTERS.some((filter) => filter.id === category) ? category : "all";
   dismissDeleteError();
   if (!isInbox) dismissUndo();
@@ -248,7 +243,9 @@ function deleteNotification(id, wrapper) {
   if (openRow) openRow = null;
   const index = notifications.findIndex((notification) => notification.id === id);
   if (index === -1) return;
-  if (deleteFailureMode) {
+  // Deleting the last remaining notification fails, so the error state can be
+  // seen in the prototype; a real client fails when the backend call fails.
+  if (notifications.length === 1) {
     showDeleteError(id);
     return;
   }
