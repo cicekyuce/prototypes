@@ -95,7 +95,7 @@
     clearTimeout(bannerTimer);
     b.classList.remove("leaving");
     b.querySelector(".pb-icon").classList.toggle("sms", kind === "sms");
-    b.querySelector(".pb-top strong").textContent = kind === "sms" ? "MESSAGES" : "FREEDOM";
+    b.querySelector(".pb-top strong").textContent = kind === "sms" ? "MESSAGES" : "TIME SENSITIVE";
     $("pb-title").textContent = title;
     $("pb-text").textContent = text;
     bannerTarget = target;
@@ -165,8 +165,8 @@
       approved: ["Already approved", "This sign-in request was already approved."],
       denied: ["Already denied", "This sign-in request was already denied."],
     }[status] || [
-      r ? "This request has expired" : "No sign-in requests",
-      r ? "No action is needed. If you're still trying to sign in, request a new notification from your computer." : "There are no sign-in requests waiting for your approval.",
+      r ? "Time's up" : "No sign-in requests",
+      r ? "Your notification has expired. If you're still trying to sign in, request a new notification from your computer." : "There are no sign-in requests waiting for your approval.",
     ];
     $("expired-title").textContent = copy[0];
     $("expired-text").textContent = copy[1];
@@ -294,8 +294,8 @@
       if (route() !== "approve") {
         showBanner({
           kind: "push",
-          title: "Sign-in request",
-          text: "Are you trying to sign in to My Account on " + r.browser + "? Tap to review.",
+          title: "Freedom",
+          text: "It looks like you're trying to sign in on another device. Tap to verify sign in attempt.",
           target: "approve",
         });
       } else {
@@ -359,9 +359,9 @@
 
   function deny() {
     openSheet({
-      title: "Deny this sign-in?",
-      text: "We'll block the sign-in on the computer. Nobody will be signed in to your account.",
-      confirm: "Deny sign-in",
+      title: "Report unusual activity",
+      text: "For your security, after you report unusual activity, please reset your password.",
+      confirm: "Report",
       danger: true,
       onConfirm: () => {
         const r = FMSync.read().request;

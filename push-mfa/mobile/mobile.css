@@ -272,3 +272,19 @@ button.row:active { background: var(--greyscale-950); }
 
 /* Toast */
 .toast { position: absolute; z-index: 70; left: 50%; bottom: 110px; transform: translateX(-50%); padding: 10px 16px; border-radius: 100px; background: rgba(30,30,30,.9); color: #fff; font-size: 13px; white-space: nowrap; animation: fade .2s; }
+
+/* RBC "Sign In Requested" layout (Figma 4822:4514) */
+.approve-bell { display: flex; justify-content: center; margin: 4px 0 10px; color: var(--greyscale-200); }
+.req-map {
+  position: relative; height: 96px; margin: 0 0 12px; border-radius: 14px; overflow: hidden;
+  background: linear-gradient(115deg, transparent 46%, #fff 46%, #fff 49%, transparent 49%), linear-gradient(25deg, transparent 58%, #fff 58%, #fff 61%, transparent 61%), #dfeadf;
+}
+.req-map .pin { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -14px 0 0 -9px; border-radius: 50% 50% 50% 0; background: var(--brand-orange); transform: rotate(-45deg); box-shadow: 0 0 0 6px rgba(219, 92, 5, .2); }
+.approve-actions { flex-direction: row; }
+.approve-actions .btn { flex: 1; }
+
+/* Freedom "ON" toggle (App Architecture 4367:3832) */
+.switch input:checked + span { background: #0a7d1f; }
+.switch input:checked + span::before { content: "ON"; position: absolute; left: 7px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #fff; }
+.switch { width: 60px; }
+.switch input:checked + span::after { transform: translateX(29px); }

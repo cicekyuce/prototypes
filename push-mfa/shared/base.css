@@ -71,3 +71,5 @@ button { font-family: inherit; }
   line-height: 16px;
   color: var(--greyscale-500);
 }
+.btn-outline { background: #fff; color: var(--greyscale-200); box-shadow: inset 0 0 0 2px var(--brand-orange); font-weight: 500; }
+.btn-outline:hover { background: #fff5ee; }

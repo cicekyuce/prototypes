@@ -13,6 +13,7 @@
     steps.forEach((s) => {
       $("step-" + s).hidden = s !== step;
     });
+    document.body.classList.toggle("on-landing", step === "identify");
     const focusable = step !== "account" && $("step-" + step).querySelector("input, button.btn-primary");
     if (focusable) focusable.focus({ preventScroll: true });
   }
@@ -33,7 +34,7 @@
     const req = FMSync.createRequest(email());
     currentRequestId = req.id;
     const device = FMSync.read().devices.find((d) => d.approval);
-    $("push-device").textContent = device ? device.name : "your phone";
+    $("push-device").textContent = device ? "your primary mobile device, " + device.name : "your primary mobile device";
     $("push-tip").hidden = FMSync.phoneOnline();
     show("push");
     tick(req.expiresAt);
@@ -113,7 +114,7 @@
     const input = $("password");
     const showing = input.type === "text";
     input.type = showing ? "password" : "text";
-    $("show-password").textContent = showing ? "Show" : "Hide";
+    $("show-password").setAttribute("aria-label", showing ? "Show password" : "Hide password");
   });
 
   $("resend-push").addEventListener("click", () => {

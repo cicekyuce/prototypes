@@ -99,27 +99,26 @@
       <div class="app-screen" id="scr-approve" hidden>
         <header class="nav-header">
           <button class="icon-button back" type="button" aria-label="Close" data-go="overview"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
-          <p class="nav-title">Sign-in request</p>
+          <p class="nav-title">Verification required</p>
           <span class="nav-spacer"></span>
         </header>
         <div class="app-body approve-body">
-          <div class="approve-hero" aria-hidden="true">
-            <svg viewBox="0 0 64 64" width="64" height="64"><rect x="8" y="12" width="48" height="30" rx="4" fill="#e9f3fb" stroke="#00598e" stroke-width="3"/><path d="M2 50h60" stroke="#00598e" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="40" r="12" fill="#db5c05"/><path d="M46 34v7M46 45v.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
-          </div>
-          <h1 class="approve-title">Are you trying to sign in?</h1>
-          <p class="approve-sub">Someone is signing in to <strong>My Account</strong> on a computer with your email and password.</p>
+          <!-- RBC "Sign In Requested" (Figma 4822:4514), Freedom styling -->
+          <div class="approve-bell" aria-hidden="true"><svg viewBox="0 0 24 24" width="36" height="36"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <h1 class="approve-title">Sign in requested</h1>
+          <p class="approve-sub">Someone is trying to sign in to <strong>My Account</strong> on another device. Is this you?</p>
           <dl class="detail-list">
+            <div><dt>Device</dt><dd id="req-browser"></dd></div>
+            <div><dt>Where</dt><dd><span id="req-city"></span><span class="approx">Approximate · IP <span id="req-ip"></span></span></dd></div>
+            <div><dt>When</dt><dd id="req-time"></dd></div>
             <div><dt>Account</dt><dd id="req-email"></dd></div>
-            <div><dt>Browser</dt><dd id="req-browser"></dd></div>
-            <div><dt>Location</dt><dd><span id="req-city"></span><span class="approx">Approximate, based on IP <span id="req-ip"></span></span></dd></div>
-            <div><dt>Time</dt><dd id="req-time"></dd></div>
           </dl>
+          <div class="req-map" aria-hidden="true"><span class="pin"></span></div>
           <p class="expires" id="req-expires">This request expires in 2:00</p>
           <div class="approve-actions">
-            <button class="btn btn-primary btn-block" type="button" id="approve-btn">Yes, it's me — Approve</button>
-            <button class="btn btn-secondary btn-block" type="button" id="deny-btn">No, it's not me</button>
+            <button class="btn btn-outline" type="button" id="deny-btn">Don’t allow</button>
+            <button class="btn btn-primary" type="button" id="approve-btn">Allow</button>
           </div>
-          <p class="approve-help">Only approve if you're signing in right now. Freedom will never call or text to ask you to approve a request.</p>
         </div>
       </div>
 
@@ -127,8 +126,8 @@
       <div class="app-screen result-screen" id="scr-approved" hidden>
         <div class="result">
           <div class="result-icon ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
-          <h1>Sign-in approved</h1>
-          <p>You're now signed in to My Account on <span id="ok-browser">your computer</span>. You can go back to your computer to continue.</p>
+          <h1>Success</h1>
+          <p>Identity verified. You're now signed in to My Account on <span id="ok-browser">your computer</span>.</p>
         </div>
         <div class="result-actions">
           <button class="btn btn-primary btn-block" type="button" data-go="overview">Done</button>
@@ -140,11 +139,11 @@
       <div class="app-screen result-screen" id="scr-denied" hidden>
         <div class="result">
           <div class="result-icon bad" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 3l8 3.5v5c0 4.6-3.3 8.4-8 9.5-4.7-1.1-8-4.9-8-9.5v-5L12 3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h1>We blocked the sign-in</h1>
-          <p>Nobody was signed in. Someone may know your password, so we recommend changing it now.</p>
+          <h1>Unusual activity reported</h1>
+          <p>We blocked the sign-in. For your security, please reset your password now.</p>
         </div>
         <div class="result-actions">
-          <button class="btn btn-primary btn-block" type="button" data-fake>Change password</button>
+          <button class="btn btn-primary btn-block" type="button" data-fake>Reset password</button>
           <button class="btn btn-secondary btn-block" type="button" data-go="overview">Not now</button>
         </div>
       </div>
@@ -157,7 +156,8 @@
           <p id="expired-text">No action is needed. If you're still trying to sign in, request a new notification from your computer.</p>
         </div>
         <div class="result-actions">
-          <button class="btn btn-primary btn-block" type="button" data-go="overview">OK</button>
+          <button class="btn btn-primary btn-block" type="button" data-go="overview">Continue</button>
+          <button class="btn-link" type="button" data-fake>Didn’t get a notification?</button>
         </div>
       </div>
 
@@ -304,7 +304,7 @@
     <button class="push-banner" id="push-banner" type="button" hidden>
       <span class="pb-icon"><img src="../assets/freedom-mark.svg" alt="" /></span>
       <span class="pb-body">
-        <span class="pb-top"><strong>FREEDOM</strong><span>now</span></span>
+        <span class="pb-top"><strong id="pb-tag">TIME SENSITIVE</strong><span>now</span></span>
         <strong class="pb-title" id="pb-title">Sign-in request</strong>
         <span class="pb-text" id="pb-text">Are you trying to sign in to My Account?</span>
       </span>
