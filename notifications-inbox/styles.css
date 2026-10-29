@@ -1,3 +1,33 @@
+@font-face {
+  font-family: "Ambra Sans";
+  src: url("assets/fonts/Ambra-Sans-Book-trial.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  /* The trial files draw digits as "TRIAL ONLY"; let 0-9 fall back. */
+  unicode-range: U+0000-002F, U+003A-10FFFF;
+}
+
+@font-face {
+  font-family: "Ambra Sans";
+  src: url("assets/fonts/Ambra-Sans-Bold-trial.ttf") format("truetype");
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+  /* The trial files draw digits as "TRIAL ONLY"; let 0-9 fall back. */
+  unicode-range: U+0000-002F, U+003A-10FFFF;
+}
+
+@font-face {
+  font-family: "Ambra Sans";
+  src: url("assets/fonts/Ambra-Sans-Extrabold-trial.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  /* The trial files draw digits as "TRIAL ONLY"; let 0-9 fall back. */
+  unicode-range: U+0000-002F, U+003A-10FFFF;
+}
+
 /* Design tokens taken from the Figma file "App Architecture"
    (page: ✨ Navigation 2 (final) ✨, frame 1282:2824 "Noification inbox"). */
 :root {
@@ -18,7 +48,7 @@
      values were not resolvable through the MCP variable search. */
   --error-red: #d0021b;
 
-  --font-stack: "Ambra Sans Text", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --font-stack: "Ambra Sans", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
   --screen-width: 393px;
   --content-width: 354px;
   --swipe-action-width: 88px;
