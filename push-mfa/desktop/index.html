@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Freedom Mobile — Sign in to My Account</title>
+  <link rel="stylesheet" href="../shared/base.css" />
+  <link rel="stylesheet" href="desktop.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-logo" href="#" aria-label="Freedom Mobile"><img src="../assets/freedom-logo.svg" alt="" /></a>
+    <nav class="site-nav" aria-label="Main">
+      <span>Phones</span><span>Plans</span><span>Deals</span><span>Network</span><span>Support</span>
+    </nav>
+    <div class="site-header-right">
+      <span class="phone-status" id="phone-status" title="Status of the mobile tab">
+        <span class="dot"></span><span id="phone-status-text">Phone tab not open</span>
+      </span>
+      <a class="btn-link" id="open-phone" href="../mobile/" target="freedom-push-mfa-mobile">Open phone tab</a>
+    </div>
+  </header>
+
+  <main class="auth-main" id="auth-main">
+    <!-- Step 1: identify -->
+    <section class="auth-card" id="step-identify">
+      <img class="auth-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
+      <h1>Sign in to My Account</h1>
+      <form id="identify-form" novalidate>
+        <label class="field">
+          <span class="field-label">Email or Freedom phone number</span>
+          <input id="email" type="email" autocomplete="username" value="bartholomew.r@example.com" required />
+        </label>
+        <label class="check">
+          <input type="checkbox" id="keep-signed-in" />
+          <span>Keep me signed in</span>
+        </label>
+        <button class="btn btn-primary btn-block" type="submit">Next</button>
+      </form>
+      <div class="auth-links">
+        <a href="#" class="btn-link" onclick="return false">Need help signing in?</a>
+        <span class="muted">New to Freedom? <a href="#" class="btn-link" onclick="return false">Register</a></span>
+      </div>
+    </section>
+
+    <!-- Step 2: password -->
+    <section class="auth-card" id="step-password" hidden>
+      <img class="auth-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
+      <h1>Verify with your password</h1>
+      <p class="identity-chip" id="identity-chip"></p>
+      <form id="password-form" novalidate>
+        <label class="field">
+          <span class="field-label">Password</span>
+          <span class="field-row">
+            <input id="password" type="password" autocomplete="current-password" value="Freedom2026!" required />
+            <button type="button" class="show-toggle" id="show-password" aria-label="Show password">Show</button>
+          </span>
+        </label>
+        <button class="btn btn-primary btn-block" type="submit">Verify</button>
+      </form>
+      <div class="auth-links">
+        <a href="#" class="btn-link" onclick="return false">Forgot password?</a>
+        <button class="btn-link" type="button" data-action="back-to-start">Back to sign in</button>
+      </div>
+    </section>
+
+    <!-- Step 3a: push approval -->
+    <section class="auth-card auth-card-wide" id="step-push" hidden>
+      <div class="push-visual" aria-hidden="true">
+        <div class="push-phone">
+          <div class="push-phone-notch"></div>
+          <div class="push-phone-banner">
+            <img src="../assets/freedom-mark.svg" alt="" />
+            <span></span><span></span>
+          </div>
+        </div>
+        <div class="push-pulse"></div>
+      </div>
+      <h1>Check your phone</h1>
+      <p class="lead">We sent a sign-in request to the Freedom app on <strong id="push-device">Bartholomew's iPhone 15</strong>. Open the notification and tap <strong>Approve</strong> to continue.</p>
+      <div class="push-status" id="push-status" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Waiting for approval · expires in <strong id="push-countdown">2:00</strong></span>
+      </div>
+      <div class="push-actions">
+        <button class="btn btn-secondary" type="button" id="resend-push">Resend notification</button>
+        <button class="btn-link" type="button" id="try-sms">Try another way</button>
+      </div>
+      <p class="demo-note" id="push-tip">Tip: switch to the phone tab to see the notification.</p>
+      <button class="btn-link cancel-link" type="button" data-action="back-to-start">Cancel and return to sign in</button>
+    </section>
+
+    <!-- Step 3b: SMS fallback -->
+    <section class="auth-card" id="step-sms" hidden>
+      <img class="auth-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
+      <h1>Enter your verification code</h1>
+      <p class="lead" id="sms-lead">We texted a 6-digit code to •••-•••-4821.</p>
+      <form id="sms-form" novalidate>
+        <label class="field">
+          <span class="field-label">Verification code</span>
+          <input id="sms-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required />
+        </label>
+        <p class="field-error" id="sms-error" hidden>That code doesn't match. Check the text message and try again.</p>
+        <button class="btn btn-primary btn-block" type="submit">Verify</button>
+      </form>
+      <div class="auth-links">
+        <button class="btn-link" type="button" id="resend-sms">Text me a new code</button>
+        <button class="btn-link" type="button" id="back-to-push">Send a push notification instead</button>
+      </div>
+      <p class="demo-note">The text message arrives on the phone tab.</p>
+    </section>
+
+    <!-- Result: denied -->
+    <section class="auth-card" id="step-denied" hidden>
+      <div class="result-icon result-error" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </div>
+      <h1>Sign-in request denied</h1>
+      <p class="lead">The request was declined on your phone, so we didn't sign you in. If you didn't try to sign in, change your password now and we'll sign out every other session.</p>
+      <div class="stack">
+        <button class="btn btn-primary btn-block" type="button" data-action="back-to-start">Try again</button>
+        <button class="btn btn-secondary btn-block" type="button" onclick="return false">Change password</button>
+      </div>
+    </section>
+
+    <!-- Result: expired -->
+    <section class="auth-card" id="step-expired" hidden>
+      <div class="result-icon result-warn" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <h1>Your sign-in request expired</h1>
+      <p class="lead">We didn't get a response from your phone within 2 minutes. Send a new request, or use a text message code instead.</p>
+      <div class="stack">
+        <button class="btn btn-primary btn-block" type="button" id="expired-resend">Send a new request</button>
+        <button class="btn btn-secondary btn-block" type="button" id="expired-sms">Text me a code</button>
+      </div>
+    </section>
+
+    <!-- Result: approved, transitional -->
+    <section class="auth-card" id="step-approved" hidden>
+      <div class="result-icon result-success" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </div>
+      <h1>Approved on your phone</h1>
+      <p class="lead">Signing you in to My Account…</p>
+    </section>
+  </main>
+
+  <!-- Signed-in My Account -->
+  <main class="account" id="account" hidden>
+    <div class="account-inner">
+      <div class="account-top">
+        <div>
+          <p class="eyebrow">My Account</p>
+          <h1>Welcome back, Bartholomew</h1>
+        </div>
+        <button class="btn btn-secondary" type="button" id="sign-out">Sign out</button>
+      </div>
+      <div class="signin-banner" role="status">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span id="signin-banner-text">Signed in with approval from your Freedom app.</span>
+      </div>
+      <div class="account-grid">
+        <article class="tile">
+          <p class="tile-label">Current plan</p>
+          <p class="tile-value">Absolute Zero 75GB 5G+</p>
+          <p class="tile-meta">(416) 555-4821 · Renews Nov 14</p>
+        </article>
+        <article class="tile">
+          <p class="tile-label">Data used</p>
+          <p class="tile-value">38.2 GB <span class="muted">of 75 GB</span></p>
+          <div class="meter"><span style="width: 51%"></span></div>
+        </article>
+        <article class="tile">
+          <p class="tile-label">Next bill</p>
+          <p class="tile-value">$55.00</p>
+          <p class="tile-meta">Auto-pay on Nov 14</p>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Freedom Mobile Inc.</span>
+    <span>Prototype · <a href="../" class="btn-link">Back to prototype dashboard</a> · <button class="btn-link" type="button" id="reset-demo">Reset demo</button></span>
+  </footer>
+
+  <script src="../shared/sync.js"></script>
+  <script src="desktop.js"></script>
+</body>
+</html>

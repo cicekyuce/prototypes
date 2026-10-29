@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Push Notifications as MFA for Desktop Login — Prototype dashboard</title>
+  <link rel="stylesheet" href="shared/base.css" />
+  <style>
+    body { background: var(--greyscale-950); }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+    .crumb { font-size: 14px; }
+    .eyebrow { margin: 28px 0 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-orange); }
+    h1 { margin: 0; font-size: 34px; line-height: 40px; color: var(--greyscale-100); }
+    .tagline { margin: 10px 0 32px; max-width: 680px; font-size: 16px; line-height: 24px; color: var(--greyscale-400); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+    .card { display: flex; flex-direction: column; padding: 24px; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.04); }
+    .card-tag { align-self: flex-start; padding: 3px 10px; border-radius: 100px; background: #e2f0fa; color: var(--freedom-blue-dark); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .card h2 { margin: 14px 0 8px; font-size: 21px; line-height: 28px; color: var(--greyscale-100); }
+    .card p { margin: 0 0 14px; font-size: 14.5px; line-height: 22px; color: var(--greyscale-400); }
+    .card ol { margin: 0 0 20px; padding-left: 20px; font-size: 14px; line-height: 22px; color: var(--greyscale-400); }
+    .card .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: auto; }
+    .card .btn { min-height: 44px; font-size: 15px; }
+    .links { margin-top: 28px; padding: 20px 24px; border-radius: 16px; background: #fff; }
+    .links h3 { margin: 0 0 4px; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .links p { margin: 0 0 14px; font-size: 13.5px; color: var(--greyscale-500); }
+    .links ul { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0; padding: 0; list-style: none; }
+    .links a { display: inline-block; padding: 7px 13px; border: 1px solid var(--greyscale-800); border-radius: 100px; font-size: 13.5px; font-weight: 600; color: var(--freedom-blue); text-decoration: none; }
+    .links a:hover { border-color: var(--freedom-blue); background: #f2f8fd; }
+    .popup-warning { margin: 0 0 20px; padding: 12px 16px; border-radius: 10px; background: #fff1e5; color: var(--brand-orange-dark); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="crumb btn-link" href="../">← Cicek's prototypes</a>
+    <p class="eyebrow">Freedom Mobile · Prototype dashboard</p>
+    <h1>Push Notifications as MFA for Desktop Login</h1>
+    <p class="tagline">Approve a My Account sign-in on a computer with a push notification to the Freedom app, the same pattern RBC uses. Pick a prototype below.</p>
+    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked the phone tab. Allow pop-ups for this site, or open it with the "Phone tab only" link.</p>
+
+    <section class="grid">
+      <article class="card">
+        <span class="card-tag">Desktop + mobile · 2 tabs</span>
+        <h2>Desktop login with push approval</h2>
+        <p>Opens the Freedom desktop sign-in and the phone (home screen + Freedom app) in two tabs that stay in sync.</p>
+        <ol>
+          <li>Sign in on the desktop tab (email, then password).</li>
+          <li>Switch to the phone tab: a push notification arrives.</li>
+          <li>Tap it, review the request, then approve or deny.</li>
+          <li>The desktop tab signs you in, or blocks the sign-in.</li>
+        </ol>
+        <div class="actions">
+          <a class="btn btn-primary" id="open-both" href="desktop/">Open prototype (2 tabs)</a>
+          <a class="btn-link" href="desktop/" target="freedom-push-mfa-desktop">Desktop tab only</a>
+          <a class="btn-link" href="mobile/" target="freedom-push-mfa-mobile">Phone tab only</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Mobile · Settings</span>
+        <h2>Freedom app — Sign-in &amp; security settings</h2>
+        <p>RBC-style Profile &amp; settings in the Freedom app: turn desktop sign-in approvals on or off, Face ID, trusted devices, sign-in activity and notification preferences.</p>
+        <p>The settings are shared with the 2-tab prototype. For example, turning approvals off makes the desktop send a text message code instead.</p>
+        <div class="actions">
+          <a class="btn btn-dark" href="mobile/#/settings" target="freedom-push-mfa-mobile">Open settings prototype</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="links">
+      <h3>Direct links</h3>
+      <p>Jump straight to a specific screen.</p>
+      <ul>
+        <li><a href="desktop/" target="freedom-push-mfa-desktop">Desktop sign-in</a></li>
+        <li><a href="mobile/" target="freedom-push-mfa-mobile">Phone home screen</a></li>
+        <li><a href="mobile/#/app" target="freedom-push-mfa-mobile">Freedom app overview</a></li>
+        <li><a href="mobile/#/settings" target="freedom-push-mfa-mobile">Profile &amp; settings</a></li>
+        <li><a href="mobile/#/security" target="freedom-push-mfa-mobile">Sign-in &amp; security</a></li>
+        <li><a href="mobile/#/devices" target="freedom-push-mfa-mobile">Trusted devices</a></li>
+        <li><a href="mobile/#/activity" target="freedom-push-mfa-mobile">Sign-in activity</a></li>
+        <li><a href="mobile/#/notifications" target="freedom-push-mfa-mobile">Notification settings</a></li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    // Browsers allow one new window per click, so the phone opens in a new tab
+    // and this tab becomes the desktop sign-in.
+    document.getElementById("open-both").addEventListener("click", function (event) {
+      event.preventDefault();
+      const phone = window.open("mobile/", "freedom-push-mfa-mobile");
+      if (!phone) {
+        document.getElementById("popup-warning").hidden = false;
+        return;
+      }
+      window.location.href = "desktop/";
+    });
+  </script>
+</body>
+</html>

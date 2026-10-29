@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phone — Freedom app</title>
+  <link rel="stylesheet" href="../shared/base.css" />
+  <link rel="stylesheet" href="mobile.css" />
+</head>
+<body>
+  <aside class="side-note">
+    <p class="side-eyebrow">Phone tab</p>
+    <h1 id="side-title">Your phone</h1>
+    <p id="side-text">Keep this tab open next to the desktop sign-in tab. Sign-in requests from the desktop arrive here as push notifications.</p>
+    <p class="side-status" id="side-status"><span class="dot"></span><span>Waiting for a sign-in request</span></p>
+    <p class="side-links"><a class="btn-link" href="../">Prototype dashboard</a> · <a class="btn-link" href="../desktop/" target="freedom-push-mfa-desktop">Desktop tab</a> · <button class="btn-link" type="button" id="reset-demo">Reset demo</button></p>
+  </aside>
+
+  <div class="device" role="application" aria-label="Phone prototype">
+    <div class="status-bar" id="status-bar">
+      <span class="sb-time" id="sb-time">9:41</span>
+      <span class="sb-island"></span>
+      <span class="sb-icons" aria-hidden="true">
+        <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+        <span class="sb-carrier">5G+</span>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity="0.5"/></svg>
+      </span>
+    </div>
+
+    <!-- Phone home screen -->
+    <section class="os-home" id="os-home">
+      <div class="os-widget">
+        <p class="os-widget-date" id="os-date">Thursday, October 29</p>
+        <p class="os-widget-time" id="os-clock">9:41</p>
+      </div>
+      <div class="os-grid" id="os-grid">
+        <button class="os-app" type="button" data-fake><span class="os-icon i-calendar"><b id="cal-day">29</b></span><span>Calendar</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-photos"></span><span>Photos</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-camera"></span><span>Camera</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-mail"></span><span>Mail</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-maps"></span><span>Maps</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-weather"></span><span>Weather</span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-clock"></span><span>Clock</span></button>
+        <button class="os-app" type="button" id="open-freedom"><span class="os-icon i-freedom"><img src="../assets/freedom-mark.svg" alt="" /><span class="os-badge" id="freedom-badge" hidden>1</span></span><span>Freedom</span></button>
+      </div>
+      <div class="os-dock">
+        <button class="os-app" type="button" data-fake><span class="os-icon i-phone"></span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-safari"></span></button>
+        <button class="os-app" type="button" id="open-messages"><span class="os-icon i-messages"><span class="os-badge" id="messages-badge" hidden>1</span></span></button>
+        <button class="os-app" type="button" data-fake><span class="os-icon i-music"></span></button>
+      </div>
+    </section>
+
+    <!-- Freedom app -->
+    <section class="app" id="app" hidden>
+      <!-- Overview -->
+      <div class="app-screen" id="scr-overview">
+        <header class="home-header">
+          <img class="home-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
+          <div class="home-actions">
+            <button class="icon-button" type="button" aria-label="Notifications" data-fake><img src="../assets/icon-bell.svg" alt="" /></button>
+            <button class="icon-button" type="button" aria-label="Profile and settings" data-go="settings"><img src="../assets/icon-profile.svg" alt="" /></button>
+          </div>
+        </header>
+        <div class="app-body">
+          <h1 class="greeting">Hi, Bartholomew</h1>
+          <button class="pending-card" id="pending-card" type="button" data-go="approve" hidden>
+            <span class="pending-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M1 19h22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span class="pending-text"><strong>Sign-in request waiting</strong><span>Review the request from a computer</span></span>
+            <img src="../assets/icon-chevron-right.svg" alt="" />
+          </button>
+          <article class="plan-card">
+            <p class="plan-label">Absolute Zero 75GB 5G+</p>
+            <p class="plan-number">(416) 555-4821</p>
+            <div class="plan-usage">
+              <div><strong>38.2 GB</strong><span>of 75 GB used</span></div>
+              <div class="ring" style="--pct: 51"><span>51%</span></div>
+            </div>
+            <p class="plan-meta">Renews Nov 14 · 16 days left</p>
+          </article>
+          <div class="quick-grid">
+            <div class="quick"><span>Bill</span><strong>$55.00</strong></div>
+            <div class="quick"><span>Rewards</span><strong>1,240 pts</strong></div>
+          </div>
+          <button class="settings-shortcut" type="button" data-go="security">
+            <span><strong>Sign-in &amp; security</strong><span>Manage desktop sign-in approvals</span></span>
+            <img src="../assets/icon-chevron-right.svg" alt="" />
+          </button>
+        </div>
+        <nav class="tab-bar" aria-label="App">
+          <button class="tab active" type="button"><span class="tab-ico t-home"></span>Overview</button>
+          <button class="tab" type="button" data-fake><span class="tab-ico t-usage"></span>Usage</button>
+          <button class="tab" type="button" data-fake><span class="tab-ico t-bill"></span>Billing</button>
+          <button class="tab" type="button" data-go="settings"><span class="tab-ico t-more"></span>More</button>
+        </nav>
+      </div>
+
+      <!-- Approve sign-in request -->
+      <div class="app-screen" id="scr-approve" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Close" data-go="overview"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Sign-in request</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body approve-body">
+          <div class="approve-hero" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="64" height="64"><rect x="8" y="12" width="48" height="30" rx="4" fill="#e9f3fb" stroke="#00598e" stroke-width="3"/><path d="M2 50h60" stroke="#00598e" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="40" r="12" fill="#db5c05"/><path d="M46 34v7M46 45v.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <h1 class="approve-title">Are you trying to sign in?</h1>
+          <p class="approve-sub">Someone is signing in to <strong>My Account</strong> on a computer with your email and password.</p>
+          <dl class="detail-list">
+            <div><dt>Account</dt><dd id="req-email"></dd></div>
+            <div><dt>Browser</dt><dd id="req-browser"></dd></div>
+            <div><dt>Location</dt><dd><span id="req-city"></span><span class="approx">Approximate, based on IP <span id="req-ip"></span></span></dd></div>
+            <div><dt>Time</dt><dd id="req-time"></dd></div>
+          </dl>
+          <p class="expires" id="req-expires">This request expires in 2:00</p>
+          <div class="approve-actions">
+            <button class="btn btn-primary btn-block" type="button" id="approve-btn">Yes, it's me — Approve</button>
+            <button class="btn btn-secondary btn-block" type="button" id="deny-btn">No, it's not me</button>
+          </div>
+          <p class="approve-help">Only approve if you're signing in right now. Freedom will never call or text to ask you to approve a request.</p>
+        </div>
+      </div>
+
+      <!-- Approved -->
+      <div class="app-screen result-screen" id="scr-approved" hidden>
+        <div class="result">
+          <div class="result-icon ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <h1>Sign-in approved</h1>
+          <p>You're now signed in to My Account on <span id="ok-browser">your computer</span>. You can go back to your computer to continue.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="overview">Done</button>
+          <button class="btn-link" type="button" data-go="activity">View sign-in activity</button>
+        </div>
+      </div>
+
+      <!-- Denied -->
+      <div class="app-screen result-screen" id="scr-denied" hidden>
+        <div class="result">
+          <div class="result-icon bad" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 3l8 3.5v5c0 4.6-3.3 8.4-8 9.5-4.7-1.1-8-4.9-8-9.5v-5L12 3z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h1>We blocked the sign-in</h1>
+          <p>Nobody was signed in. Someone may know your password, so we recommend changing it now.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-fake>Change password</button>
+          <button class="btn btn-secondary btn-block" type="button" data-go="overview">Not now</button>
+        </div>
+      </div>
+
+      <!-- Expired / no longer valid -->
+      <div class="app-screen result-screen" id="scr-expired" hidden>
+        <div class="result">
+          <div class="result-icon warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></div>
+          <h1 id="expired-title">This request has expired</h1>
+          <p id="expired-text">No action is needed. If you're still trying to sign in, request a new notification from your computer.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="overview">OK</button>
+        </div>
+      </div>
+
+      <!-- Settings root (RBC-style Profile & settings) -->
+      <div class="app-screen" id="scr-settings" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="overview"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Profile &amp; settings</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body settings-body">
+          <div class="profile-card">
+            <span class="avatar">BR</span>
+            <div><strong>Bartholomew Roberts</strong><span>bartholomew.r@example.com</span><span>Account 2046 1188 03</span></div>
+          </div>
+          <p class="group-title">Security</p>
+          <ul class="list">
+            <li><button type="button" class="row" data-go="security"><span class="row-ico ic-shield"></span><span class="row-main"><strong>Sign-in &amp; security</strong><span id="security-summary">Face ID, desktop sign-in approvals</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-go="devices"><span class="row-ico ic-device"></span><span class="row-main"><strong>Trusted devices</strong><span id="devices-summary">2 devices</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-go="activity"><span class="row-ico ic-clock"></span><span class="row-main"><strong>Sign-in activity</strong><span>Recent sign-ins and requests</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <p class="group-title">Preferences</p>
+          <ul class="list">
+            <li><button type="button" class="row" data-go="notifications"><span class="row-ico ic-bell"></span><span class="row-main"><strong>Notifications</strong><span>Alerts and push notifications</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-fake><span class="row-ico ic-globe"></span><span class="row-main"><strong>Language</strong><span>English</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-fake><span class="row-ico ic-person"></span><span class="row-main"><strong>Personal information</strong><span>Name, address, contact details</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <p class="group-title">Support</p>
+          <ul class="list">
+            <li><button type="button" class="row" data-fake><span class="row-main"><strong>Help centre</strong></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-fake><span class="row-main"><strong>Privacy &amp; legal</strong></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <button class="btn btn-secondary btn-block signout" type="button" data-fake>Sign out</button>
+          <p class="version">Freedom app · Version 1.0.0 (prototype)</p>
+        </div>
+      </div>
+
+      <!-- Sign-in & security -->
+      <div class="app-screen" id="scr-security" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="settings"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Sign-in &amp; security</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body settings-body">
+          <p class="group-title">Desktop sign-in approvals</p>
+          <ul class="list">
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Approve sign-ins with this device</strong><span>When you sign in to My Account on a computer, we'll send a notification here so you can approve it.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-push" /><span></span></label>
+            </li>
+            <li class="row info-row" id="approval-device-row">
+              <span class="row-main"><strong>Approval device</strong><span id="approval-device-name">Bartholomew's iPhone 15 (this device)</span></span>
+              <span class="pill ok">Active</span>
+            </li>
+            <li><button type="button" class="row" data-fake><span class="row-main"><strong>Backup method</strong><span>Text message to •••-•••-4821</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <p class="group-hint" id="push-off-hint" hidden>Sign-in approvals are off. We'll text a code to •••-•••-4821 when you sign in on a computer.</p>
+          <p class="group-title">App sign-in</p>
+          <ul class="list">
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Face ID</strong><span>Use Face ID to open the app and confirm sign-in approvals.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-faceid" /><span></span></label>
+            </li>
+            <li><button type="button" class="row" data-fake><span class="row-main"><strong>Change password</strong><span>Last changed 3 months ago</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <p class="group-title">Devices &amp; activity</p>
+          <ul class="list">
+            <li><button type="button" class="row" data-go="devices"><span class="row-main"><strong>Trusted devices</strong><span id="devices-summary-2">2 devices</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="row" data-go="activity"><span class="row-main"><strong>Sign-in activity</strong><span id="activity-summary">Last sign-in today</span></span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Trusted devices -->
+      <div class="app-screen" id="scr-devices" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-back></button>
+          <p class="nav-title">Trusted devices</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body settings-body">
+          <p class="group-hint top">These devices are signed in to your Freedom account. Remove any you don't recognize.</p>
+          <ul class="list" id="device-list"></ul>
+        </div>
+      </div>
+
+      <!-- Sign-in activity -->
+      <div class="app-screen" id="scr-activity" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-back></button>
+          <p class="nav-title">Sign-in activity</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body settings-body">
+          <p class="group-hint top">Sign-in requests from the last 30 days.</p>
+          <ul class="list" id="activity-list"></ul>
+          <p class="group-hint">Don't recognize an activity? <button type="button" class="btn-link" data-fake>Change your password</button></p>
+        </div>
+      </div>
+
+      <!-- Notifications settings -->
+      <div class="app-screen" id="scr-notifications" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="settings"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Notifications</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body settings-body">
+          <p class="group-title">Push notifications</p>
+          <ul class="list">
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Sign-in &amp; security</strong><span id="security-alert-text">Sign-in requests and security alerts.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-security" /><span></span></label>
+            </li>
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Billing &amp; payments</strong><span>Bill ready, payment received, auto-pay reminders.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-billing" /><span></span></label>
+            </li>
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Usage</strong><span>Data usage at 80% and 100%.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-usage" /><span></span></label>
+            </li>
+            <li class="row toggle-row">
+              <span class="row-main"><strong>Offers &amp; rewards</strong><span>Deals, rewards and new phones.</span></span>
+              <label class="switch"><input type="checkbox" id="tg-offers" /><span></span></label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Messages (SMS fallback) -->
+    <section class="messages" id="messages" hidden>
+      <header class="msg-header">
+        <button class="btn-link" type="button" id="close-messages">‹ Back</button>
+        <div class="msg-contact"><span class="msg-avatar">F</span><strong>Freedom</strong></div>
+        <span></span>
+      </header>
+      <div class="msg-thread" id="msg-thread"></div>
+    </section>
+
+    <!-- Push notification banner -->
+    <button class="push-banner" id="push-banner" type="button" hidden>
+      <span class="pb-icon"><img src="../assets/freedom-mark.svg" alt="" /></span>
+      <span class="pb-body">
+        <span class="pb-top"><strong>FREEDOM</strong><span>now</span></span>
+        <strong class="pb-title" id="pb-title">Sign-in request</strong>
+        <span class="pb-text" id="pb-text">Are you trying to sign in to My Account?</span>
+      </span>
+    </button>
+
+    <!-- Face ID overlay -->
+    <div class="faceid" id="faceid" hidden>
+      <div class="faceid-box">
+        <svg class="faceid-glyph" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
+          <path d="M4 18V10a6 6 0 016-6h8M46 4h8a6 6 0 016 6v8M60 46v8a6 6 0 01-6 6h-8M18 60h-8a6 6 0 01-6-6v-8" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path class="face" d="M22 24v4M42 24v4M32 24v12h-3M24 44c4 4 12 4 16 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="tick" d="M20 33l8 8 16-17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="faceid-label">Face ID</span>
+      </div>
+    </div>
+
+    <!-- Confirm sheet -->
+    <div class="sheet-backdrop" id="sheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <h2 id="sheet-title"></h2>
+        <p id="sheet-text"></p>
+        <button class="btn btn-primary btn-block" type="button" id="sheet-confirm"></button>
+        <button class="btn btn-secondary btn-block" type="button" id="sheet-cancel">Cancel</button>
+      </div>
+    </div>
+
+    <button class="home-indicator" id="home-indicator" type="button" aria-label="Go to home screen"></button>
+  </div>
+
+  <script src="../shared/sync.js"></script>
+  <script src="mobile.js"></script>
+</body>
+</html>
