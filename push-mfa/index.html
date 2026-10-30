@@ -67,7 +67,7 @@
       <article class="card">
         <span class="card-tag">Mobile · Set-up</span>
         <h2>Trust this device for sign-in notifications</h2>
-        <p>How a customer opts in: the Freedom app on a new phone verifies it's them, checks for a recent SIM swap or number transfer, asks for notifications and binds the phone with Face ID. It replaces the previous trusted phone and sends a security email. Manage devices follows Wealthsimple's trusted-device pattern, adapted to one device: Get started when none is trusted, and a bin icon to remove it after a one-time code.</p>
+        <p>How a customer opts in: the Freedom app on a new phone verifies it's them, checks for a recent SIM swap or number transfer, asks for notifications and binds the phone with Face ID. It replaces the previous trusted phone and sends a security email. Trusting and removing a device follow the Wealthsimple flow (App Architecture 4863:3890), adapted to Freedom's one trusted device: “Trust this iPhone 15?”, a notification-permission check that sends you to iOS Settings if it's off, a verification-code sheet, and “Trusted device added”. In Manage devices, the bin icon opens “Are you sure?”, then a code, then “Trusted device removed”.</p>
         <ol>
           <li>Profile icon → My Account → Manage login settings → 2-step verification on sign-in → Trust this device.</li>
           <li>Confirm a one-time code (email recommended).</li>
