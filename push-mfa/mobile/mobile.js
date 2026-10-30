@@ -2,8 +2,10 @@
 // request as a push notification and answers it through FMSync.
 (function () {
   const $ = (id) => document.getElementById(id);
-  const APP_SCREENS = ["overview", "approve", "approved", "denied", "expired", "settings", "login", "biometric", "twostep", "devices", "activity", "notifications"];
-  const LIGHT_STATUS = ["lock", "home"];
+  const APP_SCREENS = ["overview", "approve", "approved", "denied", "expired", "settings", "login", "biometric", "twostep", "devices", "activity", "notifications", "signin"];
+  const LIGHT_STATUS = ["lock", "home", "signin"];
+  // Screens reachable while signed out on the phone (approving a request still works).
+  const SIGNED_OUT_OK = ["signin", "approve", "approved", "denied", "expired"];
 
   let notifiedRequestId = null;
   let notifiedSmsId = (FMSync.read().sms || {}).id || null;
@@ -12,6 +14,7 @@
   let bannerTarget = null;
   let approveTimer = null;
   let sheetConfirm = null;
+  let activeRequestId = null;
 
   // ---------- Routing ----------
   function route() {
@@ -26,8 +29,13 @@
     else render();
   }
 
+  function signedOut() {
+    return sessionStorage.getItem("fm-signed-out") === "1";
+  }
+
   function render() {
     const name = route();
+    if (signedOut() && APP_SCREENS.includes(name) && !SIGNED_OUT_OK.includes(name)) return go("signin");
     const inApp = APP_SCREENS.includes(name);
     $("os-lock").hidden = name !== "lock";
     $("os-home").hidden = name !== "home";
@@ -103,7 +111,7 @@
   }
 
   function launchTarget(state) {
-    return hasPushNotice(state) ? "approve" : "overview";
+    return hasPushNotice(state) ? "approve" : signedOut() ? "signin" : "overview";
   }
 
   function toast(text) {
@@ -343,6 +351,7 @@
       if (name === "approve") {
         renderApprove(state);
       } else if (APP_SCREENS.includes(name)) {
+        activeRequestId = r.id;
         go("approve");
       } else if (name === "lock") {
         if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
@@ -391,7 +400,11 @@
       clearInterval(approveTimer);
       FMSync.resolveRequest(id, "approved");
       $("ok-browser").textContent = latest.browser;
-      go("approved");
+      // Approving from an active app session signs the phone out of My Account.
+      if (activeRequestId === id) {
+        sessionStorage.setItem("fm-signed-out", "1");
+        showSignin();
+      } else go("approved");
     };
     if (!state.settings.faceId) return finish();
     const fx = $("faceid");
@@ -406,6 +419,14 @@
       fx.hidden = true;
       finish();
     }, 1700);
+  }
+
+  function showSignin() {
+    const n = $("signin-notice");
+    n.hidden = true;
+    go("signin");
+    void n.offsetWidth;
+    n.hidden = false;
   }
 
   function deny() {
@@ -481,8 +502,35 @@
     closeSheet();
     if (fn) fn();
   });
+  $("signin-notice-close").addEventListener("click", () => ($("signin-notice").hidden = true));
+  $("open-signin-drawer").addEventListener("click", () => {
+    $("signin-error").hidden = true;
+    $("signin-drawer").hidden = false;
+  });
+  $("close-signin-drawer").addEventListener("click", () => ($("signin-drawer").hidden = true));
+  $("signin-drawer").addEventListener("click", (e) => {
+    if (e.target === $("signin-drawer")) $("signin-drawer").hidden = true;
+  });
+  $("signin-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = $("signin-email").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      $("signin-error").hidden = false;
+      return;
+    }
+    sessionStorage.removeItem("fm-signed-out");
+    $("signin-drawer").hidden = true;
+    $("signin-email").value = "";
+    go("overview");
+    toast("Signed in to My Account");
+  });
+  document.querySelectorAll("[data-not-in-prototype]").forEach((b) =>
+    b.addEventListener("click", () => toast("This option isn't part of the prototype."))
+  );
+
   $("reset-demo").addEventListener("click", () => {
     FMSync.reset();
+    sessionStorage.removeItem("fm-signed-out");
     sessionStorage.removeItem("fm-sms-seen");
     sessionStorage.removeItem("fm-expired-seen");
     location.hash = "#/";
