@@ -21,7 +21,6 @@
     },
     devices: [
       { id: "d-phone", name: "Bartholomew's iPhone 15", detail: "Freedom app · This device", kind: "phone", approval: true },
-      { id: "d-mac", name: "Chrome on macOS", detail: "Last used Oct 12 · Toronto, ON", kind: "desktop", approval: false },
     ],
     activity: [
       { id: "a-seed-1", result: "approved", browser: "Chrome on macOS", city: "Toronto, ON", at: Date.now() - 1000 * 60 * 60 * 26 },
@@ -40,7 +39,7 @@
       const raw = localStorage.getItem(KEY);
       if (!raw) return clone(DEFAULT_STATE);
       const parsed = JSON.parse(raw);
-      return { ...clone(DEFAULT_STATE), ...parsed, settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) } };
+      return { ...clone(DEFAULT_STATE), ...parsed, settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}), pushApprovals: true } };
     } catch (err) {
       return clone(DEFAULT_STATE);
     }
