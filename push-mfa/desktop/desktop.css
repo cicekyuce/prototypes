@@ -36,11 +36,9 @@ body.on-landing .pill-back { display: none; }
   background: linear-gradient(160deg, #00334f 0%, #000 100%);
 }
 .landing-art {
-  flex: 1; min-height: 300px; margin-bottom: 28px; border-radius: 12px; position: relative; overflow: hidden;
-  background: radial-gradient(circle at 30% 35%, #f6b26b 0, transparent 40%), radial-gradient(circle at 75% 70%, #db5c05 0, transparent 35%),
-    linear-gradient(135deg, #c9a27e, #6b4a33);
+  flex: 0 0 auto; aspect-ratio: 1104 / 660; margin-bottom: 28px; border-radius: 12px; overflow: hidden;
+  background: #0b2540 url("../assets/pre-login-banner.jpg") center / cover no-repeat;
 }
-.landing-art span { position: absolute; inset: 40px 26px; border: 5px solid #fff; border-radius: 28px; }
 .landing .eyebrow { margin: 0 0 8px; font-size: 17px; letter-spacing: 0.1em; }
 .landing-promo h2 { margin: 0 0 12px; font-size: 32px; line-height: 38px; font-weight: 700; }
 .landing-promo p { margin: 0 0 18px; font-size: 16px; line-height: 20px; }
