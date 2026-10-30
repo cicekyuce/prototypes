@@ -193,6 +193,7 @@
 
   $("restart").addEventListener("click", reset);
   $("sc-existing").addEventListener("change", reset);
+  $("sc-none").addEventListener("change", reset);
   $("sc-sim").addEventListener("change", reset);
   reset();
 })();
