@@ -80,6 +80,28 @@
     const r = state.request;
     return isPending(state) || (isExpired(r) && r.id !== expiredSeen());
   }
+  // Cold start: show the splash briefly, like the real app loading, then the screen.
+  let splashTimer = null;
+  function launchApp(target) {
+    if (splashTimer) return;
+    hideBanner();
+    const pick = () => (typeof target === "function" ? target() : target);
+    if (APP_SCREENS.includes(route())) return go(pick());
+    const s = $("splash");
+    s.classList.remove("leaving");
+    s.hidden = false;
+    $("status-bar").classList.add("light");
+    splashTimer = setTimeout(() => {
+      go(pick());
+      s.classList.add("leaving");
+      splashTimer = setTimeout(() => {
+        s.hidden = true;
+        s.classList.remove("leaving");
+        splashTimer = null;
+      }, 250);
+    }, 1300);
+  }
+
   function launchTarget(state) {
     return hasPushNotice(state) ? "approve" : "overview";
   }
@@ -183,7 +205,7 @@
       b.querySelector(".pb-top span").textContent = ago(n.at);
       b.querySelector(".pb-title").textContent = n.title;
       b.querySelector(".pb-text").textContent = n.text;
-      b.addEventListener("click", () => go(n.target));
+      b.addEventListener("click", () => (n.kind === "push" ? launchApp(n.target) : go(n.target)));
       list.appendChild(b);
     });
   }
@@ -437,10 +459,7 @@
     b.innerHTML = '<img src="../assets/icon-chevron-left.svg" alt="" />';
   });
 
-  $("open-freedom").addEventListener("click", () => {
-    hideBanner();
-    go(launchTarget(FMSync.read()));
-  });
+  $("open-freedom").addEventListener("click", () => launchApp(() => launchTarget(FMSync.read())));
   $("open-messages").addEventListener("click", () => go("messages"));
   $("close-messages").addEventListener("click", () => go("home"));
   $("home-indicator").addEventListener("click", () => go("home"));
@@ -448,7 +467,8 @@
   $("push-banner").addEventListener("click", () => {
     const target = bannerTarget;
     hideBanner();
-    if (target) go(target);
+    if (target === "messages") go(target);
+    else if (target) launchApp(target);
   });
   $("approve-btn").addEventListener("click", approve);
   $("deny-btn").addEventListener("click", deny);

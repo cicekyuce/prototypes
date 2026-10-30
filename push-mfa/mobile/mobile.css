@@ -83,8 +83,7 @@ body {
 .i-weather::after { content: ""; width: 26px; height: 26px; border-radius: 50%; background: #ffd60a; box-shadow: 10px 8px 0 -2px #fff; }
 .i-clock { background: #111; }
 .i-clock::after { content: ""; width: 40px; height: 40px; border-radius: 50%; background: #fff; }
-.i-freedom { background: #fff; overflow: visible; }
-.i-freedom img { width: 26px; height: 34px; }
+.i-freedom { background: #000 url("../assets/freedom-app-icon.png") center / cover no-repeat; overflow: visible; }
 .i-phone { background: linear-gradient(#65d36e, #2fb344); }
 .i-safari { background: linear-gradient(#fff, #e5e5ea); }
 .i-safari::after { content: ""; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, #fff 20%, #1a8cff 22%); }
@@ -222,7 +221,8 @@ button.row:active { background: var(--greyscale-950); }
 @keyframes banner-in { from { transform: translateY(-140%); } to { transform: none; } }
 @keyframes banner-out { to { transform: translateY(-140%); opacity: 0; } }
 .pb-icon { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 9px; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.1); overflow: hidden; }
-.pb-icon img { width: 18px; height: 24px; }
+.pb-icon:not(.sms) { background: #000 url("../assets/freedom-app-icon.png") center / cover no-repeat; }
+.pb-icon img { display: none; }
 .pb-icon.sms { background: linear-gradient(#65d36e, #2fb344); }
 .pb-icon.sms img { display: none; }
 .pb-icon.sms::after { content: ""; width: 22px; height: 18px; border-radius: 50%; background: #fff; }
@@ -344,3 +344,14 @@ button.row:active { background: var(--greyscale-950); }
 .lock-notice.new { animation: notice-in .45s cubic-bezier(.2, 1.2, .3, 1); }
 @keyframes notice-in { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: none; } }
 .lock-unlock { margin-top: 12px; padding: 8px 16px; border: 0; background: none; color: #fff; font: inherit; font-size: 14px; opacity: .85; cursor: pointer; }
+
+/* App launch splash */
+.splash {
+  position: absolute; z-index: 25; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 0 0, rgba(0, 121, 193, .9), rgba(0, 32, 56, .6) 32%, transparent 60%), #000;
+  animation: app-in .25s ease;
+}
+.splash img { width: 92px; height: 122px; animation: splash-wings 1.3s ease both; }
+.splash.leaving { animation: splash-out .25s ease forwards; }
+@keyframes splash-wings { 0% { opacity: 0; transform: scale(.8); } 30% { opacity: 1; transform: none; } 70% { transform: scale(1.04); } 100% { transform: none; } }
+@keyframes splash-out { to { opacity: 0; } }
