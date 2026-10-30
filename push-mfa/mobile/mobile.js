@@ -49,7 +49,6 @@
     const state = FMSync.read();
     renderBadges(state);
     renderSide(state);
-    if (name === "overview") $("pending-card").hidden = !isPending(state);
     if (name === "approve") renderApprove(state);
     if (name === "settings") renderSettings(state);
     if (name === "security") renderSecurity(state);
@@ -126,7 +125,7 @@
     const pending = isPending(state);
     $("side-status").classList.toggle("pending", pending);
     $("side-status").lastElementChild.textContent = pending
-      ? "Sign-in request waiting — tap the notification"
+      ? "Sign-in request waiting — open the Freedom app"
       : state.settings.pushApprovals
         ? "Waiting for a sign-in request"
         : "Desktop sign-in approvals are off (text codes instead)";
@@ -291,15 +290,18 @@
     const r = state.request;
     if (isPending(state) && r.id !== notifiedRequestId) {
       notifiedRequestId = r.id;
-      if (route() !== "approve") {
+      const name = route();
+      if (name === "approve") {
+        renderApprove(state);
+      } else if (APP_SCREENS.includes(name)) {
+        go("approve");
+      } else {
         showBanner({
           kind: "push",
           title: "Freedom",
           text: "It looks like you're trying to sign in on another device. Tap to verify sign in attempt.",
           target: "approve",
         });
-      } else {
-        renderApprove(state);
       }
     }
     if (!isPending(state) && bannerTarget === "approve") hideBanner();
@@ -319,7 +321,6 @@
     renderBadges(state);
     renderSide(state);
     const name = route();
-    if (name === "overview") $("pending-card").hidden = !isPending(state);
     if (name === "settings") renderSettings(state);
     if (name === "security") renderSecurity(state);
     if (name === "devices") renderDevices(state);
@@ -418,7 +419,10 @@
     b.innerHTML = '<img src="../assets/icon-chevron-left.svg" alt="" />';
   });
 
-  $("open-freedom").addEventListener("click", () => go("overview"));
+  $("open-freedom").addEventListener("click", () => {
+    hideBanner();
+    go(isPending(FMSync.read()) ? "approve" : "overview");
+  });
   $("open-messages").addEventListener("click", () => go("messages"));
   $("close-messages").addEventListener("click", () => go("home"));
   $("home-indicator").addEventListener("click", () => go("home"));
