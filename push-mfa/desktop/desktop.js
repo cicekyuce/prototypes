@@ -1,7 +1,7 @@
 // Desktop sign-in tab. Mirrors the Freedom Okta sign-in (identify → password)
 // and adds the push-approval step that the mobile tab answers.
 (function () {
-  const steps = ["identify", "password", "push", "options", "sms", "denied", "expired", "approved"];
+  const steps = ["identify", "password", "push", "options", "mfa", "sms", "denied", "expired", "approved"];
   const $ = (id) => document.getElementById(id);
   let currentRequestId = null;
   let countdownTimer = null;
@@ -54,10 +54,24 @@
     }
   }
 
-  function startSms() {
+  function chooseCodeChannel() {
     cancelPending();
-    usedMethod = "sms";
-    FMSync.sendSms();
+    $("mfa-email").textContent = FMSync.maskEmail(email());
+    document.querySelector('input[name="code-channel"][value="sms"]').checked = true;
+    show("mfa");
+  }
+
+  function startSms(channel) {
+    cancelPending();
+    usedMethod = channel === "email" ? "email" : "sms";
+    const sent = usedMethod === "email" ? FMSync.sendEmailCode() : FMSync.sendSms();
+    $("sms-lead").textContent =
+      "We sent a code to " + (usedMethod === "email" ? FMSync.maskEmail(email()) : "(***) ***-**21");
+    $("sms-error-src").textContent = usedMethod === "email" ? "email" : "text message";
+    $("code-tip").textContent =
+      usedMethod === "email"
+        ? "Prototype tip: there's no email inbox in this demo. Your code is " + sent.code + "."
+        : "Prototype tip: the text message arrives on the phone tab.";
     $("sms-code").value = "";
     $("sms-error").hidden = true;
     $("back-to-push").hidden = !FMSync.read().settings.pushApprovals;
@@ -68,6 +82,8 @@
     $("signin-banner-text").textContent =
       usedMethod === "push"
         ? "Signed in with approval from your Freedom app."
+        : usedMethod === "email"
+        ? "Signed in with an email verification code."
         : "Signed in with a text message verification code.";
     show("account");
   }
@@ -118,7 +134,7 @@
   $("password-form").addEventListener("submit", (e) => {
     e.preventDefault();
     if (FMSync.read().settings.pushApprovals) startPush();
-    else startSms();
+    else chooseCodeChannel();
   });
 
   $("show-password").addEventListener("click", () => {
@@ -137,24 +153,25 @@
   function showOptions() {
     cancelPending();
     $("opt-push-row").hidden = !FMSync.read().settings.pushApprovals;
-    $("option-note").hidden = true;
     show("options");
   }
   $("try-sms").addEventListener("click", showOptions);
   $("opt-push").addEventListener("click", startPush);
-  $("opt-sms").addEventListener("click", startSms);
-  document.querySelectorAll("[data-unavailable]").forEach((el) =>
-    el.addEventListener("click", () => ($("option-note").hidden = false))
-  );
+  $("opt-sms").addEventListener("click", chooseCodeChannel);
+  $("mfa-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    startSms(document.querySelector('input[name="code-channel"]:checked').value);
+  });
   $("expired-resend").addEventListener("click", startPush);
-  $("expired-sms").addEventListener("click", startSms);
+  $("expired-sms").addEventListener("click", chooseCodeChannel);
   $("back-to-push").addEventListener("click", startPush);
-  $("resend-sms").addEventListener("click", startSms);
+  $("resend-sms").addEventListener("click", () => startSms(usedMethod));
 
   $("sms-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    const sms = FMSync.read().sms;
-    const ok = sms && $("sms-code").value.trim() === sms.code;
+    const state = FMSync.read();
+    const sent = usedMethod === "email" ? state.emailCode : state.sms;
+    const ok = sent && $("sms-code").value.trim() === sent.code;
     $("sms-error").hidden = ok;
     if (ok) signedIn();
   });
