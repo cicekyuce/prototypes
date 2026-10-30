@@ -35,13 +35,13 @@
     <p class="eyebrow">Freedom Mobile · Prototype dashboard</p>
     <h1>Push Notifications as MFA for Desktop Login</h1>
     <p class="tagline">Approve a My Account sign-in on a computer with a push notification to the Freedom app, the same pattern RBC uses. Pick a prototype below.</p>
-    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked the phone tab. Allow pop-ups for this site, or open it with the "Phone tab only" link.</p>
+    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked one of the tabs. Allow pop-ups for cicekyuce.github.io (the icon at the right of the address bar), then click "Open prototype (2 tabs)" again.</p>
 
     <section class="grid">
       <article class="card">
         <span class="card-tag">Desktop + mobile · 2 tabs</span>
         <h2>Desktop login with push approval</h2>
-        <p>Opens the Freedom desktop sign-in and the phone (home screen + Freedom app) in two tabs that stay in sync.</p>
+        <p>Opens the Freedom desktop sign-in and the phone (lock screen, home screen and Freedom app) in two new tabs that stay in sync.</p>
         <ol>
           <li>Sign in on the desktop tab (email, then password).</li>
           <li>Switch to the phone tab: a push notification arrives.</li>
@@ -85,16 +85,14 @@
     </section>
   </main>
   <script>
-    // Browsers allow one new window per click, so the phone opens in a new tab
-    // and this tab becomes the desktop sign-in.
+    // Desktop and phone each open in their own named tab (clicking again reuses them).
+    // Chrome allows only one pop-up per click until pop-ups are allowed for the site.
     document.getElementById("open-both").addEventListener("click", function (event) {
       event.preventDefault();
       const phone = window.open("mobile/", "freedom-push-mfa-mobile");
-      if (!phone) {
-        document.getElementById("popup-warning").hidden = false;
-        return;
-      }
-      window.location.href = "desktop/";
+      const desktop = window.open("desktop/", "freedom-push-mfa-desktop");
+      document.getElementById("popup-warning").hidden = !!(phone && desktop);
+      if (desktop) desktop.focus();
     });
   </script>
 </body>
