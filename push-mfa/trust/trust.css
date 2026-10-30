@@ -3,7 +3,7 @@
 .side-note h1 { font-size: 24px; line-height: 30px; }
 .scenario { margin: 0 0 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: #fff; font-size: 13.5px; }
 .scenario legend { float: left; width: 100%; padding: 0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--greyscale-500); }
-.scenario label { display: flex; gap: 8px; align-items: center; margin-top: 8px; cursor: pointer; }
+.scenario label { clear: both; display: flex; gap: 8px; align-items: center; margin-top: 8px; cursor: pointer; }
 .side-note .side-tip { padding: 10px 14px; border-radius: 10px; background: #fff1e5; color: var(--brand-orange-dark); font-size: 13.5px; }
 .log-title { margin: 0 0 8px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--greyscale-500); }
 .log { max-height: 260px; margin: 0 0 16px; padding: 0; overflow-y: auto; list-style: none; font-size: 13px; line-height: 18px; color: var(--greyscale-300, #333); }
@@ -13,12 +13,8 @@
 .log li.log-empty { padding-left: 0; color: var(--greyscale-500); }
 .log li.log-empty::before { display: none; }
 
-.invite-card { display: flex; gap: 14px; margin: 0 0 18px; padding: 18px 16px; border-radius: 18px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--brand-orange); }
-.invite-card h2 { margin: 0 0 4px; font-size: 16px; line-height: 22px; color: var(--greyscale-100); }
-.invite-card p { margin: 0 0 12px; font-size: 13.5px; line-height: 19px; color: var(--greyscale-400); }
-.invite-icon { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; background: #fff1e5; color: var(--brand-orange); }
-.invite-actions { display: flex; align-items: center; gap: 18px; }
-.invite-actions .btn { min-height: 40px; padding: 0 22px; font-size: 14px; }
+.ts-trust { margin: 4px 0 12px; }
+#ts-card .trusted-card, #ts-card .device-card { margin-top: 4px; }
 
 .trust-body { padding: 8px 20px 24px; }
 .trust-hero { display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; margin: 12px 0 18px; border-radius: 50%; background: #fff1e5; }

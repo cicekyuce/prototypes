@@ -12,7 +12,7 @@
   <aside class="side-note">
     <p class="side-eyebrow">Mobile · Trust a device</p>
     <h1>Trust this phone for sign-in notifications</h1>
-    <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
+    <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Start from the profile icon: My Account → Manage login settings → 2-step verification on sign-in → Trust this device. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
     <fieldset class="scenario">
       <legend>Scenario</legend>
       <label><input type="checkbox" id="sc-existing" checked /> An older phone is already trusted</label>
@@ -42,22 +42,11 @@
           <img class="home-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
           <div class="home-actions">
             <button class="icon-button" type="button" aria-label="Notifications" data-not-in-prototype><img src="../assets/icon-bell.svg" alt="" /></button>
-            <button class="icon-button" type="button" aria-label="Profile and settings" data-not-in-prototype><img src="../assets/icon-profile.svg" alt="" /></button>
+            <button class="icon-button" type="button" aria-label="Profile and settings" data-go="settings"><img src="../assets/icon-profile.svg" alt="" /></button>
           </div>
         </header>
         <div class="app-body">
           <h1 class="greeting">Hi, Cicek</h1>
-          <article class="invite-card" id="invite-card">
-            <span class="invite-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 12l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <div>
-              <h2>Approve sign-ins with this phone</h2>
-              <p>Get a notification when you sign in to My Account on a computer, and approve it with Face ID.</p>
-              <div class="invite-actions">
-                <button class="btn btn-primary" type="button" id="start-setup">Set up</button>
-                <button class="btn-link" type="button" id="not-now">Not now</button>
-              </div>
-            </div>
-          </article>
           <article class="plan-card">
             <p class="plan-label">Absolute Zero 75GB 5G+</p>
             <p class="plan-number">(416) 555-4821</p>
@@ -70,10 +59,97 @@
         </div>
       </div>
 
+      <!-- My Account (App Architecture 780:14247) -->
+      <div class="app-screen" id="scr-settings" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="start"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">My Account</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body acct-body">
+          <ul class="acct-list">
+            <li><button type="button" class="acct-row" data-not-in-prototype><span>My profile</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-not-in-prototype><span>Manage network features</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-not-in-prototype><span>Manage notification settings</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-go="login"><span>Manage login settings</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-not-in-prototype><span>Manage SIM/eSIM</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-not-in-prototype><span>Contact us</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+          <button class="btn-link acct-logout" type="button" data-not-in-prototype>Logout</button>
+        </div>
+      </div>
+
+      <!-- Manage login settings -->
+      <div class="app-screen" id="scr-login" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="settings"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Manage login settings</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body acct-body">
+          <ul class="acct-list">
+            <li><button type="button" class="acct-row" data-go="biometric"><span>Manage biometric login</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+            <li><button type="button" class="acct-row" data-go="twostep"><span>2-step verification on sign-in</span><img src="../assets/icon-chevron-right.svg" alt="" /></button></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Manage biometric login (App Architecture 3208:4854) -->
+      <div class="app-screen" id="scr-biometric" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="login"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Manage biometric login</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body acct-body">
+          <h2 class="acct-h2">Sign in faster with Face ID or Touch ID.</h2>
+          <p class="acct-p">Use your Face ID or Touch ID to log in faster.</p>
+          <button class="chev-link" type="button" data-not-in-prototype>Learn more about biometric login</button>
+          <div class="acct-toggle">
+            <strong>Biometric login</strong>
+            <label class="switch"><input type="checkbox" id="tg-faceid" checked aria-label="Biometric login" /><span></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-step verification on sign-in (Freedom version of RBC 4822:4500) -->
+      <div class="app-screen" id="scr-twostep" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="login"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">2-step verification on sign-in</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body tsv-body">
+          <section class="tsv-section">
+            <p class="acct-p">To help keep your account safe, 2-step verification on sign-in is always on, giving you an extra layer of security.</p>
+          </section>
+          <section class="tsv-section">
+            <h2 class="acct-h2">Verification methods</h2>
+            <p class="acct-p">When you sign in, you may get a security check using one of the following methods:</p>
+            <ul class="tsv-bullets">
+              <li><button type="button" class="tsv-link" id="open-notif-drawer">Notifications</button> <span class="tsv-help" aria-hidden="true">?</span></li>
+              <li>One-time passcodes by text or email</li>
+            </ul>
+          </section>
+          <section class="tsv-section">
+            <h2 class="acct-h2">Trusted device</h2>
+            <p class="acct-p" id="ts-text"></p>
+            <div id="ts-card"></div>
+            <button class="btn btn-primary btn-block ts-trust" type="button" id="ts-trust" data-go="intro">Trust this device</button>
+          </section>
+          <section class="tsv-section tsv-rowwrap">
+            <button type="button" class="tsv-row" data-go="devices">
+              <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 6h12M6 18h12" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="19.8" r=".6" fill="currentColor"/></svg>
+              <span>Manage devices</span><img src="../assets/icon-chevron-right.svg" alt="" />
+            </button>
+          </section>
+        </div>
+      </div>
+
       <!-- 1. Intro -->
       <div class="app-screen" id="scr-intro" hidden>
         <header class="nav-header">
-          <button class="icon-button back" type="button" aria-label="Back" data-go="start"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <button class="icon-button back" type="button" aria-label="Back" data-go="twostep"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
           <p class="nav-title">Trust this device</p>
           <span class="nav-spacer"></span>
         </header>
@@ -89,7 +165,7 @@
         </div>
         <div class="trust-foot">
           <button class="btn btn-primary btn-block" type="button" data-go="verify">Continue</button>
-          <button class="btn-link" type="button" data-go="start">Not now</button>
+          <button class="btn-link" type="button" data-go="twostep">Not now</button>
         </div>
       </div>
 
@@ -161,7 +237,7 @@
           <p class="result-sub">You can still sign in on a computer with a code sent to your email. If you didn't change your SIM card, contact us right away.</p>
         </div>
         <div class="result-actions">
-          <button class="btn btn-primary btn-block" type="button" data-go="start">Done</button>
+          <button class="btn btn-primary btn-block" type="button" data-go="twostep">Done</button>
           <button class="btn-link" type="button" data-not-in-prototype>Contact us</button>
         </div>
       </div>
@@ -205,7 +281,7 @@
         </div>
         <div class="trust-foot">
           <button class="btn btn-primary btn-block" type="button" id="confirm-trust">Trust this phone</button>
-          <button class="btn-link" type="button" data-go="start">Cancel</button>
+          <button class="btn-link" type="button" data-go="twostep">Cancel</button>
         </div>
       </div>
 
@@ -225,7 +301,7 @@
       <!-- 8. Manage devices -->
       <div class="app-screen" id="scr-devices" hidden>
         <header class="nav-header">
-          <button class="icon-button back" type="button" aria-label="Back" data-go="start"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <button class="icon-button back" type="button" aria-label="Back" data-go="twostep"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
           <p class="nav-title">Manage devices</p>
           <span class="nav-spacer"></span>
         </header>
@@ -233,15 +309,34 @@
           <section class="tsv-section">
             <p class="acct-p">A trusted device is a mobile device you use to prove it's really you during security checks.</p>
             <p class="acct-p">You can have one trusted device. We'll send sign-in notifications to it when you sign in to My Account on a computer.</p>
-            <div class="trusted-card">
-              <span class="trusted-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span><strong>This device is trusted</strong><span>Cicek's iPhone 15 · Added today</span></span>
-            </div>
+            <div id="dev-card"></div>
+            <button class="btn btn-primary btn-block ts-trust" type="button" id="dev-trust" data-go="intro">Trust this device</button>
           </section>
           <p class="tsv-foot">Only one device can be trusted at a time. To trust a different phone, set it up in the Freedom app on that phone. We'll check it's you first.</p>
         </div>
       </div>
     </section>
+
+    <!-- Notifications drawer (RBC 4822:4499) -->
+    <div class="drawer-backdrop" id="notif-drawer" hidden>
+      <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        <span class="drawer-grip" aria-hidden="true"></span>
+        <div class="drawer-head">
+          <button class="drawer-close" type="button" id="close-notif-drawer" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          <h2 id="drawer-title">Notifications</h2>
+          <span class="nav-spacer"></span>
+        </div>
+        <div class="drawer-body">
+          <p>Notifications are sent to your trusted device.</p>
+          <p>To receive notifications, make sure you:</p>
+          <ul>
+            <li>Use the Freedom app on your trusted device</li>
+            <li>Allow notifications for the Freedom app in your device settings</li>
+            <li>Have “Do Not Disturb” turned off</li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
     <!-- iOS notification permission alert -->
     <div class="ios-alert-backdrop" id="ios-alert" hidden>

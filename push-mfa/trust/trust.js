@@ -10,18 +10,18 @@
   function reset() {
     timers.forEach(clearTimeout);
     timers = [];
-    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null };
+    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null, trusted: false };
     $("log").innerHTML = '<li class="log-empty">Security checks appear here as you go.</li>';
     $("side-tip").hidden = true;
     $("faceid").hidden = true;
     $("ios-alert").hidden = true;
+    $("notif-drawer").hidden = true;
     $("notify-off").hidden = true;
     $("ask-notify").textContent = "Turn on notifications";
     $("intro-replace").hidden = !s.existing;
     $("replace-card").hidden = !s.existing;
     $("done-sub").textContent = (s.existing ? "Cicek's iPhone 12 is no longer trusted. " : "") +
       "We emailed " + EMAIL + " to let you know. If this wasn't you, contact us right away.";
-    $("invite-card").hidden = false;
     document.querySelector('input[name=method][value=email]').checked = true;
     go("start");
   }
@@ -34,8 +34,30 @@
       el.hidden = !on;
       el.classList.toggle("slide", on);
     });
+    if (name === "twostep" || name === "devices") renderTrust();
     if (name === "code") $("code-input").focus();
     if (name === "checks") runChecks();
+  }
+
+  const CHECK = '<span class="trusted-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  const PHONE_ICO = '<span class="device-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="19" r=".8" fill="currentColor"/></svg></span>';
+
+  function trustCard() {
+    if (s.trusted) return '<div class="trusted-card">' + CHECK + "<span><strong>This device is trusted</strong><span>Cicek's iPhone 15 · Added today</span></span></div>";
+    if (s.existing) return '<div class="device-card">' + PHONE_ICO + "<span><strong>Cicek's iPhone 12</strong><span>Trusted device · Not this phone</span></span></div>";
+    return '<div class="device-card">' + PHONE_ICO + "<span><strong>No trusted device</strong><span>Sign-in notifications are off</span></span></div>";
+  }
+
+  function renderTrust() {
+    $("ts-text").textContent = s.trusted
+      ? "We'll send sign-in notifications to this phone when you sign in to My Account on a computer."
+      : s.existing
+        ? "Sign-in notifications go to Cicek's iPhone 12. Trust this phone to get them here instead."
+        : "This phone isn't trusted yet. Trust it to approve sign-ins on a computer with a notification.";
+    $("ts-card").innerHTML = trustCard();
+    $("dev-card").innerHTML = trustCard();
+    $("ts-trust").hidden = s.trusted;
+    $("dev-trust").hidden = s.trusted;
   }
 
   function log(text, bad) {
@@ -114,10 +136,10 @@
     if (e.target.closest("[data-not-in-prototype]")) toast("This option isn't part of the prototype.");
   });
 
-  $("start-setup").addEventListener("click", () => go("intro"));
-  $("not-now").addEventListener("click", () => {
-    $("invite-card").hidden = true;
-    toast("You can set this up later in Manage login settings.");
+  $("open-notif-drawer").addEventListener("click", () => ($("notif-drawer").hidden = false));
+  $("close-notif-drawer").addEventListener("click", () => ($("notif-drawer").hidden = true));
+  $("notif-drawer").addEventListener("click", (e) => {
+    if (e.target.id === "notif-drawer") $("notif-drawer").hidden = true;
   });
   $("send-code").addEventListener("click", () => {
     sendCode();
@@ -164,6 +186,7 @@
       log("Face ID confirmed. A device key was created in the iPhone's Secure Enclave; only its public key is sent to Freedom.");
       if (s.existing) log("Cicek's iPhone 12 removed as trusted device and its key revoked.");
       log("Security alert emailed to " + EMAIL + ": \"A new device was trusted on your account.\"");
+      s.trusted = true;
       go("done");
     });
   });
