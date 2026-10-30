@@ -10,7 +10,7 @@
   function reset() {
     timers.forEach(clearTimeout);
     timers = [];
-    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null, attempts: 0 };
+    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null };
     $("log").innerHTML = '<li class="log-empty">Security checks appear here as you go.</li>';
     $("side-tip").hidden = true;
     $("faceid").hidden = true;
@@ -59,20 +59,13 @@
   function sendCode() {
     s.method = document.querySelector("input[name=method]:checked").value;
     s.code = String(Math.floor(100000 + Math.random() * 900000));
-    s.attempts = 0;
     const dest = s.method === "email" ? EMAIL : PHONE;
     $("code-dest").textContent = dest;
     $("code-input").value = "";
-    $("code-input").disabled = false;
     $("code-error").hidden = true;
-    $("side-tip").textContent = "Prototype tip: the code sent to " + dest + " is " + s.code + ".";
+    $("side-tip").textContent = "Prototype tip: no code needed. Tap Verify to continue.";
     $("side-tip").hidden = false;
     log("One-time code sent by " + (s.method === "email" ? "email" : "text message") + ". It expires in 10 minutes and works once.");
-  }
-
-  function codeError(text) {
-    $("code-error").textContent = text;
-    $("code-error").hidden = false;
   }
 
   function runChecks() {
@@ -137,20 +130,9 @@
   $("code-input").addEventListener("input", (e) => {
     e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6);
   });
+  // Prototype shortcut: Verify accepts any entry, including an empty field.
   $("scr-code").addEventListener("submit", (e) => {
     e.preventDefault();
-    const v = $("code-input").value;
-    if (s.attempts >= 3) return codeError("Too many attempts. Send a new code.");
-    if (!/^\d{6}$/.test(v)) return codeError("Enter the 6-digit code.");
-    if (v !== s.code) {
-      s.attempts += 1;
-      log("Wrong code entered (" + s.attempts + " of 3 attempts).", true);
-      if (s.attempts >= 3) {
-        $("code-input").disabled = true;
-        return codeError("Too many attempts. Send a new code.");
-      }
-      return codeError("That code doesn't match. Check it and try again.");
-    }
     s.code = null;
     $("side-tip").hidden = true;
     go("checks");
