@@ -15,7 +15,10 @@
     <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Start from the profile icon: My Account → Manage login settings → 2-step verification on sign-in → Trust this device. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
     <fieldset class="scenario">
       <legend>Scenario</legend>
-      <label><input type="checkbox" id="sc-existing" checked /> An older phone is already trusted</label>
+      <p class="scenario-sub">Trusted devices on the account</p>
+      <label><input type="radio" name="sc-devices" id="sc-existing" checked /> An older phone (Cicek's iPhone 12)</label>
+      <label><input type="radio" name="sc-devices" id="sc-none" /> No trusted devices at all</label>
+      <p class="scenario-sub">Carrier records</p>
       <label><input type="checkbox" id="sc-sim" /> SIM card changed in the last 72 hours</label>
     </fieldset>
     <p class="side-tip" id="side-tip" hidden></p>

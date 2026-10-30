@@ -3,6 +3,9 @@
 .side-note h1 { font-size: 24px; line-height: 30px; }
 .scenario { margin: 0 0 16px; padding: 12px 14px; border: 0; border-radius: 10px; background: #fff; font-size: 13.5px; }
 .scenario legend { float: left; width: 100%; padding: 0; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--greyscale-500); }
+.scenario p.scenario-sub { clear: both; margin: 14px 0 0; padding-top: 2px; font-size: 12px; font-weight: 700; color: var(--greyscale-700, #444); }
+.scenario p.scenario-sub:first-of-type { margin-top: 4px; }
+.scenario .scenario-sub + label { margin-top: 4px; }
 .scenario label { clear: both; display: flex; gap: 8px; align-items: center; margin-top: 8px; cursor: pointer; }
 .side-note .side-tip { padding: 10px 14px; border-radius: 10px; background: #fff1e5; color: var(--brand-orange-dark); font-size: 13.5px; }
 .log-title { margin: 0 0 8px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--greyscale-500); }
