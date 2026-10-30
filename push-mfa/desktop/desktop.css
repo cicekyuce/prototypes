@@ -160,3 +160,16 @@ body.on-landing .pill-back { display: none; }
 .ffield.choice:has(input:checked) .choice-mark { border-color: var(--freedom-blue); }
 .ffield.choice:has(input:checked) .choice-mark::after { content: ""; position: absolute; left: 6px; top: 3px; width: 5px; height: 10px; border: solid var(--freedom-blue); border-width: 0 1.8px 1.8px 0; transform: rotate(45deg); }
 .ffield.choice:has(input:focus-visible) { border-color: var(--freedom-blue); box-shadow: 0 0 0 3px var(--focus-blue); }
+
+/* Shown when the phone tab is not open (e.g. the browser blocked the second tab) */
+.phone-prompt {
+  position: fixed; z-index: 30; top: 84px; left: 50%; display: flex; align-items: center; gap: 16px;
+  max-width: calc(100% - 32px); padding: 12px 12px 12px 20px; border-radius: 100px; background: var(--greyscale-100); color: #fff;
+  font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); transform: translateX(-50%); animation: prompt-in .3s ease;
+}
+.phone-prompt-btn {
+  flex: 0 0 auto; padding: 9px 18px; border-radius: 100px; background: var(--brand-orange); color: #fff; font-weight: 600; text-decoration: none;
+}
+.phone-prompt-btn:hover { background: var(--brand-orange-dark); }
+.phone-prompt-close { flex: 0 0 auto; padding: 0 6px; border: 0; background: none; color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+@keyframes prompt-in { from { opacity: 0; transform: translate(-50%, -12px); } }
