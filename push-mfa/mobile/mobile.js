@@ -146,7 +146,7 @@
   }
 
   // ---------- Banner ----------
-  function showBanner({ kind, title, text, target }) {
+  function showBanner({ kind, title, text, target, sticky }) {
     const b = $("push-banner");
     clearTimeout(bannerTimer);
     b.classList.remove("leaving");
@@ -159,7 +159,7 @@
     void b.offsetWidth;
     b.hidden = false;
     if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
-    bannerTimer = setTimeout(hideBanner, 9000);
+    if (!sticky) bannerTimer = setTimeout(hideBanner, 9000);
   }
   function hideBanner() {
     const b = $("push-banner");
@@ -360,17 +360,16 @@
       const name = route();
       if (name === "approve") {
         renderApprove(state);
-      } else if (APP_SCREENS.includes(name)) {
-        activeRequestId = r.id;
-        go("approve");
       } else if (name === "lock") {
         if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
       } else {
+        // In the app it stays until tapped, so the request isn't lost while browsing.
         showBanner({
           kind: "push",
           title: "Freedom",
           text: "It looks like you're trying to sign in on another device. Tap to verify sign in attempt.",
           target: "approve",
+          sticky: APP_SCREENS.includes(name),
         });
       }
     }
@@ -495,6 +494,11 @@
   $("push-banner").addEventListener("click", () => {
     const target = bannerTarget;
     hideBanner();
+    // Approving from inside the app signs the phone out afterwards.
+    if (target === "approve" && APP_SCREENS.includes(route())) {
+      const r = FMSync.read().request;
+      if (r) activeRequestId = r.id;
+    }
     if (target === "messages") go(target);
     else if (target) launchApp(target);
   });
