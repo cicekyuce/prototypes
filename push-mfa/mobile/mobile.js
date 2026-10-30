@@ -417,6 +417,11 @@
       } else go("approved");
     };
     if (!state.settings.faceId) return finish();
+    runFaceId(finish);
+  }
+
+  // Apple-style Face ID scan, then the confirmed tick.
+  function runFaceId(then) {
     const fx = $("faceid");
     fx.classList.remove("done");
     $("faceid-label").textContent = "Face ID";
@@ -427,7 +432,7 @@
     }, 1100);
     setTimeout(() => {
       fx.hidden = true;
-      finish();
+      then();
     }, 1700);
   }
 
@@ -515,16 +520,22 @@
   });
   $("signin-form").addEventListener("submit", (e) => {
     e.preventDefault();
+    if (!$("faceid").hidden) return;
     const email = $("signin-email").value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       $("signin-error").hidden = false;
       return;
     }
-    sessionStorage.removeItem("fm-signed-out");
-    $("signin-drawer").hidden = true;
-    $("signin-email").value = "";
-    go("overview");
-    toast("Signed in to My Account");
+    $("signin-error").hidden = true;
+    const finish = () => {
+      sessionStorage.removeItem("fm-signed-out");
+      $("signin-drawer").hidden = true;
+      $("signin-email").value = "";
+      go("overview");
+      toast("Signed in to My Account");
+    };
+    if (FMSync.read().settings.faceId) runFaceId(finish);
+    else finish();
   });
   document.querySelectorAll("[data-not-in-prototype]").forEach((b) =>
     b.addEventListener("click", () => toast("This option isn't part of the prototype."))
