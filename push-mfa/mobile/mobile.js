@@ -2,7 +2,7 @@
 // request as a push notification and answers it through FMSync.
 (function () {
   const $ = (id) => document.getElementById(id);
-  const APP_SCREENS = ["overview", "approve", "approved", "denied", "expired", "settings", "security", "devices", "activity", "notifications"];
+  const APP_SCREENS = ["overview", "approve", "approved", "denied", "expired", "settings", "login", "biometric", "twostep", "devices", "activity", "notifications"];
   const LIGHT_STATUS = ["home"];
 
   let notifiedRequestId = null;
@@ -16,6 +16,7 @@
   // ---------- Routing ----------
   function route() {
     const name = (location.hash.replace(/^#\/?/, "") || "home").split("/")[0];
+    if (name === "security") return "login";
     return name === "app" ? "overview" : name;
   }
 
@@ -50,9 +51,7 @@
     renderBadges(state);
     renderSide(state);
     if (name === "approve") renderApprove(state);
-    if (name === "settings") renderSettings(state);
-    if (name === "security") renderSecurity(state);
-    if (name === "devices") renderDevices(state);
+    if (name === "biometric") renderBiometric(state);
     if (name === "activity") renderActivity(state);
     if (name === "notifications") renderNotifications(state);
     if (name === "messages") renderMessages(state);
@@ -172,62 +171,8 @@
     go("expired");
   }
 
-  function renderSettings(state) {
-    const s = state.settings;
-    const parts = [s.faceId ? "Face ID on" : "Face ID off", s.pushApprovals ? "sign-in approvals on" : "sign-in approvals off"];
-    $("security-summary").textContent = parts.join(" · ");
-    $("devices-summary").textContent = state.devices.length + (state.devices.length === 1 ? " device" : " devices");
-  }
-
-  function renderSecurity(state) {
-    const s = state.settings;
-    $("tg-push").checked = s.pushApprovals;
-    $("tg-faceid").checked = s.faceId;
-    $("approval-device-row").hidden = !s.pushApprovals;
-    $("push-off-hint").hidden = s.pushApprovals;
-    $("devices-summary-2").textContent = state.devices.length + (state.devices.length === 1 ? " device" : " devices");
-    const last = state.activity[0];
-    $("activity-summary").textContent = last ? "Last request " + FMSync.formatTime(last.at).toLowerCase() : "No recent activity";
-  }
-
-  function renderDevices(state) {
-    const list = $("device-list");
-    list.innerHTML = "";
-    state.devices.forEach((d) => {
-      const li = document.createElement("li");
-      li.className = "row";
-      li.innerHTML =
-        '<span class="row-ico ic-device"></span><span class="row-main"><strong></strong><span></span></span>';
-      li.querySelector("strong").textContent = d.name;
-      li.querySelector(".row-main span").textContent = d.detail;
-      if (d.id === "d-phone") {
-        const pill = document.createElement("span");
-        pill.className = "pill ok";
-        pill.textContent = state.settings.pushApprovals ? "Approval device" : "This device";
-        li.appendChild(pill);
-      } else {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "remove-btn";
-        btn.textContent = "Remove";
-        btn.addEventListener("click", () =>
-          openSheet({
-            title: "Remove this device?",
-            text: d.name + " will be signed out and will need a new approval the next time it signs in.",
-            confirm: "Remove device",
-            danger: true,
-            onConfirm: () => {
-              FMSync.update((st) => {
-                st.devices = st.devices.filter((x) => x.id !== d.id);
-              });
-              toast("Device removed");
-            },
-          })
-        );
-        li.appendChild(btn);
-      }
-      list.appendChild(li);
-    });
+  function renderBiometric(state) {
+    $("tg-faceid").checked = state.settings.faceId;
   }
 
   function renderActivity(state) {
@@ -321,9 +266,7 @@
     renderBadges(state);
     renderSide(state);
     const name = route();
-    if (name === "settings") renderSettings(state);
-    if (name === "security") renderSecurity(state);
-    if (name === "devices") renderDevices(state);
+    if (name === "biometric") renderBiometric(state);
     if (name === "activity") renderActivity(state);
     if (name === "notifications") renderNotifications(state);
   }
@@ -382,25 +325,15 @@
     });
   }
 
-  $("tg-push").addEventListener("change", (e) => {
-    if (e.target.checked) {
-      setSetting("pushApprovals", true);
-      toast("Desktop sign-in approvals on");
-      return;
-    }
-    e.target.checked = true;
-    openSheet({
-      title: "Turn off sign-in approvals?",
-      text: "When you sign in to My Account on a computer, we'll text a verification code to •••-•••-4821 instead of sending a notification to this device.",
-      confirm: "Turn off",
-      danger: true,
-      onConfirm: () => {
-        setSetting("pushApprovals", false);
-        toast("Desktop sign-in approvals off");
-      },
-    });
+  $("tg-faceid").addEventListener("change", (e) => {
+    setSetting("faceId", e.target.checked);
+    toast(e.target.checked ? "Biometric login on" : "Biometric login off");
   });
-  $("tg-faceid").addEventListener("change", (e) => setSetting("faceId", e.target.checked));
+  $("open-notif-drawer").addEventListener("click", () => ($("notif-drawer").hidden = false));
+  $("close-notif-drawer").addEventListener("click", () => ($("notif-drawer").hidden = true));
+  $("notif-drawer").addEventListener("click", (e) => {
+    if (e.target === $("notif-drawer")) $("notif-drawer").hidden = true;
+  });
   $("tg-security").addEventListener("change", (e) => setSetting("securityAlerts", e.target.checked));
   $("tg-billing").addEventListener("change", (e) => setSetting("billingAlerts", e.target.checked));
   $("tg-usage").addEventListener("change", (e) => setSetting("usageAlerts", e.target.checked));
