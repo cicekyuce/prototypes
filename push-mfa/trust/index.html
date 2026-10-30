@@ -12,7 +12,7 @@
   <aside class="side-note">
     <p class="side-eyebrow">Mobile · Trust a device</p>
     <h1>Trust this phone for sign-in notifications</h1>
-    <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Start from the profile icon: My Account → Manage login settings → 2-step verification on sign-in → Trust this device. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
+    <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Start from the profile icon: My Account → Manage login settings → 2-step verification on sign-in. Trust this phone there, or open Manage devices to set up or remove the trusted device. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
     <fieldset class="scenario">
       <legend>Scenario</legend>
       <p class="scenario-sub">Trusted devices on the account</p>
@@ -175,13 +175,13 @@
       <!-- 2. Choose where to send the code -->
       <div class="app-screen" id="scr-verify" hidden>
         <header class="nav-header">
-          <button class="icon-button back" type="button" aria-label="Back" data-go="intro"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <button class="icon-button back" type="button" aria-label="Back" id="verify-back" data-go="intro"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
           <p class="nav-title">Verify it's you</p>
           <span class="nav-spacer"></span>
         </header>
         <div class="app-body trust-body">
           <h1 class="trust-title">Where should we send a one-time code?</h1>
-          <p class="acct-p">Before we trust a new phone, we need to confirm it's you.</p>
+          <p class="acct-p" id="verify-why">Before we trust a new phone, we need to confirm it's you.</p>
           <div class="opts" role="radiogroup" aria-label="Send code to">
             <label class="opt"><input type="radio" name="method" value="email" checked /><span><strong>Email</strong><span>c•••••@freedommobile.ca</span></span><em>Recommended</em></label>
             <label class="opt"><input type="radio" name="method" value="text" /><span><strong>Text message</strong><span>(***) ***-**21</span></span></label>
@@ -301,6 +301,33 @@
         </div>
       </div>
 
+      <!-- Removed -->
+      <div class="app-screen result-screen" id="scr-removed" hidden>
+        <div class="result">
+          <div class="result-icon ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <h1>Device removed</h1>
+          <p id="rm-text"></p>
+          <p class="result-sub">We emailed c•••••@freedommobile.ca to let you know. If this wasn't you, contact us right away.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="devices">Done</button>
+        </div>
+      </div>
+
+      <!-- Removal blocked: recent SIM change -->
+      <div class="app-screen result-screen" id="scr-rm-blocked" hidden>
+        <div class="result">
+          <div class="result-icon warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 7v6.5M12 17v.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></div>
+          <h1>We can't remove this device yet</h1>
+          <p>The SIM card for (***) ***-**21 was changed in the last 72 hours. To protect you from SIM swap fraud, you can remove a trusted device 72 hours after a SIM change.</p>
+          <p class="result-sub">Your trusted device still approves sign-ins. If you didn't change your SIM card, contact us right away.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="devices">Done</button>
+          <button class="btn-link" type="button" data-not-in-prototype>Contact us</button>
+        </div>
+      </div>
+
       <!-- 8. Manage devices -->
       <div class="app-screen" id="scr-devices" hidden>
         <header class="nav-header">
@@ -309,13 +336,20 @@
           <span class="nav-spacer"></span>
         </header>
         <div class="app-body tsv-body">
-          <section class="tsv-section">
-            <p class="acct-p">A trusted device is a mobile device you use to prove it's really you during security checks.</p>
-            <p class="acct-p">You can have one trusted device. We'll send sign-in notifications to it when you sign in to My Account on a computer.</p>
-            <div id="dev-card"></div>
-            <button class="btn btn-primary btn-block ts-trust" type="button" id="dev-trust" data-go="intro">Trust this device</button>
+          <section class="tsv-section dev-empty" id="dev-empty">
+            <div class="trust-hero" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 12l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h2 class="acct-h2">Set up a trusted device</h2>
+            <p class="acct-p">A trusted device is the phone you use to approve sign-ins to My Account on a computer. When someone signs in, we'll send it a notification to approve or deny.</p>
+            <p class="acct-p">You can have one trusted device.</p>
+            <button class="btn btn-primary btn-block" type="button" id="dev-start" data-go="intro">Get started</button>
           </section>
-          <p class="tsv-foot">Only one device can be trusted at a time. To trust a different phone, set it up in the Freedom app on that phone. We'll check it's you first.</p>
+          <section class="tsv-section" id="dev-list">
+            <p class="acct-p">Your trusted device approves sign-ins to My Account on a computer. You can have one trusted device.</p>
+            <div id="dev-card"></div>
+            <p class="acct-p" id="dev-replace-text">To get sign-in notifications on this phone instead, trust it. This replaces <b>Cicek's iPhone 12</b>.</p>
+            <button class="btn btn-secondary btn-block" type="button" id="dev-replace" data-go="intro">Trust this phone instead</button>
+          </section>
+          <p class="tsv-foot"><span id="dev-foot-rm">To remove a trusted device, tap the bin icon. We'll check it's you first and email you to confirm. </span>Lost your trusted phone? <button class="tsv-link" type="button" data-not-in-prototype>Contact us</button></p>
         </div>
       </div>
     </section>
@@ -338,6 +372,16 @@
             <li>Have “Do Not Disturb” turned off</li>
           </ul>
         </div>
+      </div>
+    </div>
+
+    <!-- Remove confirmation sheet -->
+    <div class="sheet-backdrop" id="sheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <h2 id="sheet-title"></h2>
+        <p id="sheet-text"></p>
+        <button class="btn btn-primary btn-block danger" type="button" id="sheet-confirm">Remove device</button>
+        <button class="btn btn-secondary btn-block" type="button" id="sheet-cancel">Cancel</button>
       </div>
     </div>
 
