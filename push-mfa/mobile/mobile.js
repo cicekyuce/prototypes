@@ -146,7 +146,7 @@
   }
 
   // ---------- Banner ----------
-  function showBanner({ kind, title, text, target, sticky }) {
+  function showBanner({ kind, title, text, target }) {
     const b = $("push-banner");
     clearTimeout(bannerTimer);
     b.classList.remove("leaving");
@@ -159,7 +159,7 @@
     void b.offsetWidth;
     b.hidden = false;
     if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
-    if (!sticky) bannerTimer = setTimeout(hideBanner, 9000);
+    bannerTimer = setTimeout(hideBanner, 9000);
   }
   function hideBanner() {
     const b = $("push-banner");
@@ -363,13 +363,11 @@
       } else if (name === "lock") {
         if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
       } else {
-        // In the app it stays until tapped, so the request isn't lost while browsing.
         showBanner({
           kind: "push",
           title: "Freedom",
           text: "It looks like you're trying to sign in on another device. Tap to verify sign in attempt.",
           target: "approve",
-          sticky: APP_SCREENS.includes(name),
         });
       }
     }
