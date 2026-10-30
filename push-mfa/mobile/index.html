@@ -11,7 +11,7 @@
   <aside class="side-note">
     <p class="side-eyebrow">Phone tab</p>
     <h1 id="side-title">Your phone</h1>
-    <p id="side-text">Keep this tab open next to the desktop sign-in tab. Sign-in requests from the desktop arrive here as push notifications.</p>
+    <p id="side-text">Keep this tab open next to the desktop sign-in tab. The phone starts locked; sign-in requests from the desktop arrive on the lock screen as push notifications.</p>
     <p class="side-status" id="side-status"><span class="dot"></span><span>Waiting for a sign-in request</span></p>
     <p class="side-links"><a class="btn-link" href="../">Prototype dashboard</a> · <a class="btn-link" href="../desktop/" target="freedom-push-mfa-desktop">Desktop tab</a> · <button class="btn-link" type="button" id="reset-demo">Reset demo</button></p>
   </aside>
@@ -27,8 +27,17 @@
       </span>
     </div>
 
+    <!-- Phone lock screen (first launch) -->
+    <section class="os-lock" id="os-lock">
+      <svg class="lock-glyph" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 018 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <p class="lock-date" id="lock-date">Thursday, October 29</p>
+      <p class="lock-time" id="lock-time">9:41</p>
+      <div class="lock-notices" id="lock-notices" aria-live="polite"></div>
+      <button class="lock-unlock" type="button" id="lock-unlock">Swipe up or tap to open</button>
+    </section>
+
     <!-- Phone home screen -->
-    <section class="os-home" id="os-home">
+    <section class="os-home" id="os-home" hidden>
       <div class="os-widget">
         <p class="os-widget-date" id="os-date">Thursday, October 29</p>
         <p class="os-widget-time" id="os-clock">9:41</p>
