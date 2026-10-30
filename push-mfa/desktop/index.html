@@ -107,28 +107,45 @@
           <span>Send a notification to your device</span></button></li>
         <li><button type="button" class="option" id="opt-sms">
           <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 5h16v11H10l-4 3.5V16H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          <span>Text me a one-time code</span></button></li>
-        <li><button type="button" class="option" data-unavailable>
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span>Answer a security question</span></button></li>
-        <li><button type="button" class="option" data-unavailable>
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 17c.8-2.2 2.5-3.3 4.5-3.3s3.7 1.1 4.5 3.3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span>Use a driver’s licence or passport</span></button></li>
+          <span>Text or email me a one-time code</span></button></li>
       </ul>
-      <p class="option-note" id="option-note" role="status" hidden>This option isn't part of the prototype.</p>
       <button class="btn-link options-cancel" type="button" data-action="back-to-start">Cancel</button>
+    </section>
+
+    <!-- Account verification: choose code channel (okta 4326:12100) -->
+    <section class="auth-card" id="step-mfa" hidden>
+      <h1>Account verification</h1>
+      <p class="bar-lead">How do you want to receive your security code?</p>
+      <form id="mfa-form" novalidate>
+        <label class="ffield choice">
+          <span class="ffield-label">Phone number</span>
+          <span class="ffield-value">(***) ***-**21</span>
+          <input type="radio" name="code-channel" value="sms" checked />
+          <span class="choice-mark" aria-hidden="true"></span>
+        </label>
+        <label class="ffield choice">
+          <span class="ffield-label">Email</span>
+          <span class="ffield-value" id="mfa-email"></span>
+          <input type="radio" name="code-channel" value="email" />
+          <span class="choice-mark" aria-hidden="true"></span>
+        </label>
+        <button class="btn btn-primary btn-block" type="submit">Continue</button>
+      </form>
+      <div class="auth-links">
+        <span>Need help? <a href="#" class="chev-link" onclick="return false">Message an agent</a></span>
+      </div>
     </section>
 
     <!-- Account verification (okta 1242:8200) -->
     <section class="auth-card" id="step-sms" hidden>
       <h1>Account verification</h1>
-      <p class="bar-lead" id="sms-lead">We sent a code to ********21</p>
+      <p class="bar-lead" id="sms-lead">We sent a code to (***) ***-**21</p>
       <form id="sms-form" novalidate>
         <label class="ffield">
           <span class="ffield-label">Enter code</span>
           <input id="sms-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required />
         </label>
-        <p class="field-error" id="sms-error" hidden>That code doesn't match. Check the text message and try again.</p>
+        <p class="field-error" id="sms-error" hidden>That code doesn't match. Check the <span id="sms-error-src">text message</span> and try again.</p>
         <p class="resend-row">Didn’t get a code? <button class="u-link" type="button" id="resend-sms">Resend</button></p>
         <button class="btn btn-primary btn-block" type="submit">Continue</button>
       </form>
@@ -136,7 +153,7 @@
         <button class="chev-link" type="button" id="back-to-push">Send a notification to the Freedom app instead</button>
         <span>Need help? <a href="#" class="chev-link" onclick="return false">Message an agent</a></span>
       </div>
-      <p class="demo-note">Prototype tip: the text message arrives on the phone tab.</p>
+      <p class="demo-note" id="code-tip">Prototype tip: the text message arrives on the phone tab.</p>
     </section>
 
     <!-- Denied -->
@@ -161,7 +178,7 @@
       <p class="lead">Your notification has expired. Send a new one to the Freedom app, or get a code by text message.</p>
       <div class="stack">
         <button class="btn btn-primary btn-block" type="button" id="expired-resend">Send a new notification</button>
-        <button class="btn btn-outline btn-block" type="button" id="expired-sms">Text me a code</button>
+        <button class="btn btn-outline btn-block" type="button" id="expired-sms">Text or email me a one-time code</button>
       </div>
     </section>
 

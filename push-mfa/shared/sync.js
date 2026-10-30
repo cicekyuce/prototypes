@@ -8,6 +8,7 @@
   const DEFAULT_STATE = {
     request: null,
     sms: null,
+    emailCode: null,
     phoneSeenAt: 0,
     settings: {
       pushApprovals: true,
@@ -126,6 +127,12 @@
       return update((s) => {
         s.sms = { id: "s-" + Date.now().toString(36), code, sentAt: Date.now() };
       }).sms;
+    },
+    sendEmailCode() {
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      return update((s) => {
+        s.emailCode = { id: "e-" + Date.now().toString(36), code, sentAt: Date.now() };
+      }).emailCode;
     },
     heartbeat() {
       update((s) => {

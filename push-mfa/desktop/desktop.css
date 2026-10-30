@@ -154,3 +154,11 @@ body.on-landing .pill-back { display: none; }
 .option:hover, .option:focus-visible { background: #f2f7fc; outline: none; }
 .option-note { margin: 16px 32px 0; font-size: 14px; color: var(--greyscale-500); }
 .options-cancel { margin: 20px 32px 0; font-size: 16px; }
+
+/* Code channel choice (okta 4326:12100) */
+.ffield.choice { cursor: pointer; background: #fff; }
+.ffield.choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.choice-mark { position: absolute; right: 16px; top: 50%; width: 22px; height: 22px; margin-top: -11px; border: 1.5px solid var(--greyscale-400); border-radius: 50%; }
+.ffield.choice:has(input:checked) .choice-mark { border-color: var(--freedom-blue); }
+.ffield.choice:has(input:checked) .choice-mark::after { content: ""; position: absolute; left: 6px; top: 3px; width: 5px; height: 10px; border: solid var(--freedom-blue); border-width: 0 1.8px 1.8px 0; transform: rotate(45deg); }
+.ffield.choice:has(input:focus-visible) { border-color: var(--freedom-blue); box-shadow: 0 0 0 3px var(--focus-blue); }
