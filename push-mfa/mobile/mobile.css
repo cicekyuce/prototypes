@@ -130,9 +130,6 @@ body {
 .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
 .quick { display: flex; flex-direction: column; padding: 14px; border-radius: 14px; background: var(--greyscale-950); font-size: 13px; color: var(--greyscale-500); }
 .quick strong { margin-top: 2px; font-size: 18px; color: var(--greyscale-100); }
-.settings-shortcut { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px; border: 1px solid var(--greyscale-900); border-radius: 14px; background: #fff; text-align: left; cursor: pointer; }
-.settings-shortcut > span { display: flex; flex-direction: column; font-size: 13px; color: var(--greyscale-500); }
-.settings-shortcut strong { font-size: 15px; color: var(--greyscale-100); }
 
 .tab-bar { position: sticky; bottom: 0; display: flex; flex: 0 0 auto; padding: 8px 8px 30px; border-top: 1px solid var(--greyscale-900); background: #fff; }
 .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 0; border: 0; background: none; font-size: 11px; font-weight: 500; color: var(--greyscale-500); cursor: pointer; }

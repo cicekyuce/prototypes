@@ -152,7 +152,7 @@
         target: "approve",
       });
     }
-    if (state.sms && state.sms.id !== readSmsSeen()) {
+    if (smsUnread(state)) {
       notices.push({
         id: state.sms.id,
         kind: "sms",
@@ -190,7 +190,7 @@
 
   function renderBadges(state) {
     $("freedom-badge").hidden = !hasPushNotice(state);
-    $("messages-badge").hidden = !(state.sms && state.sms.id !== readSmsSeen());
+    $("messages-badge").hidden = !smsUnread(state);
   }
 
   function renderSide(state) {
@@ -283,6 +283,14 @@
 
   function readSmsSeen() {
     return sessionStorage.getItem("fm-sms-seen");
+  }
+
+  // Texts left over from an earlier session aren't shown as new on this phone.
+  const tabStart = Number(sessionStorage.getItem("fm-tab-start")) || Date.now();
+  sessionStorage.setItem("fm-tab-start", tabStart);
+
+  function smsUnread(state) {
+    return !!(state.sms && state.sms.id !== readSmsSeen() && state.sms.sentAt >= tabStart);
   }
 
   function renderMessages(state) {
