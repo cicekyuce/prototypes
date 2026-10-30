@@ -1,7 +1,7 @@
-// Desktop sign-in tab. Mirrors the Freedom Okta sign-in (identify → password)
-// and adds the push-approval step that the mobile tab answers.
+// Desktop sign-in tab. Mirrors the Freedom Okta sign-in, skipping the password:
+// identify → choose verification (phone notification by default, text or email).
 (function () {
-  const steps = ["identify", "password", "push", "options", "mfa", "sms", "denied", "expired", "approved"];
+  const steps = ["identify", "push", "options", "mfa", "sms", "denied", "expired", "approved"];
   const $ = (id) => document.getElementById(id);
   let currentRequestId = null;
   let countdownTimer = null;
@@ -54,10 +54,16 @@
     }
   }
 
-  function chooseCodeChannel() {
+  // From sign-in the phone notification is offered and preselected; the
+  // "text or email me a code" fallbacks only offer the code channels.
+  function chooseCodeChannel(withPush) {
     cancelPending();
+    const offerPush = withPush === true && FMSync.read().settings.pushApprovals;
+    const device = FMSync.read().devices.find((d) => d.approval);
+    $("mfa-push-device").textContent = "Freedom app on " + (device ? device.name : "your trusted device");
+    $("mfa-push-row").hidden = !offerPush;
     $("mfa-email").textContent = FMSync.maskEmail(email());
-    document.querySelector('input[name="code-channel"][value="sms"]').checked = true;
+    document.querySelector('input[name="code-channel"][value="' + (offerPush ? "push" : "sms") + '"]').checked = true;
     show("mfa");
   }
 
@@ -122,26 +128,12 @@
     $("email-error").hidden = valid;
     input.setAttribute("aria-invalid", String(!valid));
     if (!valid) return input.focus();
-    $("identity-chip").textContent = email();
-    show("password");
+    chooseCodeChannel(true);
   });
 
   $("email").addEventListener("input", () => {
     $("email-error").hidden = true;
     $("email").removeAttribute("aria-invalid");
-  });
-
-  $("password-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (FMSync.read().settings.pushApprovals) startPush();
-    else chooseCodeChannel();
-  });
-
-  $("show-password").addEventListener("click", () => {
-    const input = $("password");
-    const showing = input.type === "text";
-    input.type = showing ? "password" : "text";
-    $("show-password").setAttribute("aria-label", showing ? "Show password" : "Hide password");
   });
 
   $("resend-push").addEventListener("click", () => {
@@ -157,13 +149,15 @@
   }
   $("try-sms").addEventListener("click", showOptions);
   $("opt-push").addEventListener("click", startPush);
-  $("opt-sms").addEventListener("click", chooseCodeChannel);
+  $("opt-sms").addEventListener("click", () => chooseCodeChannel(false));
   $("mfa-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    startSms(document.querySelector('input[name="code-channel"]:checked').value);
+    const channel = document.querySelector('input[name="code-channel"]:checked').value;
+    if (channel === "push") startPush();
+    else startSms(channel);
   });
   $("expired-resend").addEventListener("click", startPush);
-  $("expired-sms").addEventListener("click", chooseCodeChannel);
+  $("expired-sms").addEventListener("click", () => chooseCodeChannel(false));
   $("back-to-push").addEventListener("click", startPush);
   $("resend-sms").addEventListener("click", () => startSms(usedMethod));
 
