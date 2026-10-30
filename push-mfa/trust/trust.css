@@ -68,3 +68,11 @@
 .ios-alert-actions { display: flex; border-top: 1px solid rgba(60,60,67,.29); }
 .ios-alert-actions button { flex: 1; height: 44px; border: 0; background: none; font: inherit; font-size: 17px; color: #007aff; cursor: pointer; }
 .ios-alert-actions button + button { border-left: 1px solid rgba(60,60,67,.29); }
+
+.dev-empty { text-align: center; }
+.dev-empty .trust-hero { margin: 4px auto 14px; color: var(--freedom-blue); }
+.dev-row { display: flex; align-items: center; gap: 8px; }
+.dev-row > div { flex: 1; margin: 8px 0 12px; }
+.dev-remove { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--error-red); cursor: pointer; }
+.dev-remove:hover { background: var(--error-bg); }
+#dev-list .btn-secondary { margin-top: 4px; }

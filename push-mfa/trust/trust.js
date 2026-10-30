@@ -10,7 +10,7 @@
   function reset() {
     timers.forEach(clearTimeout);
     timers = [];
-    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null, trusted: false };
+    s = { existing: $("sc-existing").checked, sim: $("sc-sim").checked, method: "email", code: null, trusted: false, mode: "trust" };
     $("log").innerHTML = '<li class="log-empty">Security checks appear here as you go.</li>';
     $("side-tip").hidden = true;
     $("faceid").hidden = true;
@@ -18,10 +18,7 @@
     $("notif-drawer").hidden = true;
     $("notify-off").hidden = true;
     $("ask-notify").textContent = "Turn on notifications";
-    $("intro-replace").hidden = !s.existing;
-    $("replace-card").hidden = !s.existing;
-    $("done-sub").textContent = (s.existing ? "Cicek's iPhone 12 is no longer trusted. " : "") +
-      "We emailed " + EMAIL + " to let you know. If this wasn't you, contact us right away.";
+    $("sheet").hidden = true;
     document.querySelector('input[name=method][value=email]').checked = true;
     go("start");
   }
@@ -34,13 +31,37 @@
       el.hidden = !on;
       el.classList.toggle("slide", on);
     });
+    if (name === "intro") setMode("trust");
     if (name === "twostep" || name === "devices") renderTrust();
+    if (name === "confirm" || name === "done") syncCopy();
     if (name === "code") $("code-input").focus();
     if (name === "checks") runChecks();
   }
 
   const CHECK = '<span class="trusted-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
   const PHONE_ICO = '<span class="device-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="19" r=".8" fill="currentColor"/></svg></span>';
+
+  const BIN = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M9.5 7V4.8h5V7M6.5 7l1 13h9l1-13M10 10.5v6M14 10.5v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function deviceName() { return s.trusted ? "Cicek's iPhone 15" : "Cicek's iPhone 12"; }
+
+  function setMode(mode) {
+    s.mode = mode;
+    $("verify-back").dataset.go = mode === "remove" ? "devices" : "intro";
+    $("verify-why").textContent = mode === "remove"
+      ? "Before we remove a trusted device, we need to confirm it's you."
+      : "Before we trust a new phone, we need to confirm it's you.";
+    if (mode === "trust") {
+      $("intro-replace").hidden = !s.existing;
+      $("replace-card").hidden = !s.existing;
+    }
+  }
+
+  function syncCopy() {
+    $("replace-card").hidden = !s.existing;
+    $("done-sub").textContent = (s.replaced ? "Cicek's iPhone 12 is no longer trusted. " : "") +
+      "We emailed " + EMAIL + " to let you know. If this wasn't you, contact us right away.";
+  }
 
   function trustCard() {
     if (s.trusted) return '<div class="trusted-card">' + CHECK + "<span><strong>This device is trusted</strong><span>Cicek's iPhone 15 · Added today</span></span></div>";
@@ -55,9 +76,16 @@
         ? "Sign-in notifications go to Cicek's iPhone 12. Trust this phone to get them here instead."
         : "This phone isn't trusted yet. Trust it to approve sign-ins on a computer with a notification.";
     $("ts-card").innerHTML = trustCard();
-    $("dev-card").innerHTML = trustCard();
     $("ts-trust").hidden = s.trusted;
-    $("dev-trust").hidden = s.trusted;
+    const any = s.trusted || s.existing;
+    $("dev-empty").hidden = any;
+    $("dev-list").hidden = !any;
+    $("dev-foot-rm").hidden = !any;
+    $("dev-replace").hidden = $("dev-replace-text").hidden = s.trusted || !s.existing;
+    if (any) {
+      $("dev-card").innerHTML = '<div class="dev-row">' + trustCard() +
+        '<button class="dev-remove" type="button" id="dev-remove" aria-label="Remove ' + deviceName() + '">' + BIN + "</button></div>";
+    }
   }
 
   function log(text, bad) {
@@ -157,7 +185,40 @@
     e.preventDefault();
     s.code = null;
     $("side-tip").hidden = true;
+    if (s.mode === "remove") return removeDevice();
     go("checks");
+  });
+
+  function removeDevice() {
+    const name = deviceName();
+    log("Identity confirmed with the one-time code.");
+    if (s.sim) {
+      log("Blocked: SIM card changed in the last 72 hours (possible SIM swap). " + name + " stays trusted.", true);
+      return go("rm-blocked");
+    }
+    if (s.trusted) s.trusted = false;
+    else s.existing = false;
+    log(name + " removed as trusted device and its key revoked. Sign-ins on a computer now use a one-time code.");
+    log("Security alert emailed to " + EMAIL + ": \"A trusted device was removed from your account.\"");
+    $("rm-text").textContent = name + " can no longer approve sign-ins. Until you trust a phone, we'll send a one-time code by text or email when you sign in to My Account on a computer.";
+    go("removed");
+  }
+
+  $("dev-card").addEventListener("click", (e) => {
+    if (!e.target.closest("#dev-remove")) return;
+    $("sheet-title").textContent = "Remove " + deviceName() + "?";
+    $("sheet-text").textContent = "It will stop getting sign-in notifications. Until you trust a phone, we'll send a one-time code by text or email when you sign in to My Account on a computer.";
+    $("sheet").hidden = false;
+  });
+  $("sheet-cancel").addEventListener("click", () => ($("sheet").hidden = true));
+  $("sheet").addEventListener("click", (e) => {
+    if (e.target.id === "sheet") $("sheet").hidden = true;
+  });
+  $("sheet-confirm").addEventListener("click", () => {
+    $("sheet").hidden = true;
+    log("Removal of " + deviceName() + " requested. Confirming it's you first.");
+    setMode("remove");
+    go("verify");
   });
 
   $("ask-notify").addEventListener("click", () => {
@@ -184,7 +245,9 @@
     if (!$("faceid").hidden) return;
     runFaceId(() => {
       log("Face ID confirmed. A device key was created in the iPhone's Secure Enclave; only its public key is sent to Freedom.");
+      s.replaced = s.existing;
       if (s.existing) log("Cicek's iPhone 12 removed as trusted device and its key revoked.");
+      s.existing = false;
       log("Security alert emailed to " + EMAIL + ": \"A new device was trusted on your account.\"");
       s.trusted = true;
       go("done");
