@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trust this device — Freedom app</title>
+  <link rel="stylesheet" href="../shared/base.css" />
+  <link rel="stylesheet" href="../mobile/mobile.css" />
+  <link rel="stylesheet" href="trust.css" />
+</head>
+<body>
+  <aside class="side-note">
+    <p class="side-eyebrow">Mobile · Trust a device</p>
+    <h1>Trust this phone for sign-in notifications</h1>
+    <p>Cicek has just signed in to the Freedom app on a new iPhone 15. Before this phone can approve My Account sign-ins on a computer, we confirm it's really Cicek and that the phone number hasn't just been taken over.</p>
+    <fieldset class="scenario">
+      <legend>Scenario</legend>
+      <label><input type="checkbox" id="sc-existing" checked /> An older phone is already trusted</label>
+      <label><input type="checkbox" id="sc-sim" /> SIM card changed in the last 72 hours</label>
+    </fieldset>
+    <p class="side-tip" id="side-tip" hidden></p>
+    <h2 class="log-title">Behind the scenes</h2>
+    <ol class="log" id="log"><li class="log-empty">Security checks appear here as you go.</li></ol>
+    <p class="side-links"><a class="btn-link" href="../">Prototype dashboard</a> · <button class="btn-link" type="button" id="restart">Restart</button></p>
+  </aside>
+
+  <div class="device" role="application" aria-label="Phone prototype">
+    <div class="status-bar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-island"></span>
+      <span class="sb-icons" aria-hidden="true">
+        <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+        <span class="sb-carrier">5G+</span>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity="0.5"/></svg>
+      </span>
+    </div>
+
+    <section class="app" id="app">
+      <!-- Overview with the set-up invitation -->
+      <div class="app-screen" id="scr-start">
+        <header class="home-header">
+          <img class="home-logo" src="../assets/freedom-logo.svg" alt="Freedom" />
+          <div class="home-actions">
+            <button class="icon-button" type="button" aria-label="Notifications" data-not-in-prototype><img src="../assets/icon-bell.svg" alt="" /></button>
+            <button class="icon-button" type="button" aria-label="Profile and settings" data-not-in-prototype><img src="../assets/icon-profile.svg" alt="" /></button>
+          </div>
+        </header>
+        <div class="app-body">
+          <h1 class="greeting">Hi, Cicek</h1>
+          <article class="invite-card" id="invite-card">
+            <span class="invite-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 12l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div>
+              <h2>Approve sign-ins with this phone</h2>
+              <p>Get a notification when you sign in to My Account on a computer, and approve it with Face ID.</p>
+              <div class="invite-actions">
+                <button class="btn btn-primary" type="button" id="start-setup">Set up</button>
+                <button class="btn-link" type="button" id="not-now">Not now</button>
+              </div>
+            </div>
+          </article>
+          <article class="plan-card">
+            <p class="plan-label">Absolute Zero 75GB 5G+</p>
+            <p class="plan-number">(416) 555-4821</p>
+            <div class="plan-usage">
+              <div><strong>38.2 GB</strong><span>of 75 GB used</span></div>
+              <div class="ring" style="--pct: 51"><span>51%</span></div>
+            </div>
+            <p class="plan-meta">Renews Nov 14 · 16 days left</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- 1. Intro -->
+      <div class="app-screen" id="scr-intro" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="start"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Trust this device</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <div class="trust-hero" aria-hidden="true"><img src="../assets/icon-bell.svg" alt="" /></div>
+          <h1 class="trust-title">Use this phone to approve sign-ins</h1>
+          <ul class="trust-points">
+            <li><strong>No codes to type.</strong> When you sign in to My Account on a computer, we'll send a notification to this phone. Approve it with Face ID.</li>
+            <li><strong>One trusted phone.</strong> Only one phone can approve your sign-ins. <span id="intro-replace">Trusting this one replaces <b>Cicek's iPhone 12</b>.</span></li>
+            <li><strong>We'll check it's you first.</strong> You'll confirm a one-time code, then we'll run a few security checks on this phone and your number.</li>
+            <li><strong>We'll never ask for your password</strong> or a code in a notification.</li>
+          </ul>
+        </div>
+        <div class="trust-foot">
+          <button class="btn btn-primary btn-block" type="button" data-go="verify">Continue</button>
+          <button class="btn-link" type="button" data-go="start">Not now</button>
+        </div>
+      </div>
+
+      <!-- 2. Choose where to send the code -->
+      <div class="app-screen" id="scr-verify" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="intro"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Verify it's you</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <h1 class="trust-title">Where should we send a one-time code?</h1>
+          <p class="acct-p">Before we trust a new phone, we need to confirm it's you.</p>
+          <div class="opts" role="radiogroup" aria-label="Send code to">
+            <label class="opt"><input type="radio" name="method" value="email" checked /><span><strong>Email</strong><span>c•••••@freedommobile.ca</span></span><em>Recommended</em></label>
+            <label class="opt"><input type="radio" name="method" value="text" /><span><strong>Text message</strong><span>(***) ***-**21</span></span></label>
+          </div>
+          <p class="trust-note">We recommend email. A texted code can be intercepted if someone takes over your phone number (SIM swap).</p>
+        </div>
+        <div class="trust-foot">
+          <button class="btn btn-primary btn-block" type="button" id="send-code">Send code</button>
+        </div>
+      </div>
+
+      <!-- 3. Enter the code -->
+      <form class="app-screen" id="scr-code" hidden novalidate>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="verify"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Verify it's you</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <h1 class="trust-title">Enter the 6-digit code</h1>
+          <p class="acct-p">We sent it to <b id="code-dest">c•••••@freedommobile.ca</b>. It expires in 10 minutes.</p>
+          <input class="code-input" id="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="6-digit code" />
+          <p class="field-error" id="code-error" hidden></p>
+          <button class="btn-link" type="button" id="resend">Send a new code</button>
+        </div>
+        <div class="trust-foot">
+          <button class="btn btn-primary btn-block" type="submit" id="verify-code">Verify</button>
+        </div>
+      </form>
+
+      <!-- 4. Security checks -->
+      <div class="app-screen" id="scr-checks" hidden>
+        <header class="nav-header">
+          <span class="nav-spacer"></span>
+          <p class="nav-title">Security check</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <h1 class="trust-title">Checking this phone</h1>
+          <p class="acct-p">This only takes a moment.</p>
+          <ul class="checks" id="checks">
+            <li data-check="identity">Identity confirmed with a one-time code</li>
+            <li data-check="sim">No recent SIM card change on (***) ***-**21</li>
+            <li data-check="port">No request to transfer your number to another provider</li>
+            <li data-check="device">Phone has a passcode and Face ID, and isn't jailbroken</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4b. Blocked: recent SIM change -->
+      <div class="app-screen result-screen" id="scr-blocked" hidden>
+        <div class="result">
+          <div class="result-icon warn" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 7v6.5M12 17v.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></div>
+          <h1>We can't trust this phone yet</h1>
+          <p>The SIM card for (***) ***-**21 was changed in the last 72 hours. To protect you from SIM swap fraud, you can trust a new phone 72 hours after a SIM change.</p>
+          <p class="result-sub">You can still sign in on a computer with a code sent to your email. If you didn't change your SIM card, contact us right away.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="start">Done</button>
+          <button class="btn-link" type="button" data-not-in-prototype>Contact us</button>
+        </div>
+      </div>
+
+      <!-- 5. Notifications permission -->
+      <div class="app-screen" id="scr-notify" hidden>
+        <header class="nav-header">
+          <span class="nav-spacer"></span>
+          <p class="nav-title">Trust this device</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <div class="trust-hero" aria-hidden="true"><img src="../assets/icon-bell.svg" alt="" /></div>
+          <h1 class="trust-title">Turn on notifications</h1>
+          <p class="acct-p">Sign-in requests arrive as time-sensitive notifications, so you'll see them on your lock screen, even with Focus on.</p>
+          <p class="field-error" id="notify-off" hidden>Notifications are off. To continue, turn them on in Settings &gt; Freedom &gt; Notifications.</p>
+        </div>
+        <div class="trust-foot">
+          <button class="btn btn-primary btn-block" type="button" id="ask-notify">Turn on notifications</button>
+        </div>
+      </div>
+
+      <!-- 6. Confirm with Face ID -->
+      <div class="app-screen" id="scr-confirm" hidden>
+        <header class="nav-header">
+          <span class="nav-spacer"></span>
+          <p class="nav-title">Trust this device</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body trust-body">
+          <h1 class="trust-title">Confirm this phone</h1>
+          <div class="device-card">
+            <span class="device-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="6" y="2.5" width="12" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="19" r=".8" fill="currentColor"/></svg></span>
+            <span><strong>Cicek's iPhone 15</strong><span>iOS 18 · Freedom app · This phone</span></span>
+          </div>
+          <div class="replace-card" id="replace-card">
+            <strong>This replaces Cicek's iPhone 12</strong>
+            <span>Your iPhone 12 will stop getting sign-in notifications as soon as you confirm.</span>
+          </div>
+          <p class="acct-p">Use Face ID to confirm. This creates a security key that stays on this phone and is used to approve your sign-ins.</p>
+        </div>
+        <div class="trust-foot">
+          <button class="btn btn-primary btn-block" type="button" id="confirm-trust">Trust this phone</button>
+          <button class="btn-link" type="button" data-go="start">Cancel</button>
+        </div>
+      </div>
+
+      <!-- 7. Done -->
+      <div class="app-screen result-screen" id="scr-done" hidden>
+        <div class="result">
+          <div class="result-icon ok" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+          <h1>This phone is trusted</h1>
+          <p>When you sign in to My Account on a computer, we'll send a notification to this phone.</p>
+          <p class="result-sub" id="done-sub">We emailed c•••••@freedommobile.ca to let you know. If this wasn't you, contact us right away.</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-block" type="button" data-go="devices">Done</button>
+        </div>
+      </div>
+
+      <!-- 8. Manage devices -->
+      <div class="app-screen" id="scr-devices" hidden>
+        <header class="nav-header">
+          <button class="icon-button back" type="button" aria-label="Back" data-go="start"><img src="../assets/icon-chevron-left.svg" alt="" /></button>
+          <p class="nav-title">Manage devices</p>
+          <span class="nav-spacer"></span>
+        </header>
+        <div class="app-body tsv-body">
+          <section class="tsv-section">
+            <p class="acct-p">A trusted device is a mobile device you use to prove it's really you during security checks.</p>
+            <p class="acct-p">You can have one trusted device. We'll send sign-in notifications to it when you sign in to My Account on a computer.</p>
+            <div class="trusted-card">
+              <span class="trusted-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span><strong>This device is trusted</strong><span>Cicek's iPhone 15 · Added today</span></span>
+            </div>
+          </section>
+          <p class="tsv-foot">Only one device can be trusted at a time. To trust a different phone, set it up in the Freedom app on that phone. We'll check it's you first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- iOS notification permission alert -->
+    <div class="ios-alert-backdrop" id="ios-alert" hidden>
+      <div class="ios-alert" role="alertdialog" aria-labelledby="ios-alert-title">
+        <div class="ios-alert-body">
+          <strong id="ios-alert-title">“Freedom” Would Like to Send You Notifications</strong>
+          <p>Notifications may include alerts, sounds and icon badges. These can be configured in Settings.</p>
+        </div>
+        <div class="ios-alert-actions">
+          <button type="button" id="notify-deny">Don't Allow</button>
+          <button type="button" id="notify-allow"><b>Allow</b></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="faceid" id="faceid" hidden>
+      <div class="faceid-box">
+        <svg class="faceid-glyph" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
+          <path d="M4 18V10a6 6 0 016-6h8M46 4h8a6 6 0 016 6v8M60 46v8a6 6 0 01-6 6h-8M18 60h-8a6 6 0 01-6-6v-8" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path class="face" d="M22 24v4M42 24v4M32 24v12h-3M24 44c4 4 12 4 16 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="tick" d="M20 33l8 8 16-17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="faceid-label">Face ID</span>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+    <span class="home-indicator" aria-hidden="true"></span>
+  </div>
+
+  <script src="trust.js"></script>
+</body>
+</html>
