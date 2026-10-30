@@ -20,7 +20,7 @@
       rememberBrowser: false,
     },
     devices: [
-      { id: "d-phone", name: "Bartholomew's iPhone 15", detail: "Freedom app · This device", kind: "phone", approval: true },
+      { id: "d-phone", name: "Cicek's iPhone 15", detail: "Freedom app · This device", kind: "phone", approval: true },
     ],
     activity: [
       { id: "a-seed-1", result: "approved", browser: "Chrome on macOS", city: "Toronto, ON", at: Date.now() - 1000 * 60 * 60 * 26 },
