@@ -35,7 +35,7 @@
     <p class="eyebrow">Freedom Mobile · Prototype dashboard</p>
     <h1>Push Notifications as MFA for Desktop Login</h1>
     <p class="tagline">Approve a My Account sign-in on a computer with a push notification to the Freedom app, the same pattern RBC uses. Pick a prototype below.</p>
-    <p class="popup-warning" id="popup-warning" hidden>Your browser only let one tab open. Click "Open phone tab" at the top of the desktop tab to open the phone, or allow pop-ups for cicekyuce.github.io (the icon at the right of the address bar) so one click opens both next time.</p>
+    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked the phone tab. Allow pop-ups for cicekyuce.github.io (the icon at the right of the address bar), then click "Open prototype (2 tabs)" again.</p>
 
     <section class="grid">
       <article class="card">
@@ -85,15 +85,16 @@
     </section>
   </main>
   <script>
-    // Desktop and phone each open in their own named tab (clicking again reuses them).
-    // Browsers allow one new tab per click unless pop-ups are allowed for the site, so the
-    // desktop opens first and offers an "Open phone tab" button if the phone tab was blocked.
+    // The phone opens in a new tab and this tab becomes the desktop sign-in
+    // (browsers allow only one new tab per click without pop-up permission).
     document.getElementById("open-both").addEventListener("click", function (event) {
       event.preventDefault();
-      const desktop = window.open("desktop/", "freedom-push-mfa-desktop");
       const phone = window.open("mobile/", "freedom-push-mfa-mobile");
-      document.getElementById("popup-warning").hidden = !!(phone && desktop);
-      if (desktop) desktop.focus();
+      if (!phone) {
+        document.getElementById("popup-warning").hidden = false;
+        return;
+      }
+      location.href = "desktop/";
     });
   </script>
 </body>

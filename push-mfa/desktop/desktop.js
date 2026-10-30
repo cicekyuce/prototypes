@@ -110,17 +110,7 @@
     $("phone-status-text").textContent = online ? "Phone tab connected" : "Phone tab not open";
     $("open-phone").hidden = online;
     if (!$("step-push").hidden) $("push-tip").hidden = online;
-    // Give a just-opened phone tab a moment to connect before prompting.
-    $("phone-prompt").hidden = online || promptDismissed || Date.now() - loadedAt < 2500;
   }
-  const loadedAt = Date.now();
-  let promptDismissed = false;
-  $("phone-prompt-open").addEventListener("click", () => ($("phone-prompt").hidden = true));
-  $("phone-prompt-close").addEventListener("click", () => {
-    promptDismissed = true;
-    $("phone-prompt").hidden = true;
-  });
-  setTimeout(() => renderPhoneStatus(FMSync.read()), 2600);
   setInterval(() => renderPhoneStatus(FMSync.read()), 2000);
   renderPhoneStatus(FMSync.read());
 
