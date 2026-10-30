@@ -15,6 +15,7 @@
   let approveTimer = null;
   let sheetConfirm = null;
   let activeRequestId = null;
+  let lastRoute = null;
 
   // ---------- Routing ----------
   function route() {
@@ -36,6 +37,13 @@
   function render() {
     const name = route();
     if (signedOut() && APP_SCREENS.includes(name) && !SIGNED_OUT_OK.includes(name)) return go("signin");
+    if (name === "signin" && lastRoute !== "signin") {
+      const n = $("signin-notice");
+      n.hidden = true;
+      void n.offsetWidth;
+      n.hidden = false;
+    }
+    lastRoute = name;
     const inApp = APP_SCREENS.includes(name);
     $("os-lock").hidden = name !== "lock";
     $("os-home").hidden = name !== "home";
@@ -95,6 +103,8 @@
     hideBanner();
     const pick = () => (typeof target === "function" ? target() : target);
     if (APP_SCREENS.includes(route())) return go(pick());
+    // A fresh launch starts signed out; notifications still open their screen first.
+    sessionStorage.setItem("fm-signed-out", "1");
     const s = $("splash");
     s.classList.remove("leaving");
     s.hidden = false;
@@ -403,7 +413,7 @@
       // Approving from an active app session signs the phone out of My Account.
       if (activeRequestId === id) {
         sessionStorage.setItem("fm-signed-out", "1");
-        showSignin();
+        go("signin");
       } else go("approved");
     };
     if (!state.settings.faceId) return finish();
@@ -419,14 +429,6 @@
       fx.hidden = true;
       finish();
     }, 1700);
-  }
-
-  function showSignin() {
-    const n = $("signin-notice");
-    n.hidden = true;
-    go("signin");
-    void n.offsetWidth;
-    n.hidden = false;
   }
 
   function deny() {
