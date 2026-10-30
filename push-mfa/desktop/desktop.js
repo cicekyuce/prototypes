@@ -60,7 +60,7 @@
     cancelPending();
     const offerPush = withPush === true && FMSync.read().settings.pushApprovals;
     const device = FMSync.read().devices.find((d) => d.approval);
-    $("mfa-push-device").textContent = "Freedom app on " + (device ? device.name : "your trusted device");
+    $("mfa-push-device").textContent = device ? device.name : "Your trusted device";
     $("mfa-push-row").hidden = !offerPush;
     $("mfa-email").textContent = FMSync.maskEmail(email());
     document.querySelector('input[name="code-channel"][value="' + (offerPush ? "push" : "sms") + '"]').checked = true;
