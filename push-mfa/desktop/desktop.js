@@ -25,7 +25,7 @@
   }
 
   function email() {
-    return $("email").value.trim() || "bartholomew.r@example.com";
+    return $("email").value.trim();
   }
 
   function startPush() {
@@ -100,8 +100,19 @@
 
   $("identify-form").addEventListener("submit", (e) => {
     e.preventDefault();
+    const input = $("email");
+    input.value = input.value.trim();
+    const valid = input.value !== "" && input.checkValidity();
+    $("email-error").hidden = valid;
+    input.setAttribute("aria-invalid", String(!valid));
+    if (!valid) return input.focus();
     $("identity-chip").textContent = email();
     show("password");
+  });
+
+  $("email").addEventListener("input", () => {
+    $("email-error").hidden = true;
+    $("email").removeAttribute("aria-invalid");
   });
 
   $("password-form").addEventListener("submit", (e) => {
