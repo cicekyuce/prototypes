@@ -3,7 +3,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const APP_SCREENS = ["overview", "approve", "approved", "denied", "expired", "settings", "login", "biometric", "twostep", "devices", "activity", "notifications"];
-  const LIGHT_STATUS = ["home"];
+  const LIGHT_STATUS = ["lock", "home"];
 
   let notifiedRequestId = null;
   let notifiedSmsId = (FMSync.read().sms || {}).id || null;
@@ -15,13 +15,13 @@
 
   // ---------- Routing ----------
   function route() {
-    const name = (location.hash.replace(/^#\/?/, "") || "home").split("/")[0];
+    const name = (location.hash.replace(/^#\/?/, "") || "lock").split("/")[0];
     if (name === "security") return "login";
     return name === "app" ? "overview" : name;
   }
 
   function go(name) {
-    const target = name === "home" ? "#/" : name === "overview" ? "#/app" : "#/" + name;
+    const target = name === "lock" ? "#/" : name === "overview" ? "#/app" : "#/" + name;
     if (location.hash !== target) location.hash = target;
     else render();
   }
@@ -29,6 +29,7 @@
   function render() {
     const name = route();
     const inApp = APP_SCREENS.includes(name);
+    $("os-lock").hidden = name !== "lock";
     $("os-home").hidden = name !== "home";
     $("app").hidden = !inApp;
     $("messages").hidden = name !== "messages";
@@ -50,6 +51,7 @@
     const state = FMSync.read();
     renderBadges(state);
     renderSide(state);
+    renderLock(state);
     if (name === "approve") renderApprove(state);
     if (name === "biometric") renderBiometric(state);
     if (name === "activity") renderActivity(state);
@@ -64,6 +66,22 @@
   function isPending(state) {
     const r = state.request;
     return !!(r && r.status === "pending" && r.expiresAt > Date.now());
+  }
+
+  function isExpired(r) {
+    return !!(r && (r.status === "expired" || (r.status === "pending" && r.expiresAt <= Date.now())));
+  }
+  function expiredSeen() {
+    return sessionStorage.getItem("fm-expired-seen");
+  }
+  // Pending requests and expired ones the user hasn't opened yet stay in
+  // Notification Centre and open the related screen in the Freedom app.
+  function hasPushNotice(state) {
+    const r = state.request;
+    return isPending(state) || (isExpired(r) && r.id !== expiredSeen());
+  }
+  function launchTarget(state) {
+    return hasPushNotice(state) ? "approve" : "overview";
   }
 
   function toast(text) {
@@ -115,8 +133,63 @@
   }
 
   // ---------- Renderers ----------
+  function ago(at) {
+    const m = Math.floor((Date.now() - at) / 60000);
+    return m < 1 ? "now" : m < 60 ? m + "m ago" : FMSync.formatTime(at);
+  }
+
+  function renderLock(state) {
+    const list = $("lock-notices");
+    const notices = [];
+    if (hasPushNotice(state)) {
+      notices.push({
+        id: state.request.id,
+        kind: "push",
+        tag: "TIME SENSITIVE",
+        title: "Freedom",
+        text: "It looks like you're trying to sign in on another device. Tap to verify sign in attempt.",
+        at: state.request.createdAt,
+        target: "approve",
+      });
+    }
+    if (state.sms && state.sms.id !== readSmsSeen()) {
+      notices.push({
+        id: state.sms.id,
+        kind: "sms",
+        tag: "MESSAGES",
+        title: "Freedom",
+        text: "Freedom: " + state.sms.code + " is your My Account verification code. Never share this code.",
+        at: state.sms.sentAt,
+        target: "messages",
+      });
+    }
+    notices.sort((a, b) => b.at - a.at);
+    const key = notices.map((n) => n.id + ago(n.at)).join("|");
+    if (list.dataset.key === key) return;
+    const prev = new Set((list.dataset.ids || "").split("|"));
+    list.dataset.key = key;
+    list.dataset.ids = notices.map((n) => n.id).join("|");
+    list.innerHTML = "";
+    notices.forEach((n) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "lock-notice" + (prev.has(n.id) ? "" : " new");
+      b.dataset.kind = n.kind;
+      b.innerHTML =
+        '<span class="pb-icon"><img src="../assets/freedom-mark.svg" alt="" /></span>' +
+        '<span class="pb-body"><span class="pb-top"><strong></strong><span></span></span><strong class="pb-title"></strong><span class="pb-text"></span></span>';
+      b.querySelector(".pb-icon").classList.toggle("sms", n.kind === "sms");
+      b.querySelector(".pb-top strong").textContent = n.tag;
+      b.querySelector(".pb-top span").textContent = ago(n.at);
+      b.querySelector(".pb-title").textContent = n.title;
+      b.querySelector(".pb-text").textContent = n.text;
+      b.addEventListener("click", () => go(n.target));
+      list.appendChild(b);
+    });
+  }
+
   function renderBadges(state) {
-    $("freedom-badge").hidden = !isPending(state);
+    $("freedom-badge").hidden = !hasPushNotice(state);
     $("messages-badge").hidden = !(state.sms && state.sms.id !== readSmsSeen());
   }
 
@@ -149,7 +222,7 @@
       $("req-expires").classList.toggle("urgent", secs <= 20);
       if (left <= 0) {
         clearInterval(approveTimer);
-        showExpired({ status: "expired" });
+        showExpired({ ...r, status: "expired" });
       }
     };
     tick();
@@ -158,6 +231,7 @@
 
   function showExpired(r) {
     const status = r && r.status;
+    if (r && r.id) sessionStorage.setItem("fm-expired-seen", r.id);
     const copy = {
       cancelled: ["Sign-in was cancelled", "The sign-in was cancelled on the computer. No action is needed."],
       approved: ["Already approved", "This sign-in request was already approved."],
@@ -240,6 +314,8 @@
         renderApprove(state);
       } else if (APP_SCREENS.includes(name)) {
         go("approve");
+      } else if (name === "lock") {
+        if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
       } else {
         showBanner({
           kind: "push",
@@ -256,7 +332,7 @@
     }
     if (state.sms && state.sms.id !== notifiedSmsId) {
       notifiedSmsId = state.sms.id;
-      showBanner({
+      if (route() !== "lock") showBanner({
         kind: "sms",
         title: "Freedom",
         text: "Freedom: " + state.sms.code + " is your My Account verification code. Never share this code.",
@@ -265,6 +341,7 @@
     }
     renderBadges(state);
     renderSide(state);
+    renderLock(state);
     const name = route();
     if (name === "biometric") renderBiometric(state);
     if (name === "activity") renderActivity(state);
@@ -354,11 +431,12 @@
 
   $("open-freedom").addEventListener("click", () => {
     hideBanner();
-    go(isPending(FMSync.read()) ? "approve" : "overview");
+    go(launchTarget(FMSync.read()));
   });
   $("open-messages").addEventListener("click", () => go("messages"));
   $("close-messages").addEventListener("click", () => go("home"));
   $("home-indicator").addEventListener("click", () => go("home"));
+  $("lock-unlock").addEventListener("click", () => go("home"));
   $("push-banner").addEventListener("click", () => {
     const target = bannerTarget;
     hideBanner();
@@ -378,6 +456,7 @@
   $("reset-demo").addEventListener("click", () => {
     FMSync.reset();
     sessionStorage.removeItem("fm-sms-seen");
+    sessionStorage.removeItem("fm-expired-seen");
     location.hash = "#/";
     location.reload();
   });
@@ -388,6 +467,9 @@
     const t = now.toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit", hour12: true }).replace(/\s?[ap]\.?m\.?/i, "");
     $("sb-time").textContent = t;
     $("os-clock").textContent = t;
+    $("lock-time").textContent = t;
+    $("lock-date").textContent = now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+    renderLock(FMSync.read());
     $("os-date").textContent = now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
     $("cal-day").textContent = now.getDate();
   }
