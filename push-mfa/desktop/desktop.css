@@ -139,3 +139,18 @@ body.on-landing .pill-back { display: none; }
   .landing-form { padding: 40px 24px; }
   .account-grid { grid-template-columns: 1fr; }
 }
+
+/* 2-step verification options (4847:3858) */
+.options-card { max-width: 500px; padding: 0 0 24px; overflow: hidden; }
+.options-head { padding: 40px 32px 8px; }
+.option-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--greyscale-900); }
+.option-list li { border-bottom: 1px solid var(--greyscale-900); }
+.option {
+  display: flex; align-items: center; gap: 16px; width: 100%; padding: 22px 32px; border: 0; background: none;
+  font: inherit; font-size: 17px; font-weight: 500; color: var(--freedom-blue); text-align: left; cursor: pointer;
+}
+.option svg { flex: 0 0 auto; color: var(--freedom-blue); }
+.option::after { content: ""; width: 8px; height: 8px; margin-left: auto; border: solid var(--brand-orange); border-width: 1.8px 1.8px 0 0; transform: rotate(45deg); }
+.option:hover, .option:focus-visible { background: #f2f7fc; outline: none; }
+.option-note { margin: 16px 32px 0; font-size: 14px; color: var(--greyscale-500); }
+.options-cancel { margin: 20px 32px 0; font-size: 16px; }

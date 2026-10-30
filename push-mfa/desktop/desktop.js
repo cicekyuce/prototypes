@@ -1,7 +1,7 @@
 // Desktop sign-in tab. Mirrors the Freedom Okta sign-in (identify → password)
 // and adds the push-approval step that the mobile tab answers.
 (function () {
-  const steps = ["identify", "password", "push", "sms", "denied", "expired", "approved"];
+  const steps = ["identify", "password", "push", "options", "sms", "denied", "expired", "approved"];
   const $ = (id) => document.getElementById(id);
   let currentRequestId = null;
   let countdownTimer = null;
@@ -123,7 +123,18 @@
     void $("push-status").offsetWidth;
     $("push-status").classList.add("push-resent");
   });
-  $("try-sms").addEventListener("click", startSms);
+  function showOptions() {
+    cancelPending();
+    $("opt-push-row").hidden = !FMSync.read().settings.pushApprovals;
+    $("option-note").hidden = true;
+    show("options");
+  }
+  $("try-sms").addEventListener("click", showOptions);
+  $("opt-push").addEventListener("click", startPush);
+  $("opt-sms").addEventListener("click", startSms);
+  document.querySelectorAll("[data-unavailable]").forEach((el) =>
+    el.addEventListener("click", () => ($("option-note").hidden = false))
+  );
   $("expired-resend").addEventListener("click", startPush);
   $("expired-sms").addEventListener("click", startSms);
   $("back-to-push").addEventListener("click", startPush);

@@ -94,6 +94,30 @@
       <p class="demo-note" id="push-tip">Prototype tip: switch to the phone tab to see the notification.</p>
     </section>
 
+    <!-- 2-step verification options (App Architecture 4847:3858, RBC "Didn't get a notification") -->
+    <section class="auth-card options-card" id="step-options" hidden>
+      <div class="options-head">
+        <h1>2-step verification</h1>
+        <p class="bar-lead">Please select an option to help us verify your identity.</p>
+      </div>
+      <ul class="option-list">
+        <li id="opt-push-row"><button type="button" class="option" id="opt-push">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Send a notification to your device</span></button></li>
+        <li><button type="button" class="option" id="opt-sms">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 5h16v11H10l-4 3.5V16H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span>Text me a one-time code</span></button></li>
+        <li><button type="button" class="option" data-unavailable>
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Answer a security question</span></button></li>
+        <li><button type="button" class="option" data-unavailable>
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 17c.8-2.2 2.5-3.3 4.5-3.3s3.7 1.1 4.5 3.3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Use a driver’s licence or passport</span></button></li>
+      </ul>
+      <p class="option-note" id="option-note" role="status" hidden>This option isn't part of the prototype.</p>
+      <button class="btn-link options-cancel" type="button" data-action="back-to-start">Cancel</button>
+    </section>
+
     <!-- Account verification (okta 1242:8200) -->
     <section class="auth-card" id="step-sms" hidden>
       <h1>Account verification</h1>
