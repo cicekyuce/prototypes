@@ -185,17 +185,14 @@ function createSticker(categoryId) {
   return sticker;
 }
 
+// Bin glyph extracted from the supplied Delete CTA mockup.
 function trashIcon() {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("width", "20");
-  svg.setAttribute("height", "20");
-  svg.setAttribute("viewBox", "0 0 20 20");
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("aria-hidden", "true");
-  svg.innerHTML =
-    '<path d="M3.5 5.5h13M8 5.5V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M5.5 5.5l.7 10a1.5 1.5 0 0 0 1.5 1.4h4.6a1.5 1.5 0 0 0 1.5-1.4l.7-10" ' +
-    'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>';
-  return svg;
+  const icon = document.createElement("img");
+  icon.src = "assets/icon-delete.png";
+  icon.width = 22;
+  icon.height = 25;
+  icon.alt = "";
+  return icon;
 }
 
 // Dismissing the bar makes the previous deletion final; the notification is
