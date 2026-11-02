@@ -425,12 +425,21 @@ function createNoResultsState() {
 
   const copy = document.createElement("p");
   copy.className = "empty-copy";
-  copy.textContent = "Try a different search term or category.";
+  copy.textContent =
+    "Sorry, we couldn\u2019t find this notification. It may have expired or is no longer available.";
+
+  const hint = document.createElement("p");
+  hint.className = "empty-copy";
+  hint.textContent = "Try a different search term or category.";
 
   const reset = document.createElement("button");
   reset.className = "text-link";
   reset.type = "button";
-  reset.textContent = "Clear search and filters";
+  reset.append(document.createTextNode("Clear search and filters"));
+  const resetChevron = document.createElement("img");
+  resetChevron.src = "assets/icon-chevron-right.svg";
+  resetChevron.alt = "";
+  reset.append(resetChevron);
   reset.addEventListener("click", () => {
     searchTerm = "";
     searchInput.value = "";
@@ -438,7 +447,7 @@ function createNoResultsState() {
     navigate("#/inbox");
   });
 
-  wrapper.append(title, copy, reset);
+  wrapper.append(title, copy, hint, reset);
   return wrapper;
 }
 
