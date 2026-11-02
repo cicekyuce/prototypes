@@ -75,7 +75,6 @@ const UNDO_WINDOW_MS = 5000;
 // Swipe geometry — keep in sync with --swipe-action-width in styles.css.
 const ACTION_WIDTH = 88;
 const OPEN_THRESHOLD = 40;
-const DELETE_THRESHOLD = 180;
 const DRAG_TOLERANCE = 6;
 
 let notifications = SEED_NOTIFICATIONS.map((notification) => ({ ...notification }));
@@ -299,11 +298,8 @@ function attachSwipe(row, notification, wrapper) {
     dragging = false;
     if (row.hasPointerCapture(event.pointerId)) row.releasePointerCapture(event.pointerId);
 
-    if (-offset >= DELETE_THRESHOLD) {
-      setRowOffset(row, -wrapper.offsetWidth, true);
-      deleteNotification(notification.id, wrapper);
-      return;
-    }
+    // Swiping only reveals the Delete action; deleting always requires a tap
+    // on the Delete CTA.
     if (-offset >= OPEN_THRESHOLD) {
       setRowOffset(row, -ACTION_WIDTH, true);
       openRow = row;
@@ -329,10 +325,15 @@ function attachSwipe(row, notification, wrapper) {
     row.dataset.unread = "false";
   });
 
+  // Keyboard equivalent of the swipe: reveal the Delete CTA, which must still
+  // be activated to delete.
   row.addEventListener("keydown", (event) => {
     if (event.key === "Delete") {
       event.preventDefault();
-      deleteNotification(notification.id, wrapper);
+      if (openRow && openRow !== row) closeOpenRow();
+      setRowOffset(row, -ACTION_WIDTH, true);
+      openRow = row;
+      wrapper.querySelector(".delete-button").focus();
     }
   });
 }
