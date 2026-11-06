@@ -1,238 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Freedom Mobile — Sign in to My Account (option 1)</title>
-  <link rel="stylesheet" href="../shared/base.css" />
-  <link rel="stylesheet" href="desktop.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>This prototype has moved</title>
+<link rel="canonical" href="../../mobile-app/push-mfa/desktop-password/">
+<script>
+  // Preserve any query string and hash-based deep link (e.g. #/inbox/offer).
+  location.replace("../../mobile-app/push-mfa/desktop-password/" + location.search + location.hash);
+</script>
+<meta http-equiv="refresh" content="0; url=../../mobile-app/push-mfa/desktop-password/">
+<style>
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+         background:#f5f5f5; color:#1f2430; display:flex; align-items:center;
+         justify-content:center; min-height:100vh; }
+  .box { background:#fff; border:1px solid #e2e4e7; border-radius:12px;
+         padding:28px 32px; max-width:420px; text-align:center; }
+  h1 { margin:0 0 8px; font-size:19px; }
+  p  { margin:0; font-size:14px; color:#4e5a66; }
+  a  { color:#1970c3; font-weight:600; }
+</style>
 </head>
 <body>
-  <!-- Figma: okta file seO6L6bEAG3C7R8kq9oAte, page "Flow 2 - Sign in" (1228:10139) + RBC push MFA page 4822:3857 -->
-  <header class="site-header">
-    <a class="site-logo" href="#" aria-label="Freedom Mobile"><img src="../assets/freedom-logo.svg" alt="" /></a>
-    <div class="site-header-right">
-      <span class="phone-status" id="phone-status" title="Status of the mobile tab">
-        <span class="dot"></span><span id="phone-status-text">Phone tab not open</span>
-      </span>
-      <a class="btn-link" id="open-phone" href="../mobile/" target="freedom-push-mfa-mobile">Open phone tab</a>
-      <button class="pill-back" type="button" id="header-back" data-action="back-to-start">Back</button>
-    </div>
-  </header>
-
-  <main class="auth-main" id="auth-main">
-    <!-- Landing (okta 8157:25579) -->
-    <section class="landing" id="step-identify">
-      <div class="notice" role="note">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5v5.5M12 16.2v.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <span><strong>New! Update your account login.</strong> Phone number &amp; username login are now retired. If you have not already done so, please update your login credentials.</span>
-      </div>
-      <div class="landing-card">
-        <div class="landing-promo">
-          <div class="landing-art" role="img" aria-label="Customer smiling while using her phone on the couch"></div>
-          <p class="eyebrow">Update your account login</p>
-          <h2>We’ve updated your login experience.</h2>
-          <p>Phone number and username sign-in are no longer available. To keep using My Account, create an email and password login. Your services, plan, and billing information will stay the same.</p>
-          <button class="btn btn-primary btn-block" type="button" onclick="return false">Update My Account login</button>
-        </div>
-        <form class="landing-form" id="identify-form" novalidate>
-          <p class="eyebrow">Already updated?</p>
-          <h1>Sign in with your email and password.</h1>
-          <label class="ffield">
-            <span class="ffield-label">Email</span>
-            <input id="email" type="email" autocomplete="username" placeholder="Enter your email" required />
-          </label>
-          <p class="field-error" id="email-error" hidden>Enter a valid email address.</p>
-          <button class="btn btn-outline btn-block" type="submit">Sign in to My Account</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Sign in (okta 1242:7384) -->
-    <section class="auth-card" id="step-password" hidden>
-      <h1>Sign in</h1>
-      <p class="bar-lead">Please enter your email and password.</p>
-      <form id="password-form" novalidate>
-        <div class="ffield filled">
-          <span class="ffield-label">Email</span>
-          <span class="ffield-value" id="identity-chip"></span>
-          <button type="button" class="ffield-icon" data-action="back-to-start" aria-label="Change email">
-            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-        <label class="ffield filled">
-          <span class="ffield-label">Password</span>
-          <input id="password" type="password" autocomplete="current-password" value="Freedom2026!" required />
-          <button type="button" class="ffield-icon" id="show-password" aria-label="Show password">
-            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          </button>
-        </label>
-        <a href="#" class="chev-link" onclick="return false">Forgot password?</a>
-        <button class="btn btn-primary btn-block" type="submit">Continue</button>
-      </form>
-      <div class="auth-links">
-        <span>Need help? <a href="#" class="chev-link" onclick="return false">Message an agent</a></span>
-        <span>New to Freedom? <a href="#" class="chev-link" onclick="return false">Create an account</a></span>
-      </div>
-    </section>
-
-    <!-- Push sent (RBC 4822:4512, Freedom styling) -->
-    <section class="auth-card center" id="step-push" hidden>
-      <div class="bell-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 3v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      </div>
-      <h1>Check your device with the Freedom app</h1>
-      <p class="lead">To verify your identity, look for a notification from the Freedom app on <strong id="push-device">your primary mobile device</strong> and tap <strong>Allow</strong>. <strong>You have 2 minutes before it expires.</strong></p>
-      <div class="push-status" id="push-status" role="status" aria-live="polite">
-        <span class="spinner" aria-hidden="true"></span>
-        <span>Waiting for your approval · <strong id="push-countdown">2:00</strong></span>
-      </div>
-      <div class="stack">
-        <button class="btn btn-outline btn-block" type="button" id="try-sms">I didn’t get a notification</button>
-        <button class="btn-link" type="button" id="resend-push">Resend notification</button>
-        <button class="btn-link" type="button" data-action="back-to-start">Cancel</button>
-      </div>
-      <p class="demo-note" id="push-tip">Prototype tip: switch to the phone tab to see the notification.</p>
-    </section>
-
-    <!-- 2-step verification options (App Architecture 4847:3858, RBC "Didn't get a notification") -->
-    <section class="auth-card options-card" id="step-options" hidden>
-      <div class="options-head">
-        <h1>2-step verification</h1>
-        <p class="bar-lead">Please select an option to help us verify your identity.</p>
-      </div>
-      <ul class="option-list">
-        <li id="opt-push-row"><button type="button" class="option" id="opt-push">
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span>Send a notification to your device</span></button></li>
-        <li><button type="button" class="option" id="opt-sms">
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 5h16v11H10l-4 3.5V16H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          <span>Text or email me a one-time code</span></button></li>
-      </ul>
-      <button class="btn-link options-cancel" type="button" data-action="back-to-start">Cancel</button>
-    </section>
-
-    <!-- Account verification: choose code channel (okta 4326:12100) -->
-    <section class="auth-card" id="step-mfa" hidden>
-      <h1>Account verification</h1>
-      <p class="bar-lead">How do you want to receive your security code?</p>
-      <form id="mfa-form" novalidate>
-        <label class="ffield choice">
-          <span class="ffield-label">Phone number</span>
-          <span class="ffield-value">(***) ***-**21</span>
-          <input type="radio" name="code-channel" value="sms" checked />
-          <span class="choice-mark" aria-hidden="true"></span>
-        </label>
-        <label class="ffield choice">
-          <span class="ffield-label">Email</span>
-          <span class="ffield-value" id="mfa-email"></span>
-          <input type="radio" name="code-channel" value="email" />
-          <span class="choice-mark" aria-hidden="true"></span>
-        </label>
-        <button class="btn btn-primary btn-block" type="submit">Continue</button>
-      </form>
-      <div class="auth-links">
-        <span>Need help? <a href="#" class="chev-link" onclick="return false">Message an agent</a></span>
-      </div>
-    </section>
-
-    <!-- Account verification (okta 1242:8200) -->
-    <section class="auth-card" id="step-sms" hidden>
-      <h1>Account verification</h1>
-      <p class="bar-lead" id="sms-lead">We sent a code to (***) ***-**21</p>
-      <form id="sms-form" novalidate>
-        <label class="ffield">
-          <span class="ffield-label">Enter code</span>
-          <input id="sms-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required />
-        </label>
-        <p class="field-error" id="sms-error" hidden>That code doesn't match. Check the <span id="sms-error-src">text message</span> and try again.</p>
-        <p class="resend-row">Didn’t get a code? <button class="u-link" type="button" id="resend-sms">Resend</button></p>
-        <button class="btn btn-primary btn-block" type="submit">Continue</button>
-      </form>
-      <div class="auth-links">
-        <button class="chev-link" type="button" id="back-to-push">Send a notification to the Freedom app instead</button>
-        <span>Need help? <a href="#" class="chev-link" onclick="return false">Message an agent</a></span>
-      </div>
-      <p class="demo-note" id="code-tip">Prototype tip: the text message arrives on the phone tab.</p>
-    </section>
-
-    <!-- Denied -->
-    <section class="auth-card center" id="step-denied" hidden>
-      <div class="result-icon result-error" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <h1>Sign-in not allowed</h1>
-      <p class="lead">This sign-in was declined on your phone and reported as unusual activity. For your security, please reset your password.</p>
-      <div class="stack">
-        <button class="btn btn-primary btn-block" type="button" onclick="return false">Reset password</button>
-        <button class="btn-link" type="button" data-action="back-to-start">Back to sign in</button>
-      </div>
-    </section>
-
-    <!-- Expired -->
-    <section class="auth-card center" id="step-expired" hidden>
-      <div class="result-icon result-warn" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
-      </div>
-      <h1>Time’s up</h1>
-      <p class="lead">Your notification has expired. Send a new one to the Freedom app, or get a code by text message.</p>
-      <div class="stack">
-        <button class="btn btn-primary btn-block" type="button" id="expired-resend">Send a new notification</button>
-        <button class="btn btn-outline btn-block" type="button" id="expired-sms">Text or email me a one-time code</button>
-      </div>
-    </section>
-
-    <!-- Success (RBC 4822:4509) -->
-    <section class="auth-card center success-card" id="step-approved" hidden>
-      <div class="result-icon result-success" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 12.5l4 4L18 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      </div>
-      <h1>Success!</h1>
-      <p class="lead">Taking you to My Account…</p>
-    </section>
-  </main>
-
-  <!-- Signed-in My Account -->
-  <main class="account" id="account" hidden>
-    <div class="account-inner">
-      <div class="account-top">
-        <div>
-          <p class="eyebrow">My Account</p>
-          <h1>Hi, Cicek</h1>
-        </div>
-        <button class="btn btn-outline" type="button" id="sign-out">Sign out</button>
-      </div>
-      <div class="signin-banner" role="status">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <span id="signin-banner-text">Signed in with approval from your Freedom app.</span>
-      </div>
-      <div class="account-grid">
-        <article class="tile">
-          <p class="tile-label">My bill</p>
-          <div class="bill-band"><span>Upcoming payment:</span><strong>$170<sup>.63</sup></strong></div>
-          <p class="tile-meta">Auto Pay: <b class="on">ON</b> · Withdrawn on Jan. 07, 2026</p>
-        </article>
-        <article class="tile">
-          <p class="tile-label">My usage</p>
-          <p class="tile-value">45GB used <span class="muted">/ 50GB total</span></p>
-          <div class="meter"><span style="width: 90%"></span></div>
-          <p class="tile-meta">Your plan data will reset in 11 day(s).</p>
-        </article>
-        <article class="tile">
-          <p class="tile-label">My plan</p>
-          <p class="tile-value">Can-U.S.-Mex 50GB + 5G</p>
-          <p class="tile-meta">$45/mo. · (416) 721-8594</p>
-        </article>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <span>© 2026 Freedom Mobile Inc.</span>
-    <span>Prototype · <a href="../" class="btn-link">Back to prototype dashboard</a> · <button class="btn-link" type="button" id="reset-demo">Reset demo</button></span>
-  </footer>
-
-  <script src="../shared/sync.js"></script>
-  <script src="desktop.js"></script>
+  <div class="box">
+    <h1>This prototype has moved</h1>
+    <p>Redirecting&hellip; if nothing happens, <a href="../../mobile-app/push-mfa/desktop-password/">open it here</a>.</p>
+  </div>
 </body>
 </html>

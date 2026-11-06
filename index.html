@@ -59,11 +59,32 @@ h1 {
   border-radius: 999px;
   padding: 3px 10px;
 }
-.card h2 {
+.card h3 {
   margin: 12px 0 8px;
   font-size: 19px;
   font-weight: 700;
   line-height: 1.3;
+}
+.group {
+  margin: 0 0 46px;
+}
+.group:last-of-type {
+  margin-bottom: 0;
+}
+.group-title {
+  margin: 0 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dfe2e6;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4e5a66;
+}
+.group-count {
+  margin-left: 8px;
+  font-weight: 700;
+  color: #8b949e;
 }
 .card p {
   margin: 0 0 14px;
@@ -123,66 +144,75 @@ h1 {
 <main class="wrap">
   <h1>Cicek's prototypes</h1>
   <p class="tagline">Prototype hub — one home for all interactive prototypes.</p>
-  <section class="grid">
-    <a class="card" href="crtc-message-centre/">
-      <span class="card-tag">Freedom Mobile</span>
-      <h2>CRTC Notifications — Message Centre</h2>
-      <p>Message centre with 11 messages, keyword search, read/unread and type filters, in-app message preview, PDF messages opening in a new tab, the regulatory + marketing message template, and three notification preference options.</p>
-      <span class="card-open">Open prototype →</span>
-    </a>
-    <a class="card" href="notifications-inbox/">
-      <span class="card-tag">Freedom Mobile</span>
-      <h2>Mobile App - Notifications Inbox</h2>
-      <p>Notifications inbox journey from the Figma app architecture: tap the bell on the overview screen to open the inbox, filter by category, search notifications, and swipe a row left to delete it.</p>
-      <span class="card-open">Open prototype →</span>
-    </a>
-    <a class="card" href="push-mfa/">
-      <span class="card-tag">Freedom Mobile</span>
-      <h2>Push Notifications as MFA for Desktop Login</h2>
-      <p>Prototype dashboard for approving My Account desktop sign-ins with a push notification to the Freedom app (RBC pattern): synced desktop + phone tabs, plus RBC-style sign-in &amp; security settings.</p>
-      <span class="card-open">Open prototype →</span>
-    </a>
+  <section class="group">
+    <h2 class="group-title">My Account Web <span class="group-count">1</span></h2>
+    <div class="grid">
+      <a class="card" href="my-account-web/crtc-message-centre/">
+        <span class="card-tag">Freedom Mobile</span>
+        <h3>CRTC Notifications — Message Centre</h3>
+        <p>Message centre with 11 messages, keyword search, read/unread and type filters, in-app message preview, PDF messages opening in a new tab, the regulatory + marketing message template, and three notification preference options.</p>
+        <span class="card-open">Open prototype →</span>
+      </a>
+    </div>
+
+    <section class="deeplinks">
+      <h3>Direct links</h3>
+      <p>Jump straight to a specific screen of the Message Centre prototype.</p>
+      <ul>
+        <li><a href="my-account-web/crtc-message-centre/#/">Message list</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/message/tab-ending">Message preview (Tab ending)</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/message/offer-bonus-data">Message preview (Offer)</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/profile">My Profile</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/preferences">Preferences — Option 1</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/preferences2">Preferences — Option 2</a></li>
+        <li><a href="my-account-web/crtc-message-centre/#/preferences3">Preferences — Option 3</a></li>
+      </ul>
+    </section>
   </section>
 
-  <section class="deeplinks">
-    <h3>Direct links</h3>
-    <p>Jump straight to a specific screen of the Message Centre prototype.</p>
-    <ul>
-      <li><a href="crtc-message-centre/#/">Message list</a></li>
-      <li><a href="crtc-message-centre/#/message/tab-ending">Message preview (Tab ending)</a></li>
-      <li><a href="crtc-message-centre/#/message/offer-bonus-data">Message preview (Offer)</a></li>
-      <li><a href="crtc-message-centre/#/profile">My Profile</a></li>
-      <li><a href="crtc-message-centre/#/preferences">Preferences — Option 1</a></li>
-      <li><a href="crtc-message-centre/#/preferences2">Preferences — Option 2</a></li>
-      <li><a href="crtc-message-centre/#/preferences3">Preferences — Option 3</a></li>
-    </ul>
-  </section>
+  <section class="group">
+    <h2 class="group-title">Mobile app <span class="group-count">2</span></h2>
+    <div class="grid">
+      <a class="card" href="mobile-app/notifications-inbox/">
+        <span class="card-tag">Freedom Mobile</span>
+        <h3>Mobile App - Notifications Inbox</h3>
+        <p>Notifications inbox journey from the Figma app architecture: tap the bell on the overview screen to open the inbox, filter by category, search notifications, and swipe a row left to delete it.</p>
+        <span class="card-open">Open prototype →</span>
+      </a>
+      <a class="card" href="mobile-app/push-mfa/">
+        <span class="card-tag">Freedom Mobile</span>
+        <h3>Push Notifications as MFA for Desktop Login</h3>
+        <p>Prototype dashboard for approving My Account desktop sign-ins with a push notification to the Freedom app (RBC pattern): synced desktop + phone tabs, plus RBC-style sign-in &amp; security settings.</p>
+        <span class="card-open">Open prototype →</span>
+      </a>
+    </div>
 
-  <section class="deeplinks">
-    <h3>Direct links</h3>
-    <p>Jump straight to a specific screen of the Mobile App - Notifications Inbox prototype.</p>
-    <ul>
-      <li><a href="notifications-inbox/#/">Overview (bell entry point)</a></li>
-      <li><a href="notifications-inbox/#/inbox">Notifications inbox</a></li>
-      <li><a href="notifications-inbox/#/inbox/offer">Inbox — Offers</a></li>
-      <li><a href="notifications-inbox/#/inbox/rewards">Inbox — Rewards</a></li>
-      <li><a href="notifications-inbox/#/inbox/billing">Inbox — Billing</a></li>
-      <li><a href="notifications-inbox/#/inbox/network">Inbox — Network</a></li>
-    </ul>
-  </section>
+    <section class="deeplinks">
+      <h3>Direct links</h3>
+      <p>Jump straight to a specific screen of the Mobile App - Notifications Inbox prototype.</p>
+      <ul>
+        <li><a href="mobile-app/notifications-inbox/#/">Overview (bell entry point)</a></li>
+        <li><a href="mobile-app/notifications-inbox/#/inbox">Notifications inbox</a></li>
+        <li><a href="mobile-app/notifications-inbox/#/inbox/offer">Inbox — Offers</a></li>
+        <li><a href="mobile-app/notifications-inbox/#/inbox/rewards">Inbox — Rewards</a></li>
+        <li><a href="mobile-app/notifications-inbox/#/inbox/billing">Inbox — Billing</a></li>
+        <li><a href="mobile-app/notifications-inbox/#/inbox/network">Inbox — Network</a></li>
+      </ul>
+    </section>
 
-  <section class="deeplinks">
-    <h3>Direct links</h3>
-    <p>Jump straight to a specific part of the Push Notifications as MFA for Desktop Login prototype.</p>
-    <ul>
-      <li><a href="push-mfa/">Prototype dashboard</a></li>
-      <li><a href="push-mfa/desktop-password/">Desktop sign-in — option 1 (password)</a></li>
-      <li><a href="push-mfa/desktop/">Desktop sign-in — option 2 (choose how to verify)</a></li>
-      <li><a href="push-mfa/mobile/">Phone lock screen</a></li>
-      <li><a href="push-mfa/mobile/#/home">Phone home screen</a></li>
-      <li><a href="push-mfa/mobile/#/settings">My Account</a></li>
-      <li><a href="push-mfa/mobile/#/login">Manage login settings</a></li>
-    </ul>
+    <section class="deeplinks">
+      <h3>Direct links</h3>
+      <p>Jump straight to a specific part of the Push Notifications as MFA for Desktop Login prototype.</p>
+      <ul>
+        <li><a href="mobile-app/push-mfa/">Prototype dashboard</a></li>
+        <li><a href="mobile-app/push-mfa/desktop-password/">Desktop sign-in — option 1 (password)</a></li>
+        <li><a href="mobile-app/push-mfa/desktop/">Desktop sign-in — option 2 (choose how to verify)</a></li>
+        <li><a href="mobile-app/push-mfa/mobile/">Phone lock screen</a></li>
+        <li><a href="mobile-app/push-mfa/mobile/#/home">Phone home screen</a></li>
+        <li><a href="mobile-app/push-mfa/mobile/#/settings">My Account</a></li>
+        <li><a href="mobile-app/push-mfa/mobile/#/login">Manage login settings</a></li>
+      </ul>
+    </section>
   </section>
 </main>
 </body>

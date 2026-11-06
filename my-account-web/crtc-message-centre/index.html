@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message Centre (For Launch) | Freedom Mobile</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a href="#/">Find a Store</a>
+      <a href="#/">Contact Us</a>
+      <a href="#/">EN
+        <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="mainbar">
+    <div class="mainbar-inner">
+      <a class="brand" href="#/" aria-label="Freedom Mobile home">freedom</a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#/">Mobile
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/">Internet + TV
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/">Network
+          <svg class="ic-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <a href="#/" class="nav-promo">Back to school offers</a>
+      </nav>
+      <a class="my-freedom" href="#/">My Freedom
+        <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="account-strip">
+  <div class="account-strip-inner">
+    <p class="greeting">Hi, Jennifer</p>
+    <p class="account-phone">(666) 780-1194</p>
+  </div>
+</div>
+
+<nav class="account-tabs" aria-label="Account sections">
+  <div class="account-tabs-inner">
+    <a href="#/">Overview</a>
+    <a href="#/">Add-Ons & Passes</a>
+    <a href="#/">Usage Details</a>
+    <a href="#/">Manage Features</a>
+    <a href="#/">My Plan & Device</a>
+    <a href="#/">Billing Details</a>
+    <a href="#/profile" class="is-active">My Profile</a>
+  </div>
+</nav>
+
+<main id="app" class="page">
+  <section id="view-list" class="view" aria-label="Message Centre">
+    <div class="mc-hero">
+      <h1 class="mc-title">Message Centre</h1>
+      <p class="mc-subtitle">View your messages regarding changes to your plans, coverage or device.</p>
+    </div>
+    <div class="list-toolbar">
+      <div class="search" id="search">
+        <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search messages" aria-label="Search messages">
+      </div>
+      <div class="filter" id="filter">
+        <span class="filter-label" id="filter-by">Filter by:</span>
+        <button class="filter-btn" type="button" id="filter-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="filter-menu">
+          <span id="filter-label">All types</span>
+          <svg class="ic-14 caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-menu" id="filter-menu" role="menu" aria-label="Filter messages by type" hidden>
+          <button class="filter-option is-selected" type="button" role="menuitemradio" aria-checked="true" data-filter="all">All types</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Read">Read</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Unread">Unread</button>
+          <div class="filter-sep" role="separator"></div>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Activation">Activation</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Contract expiry">Contract expiry</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Offer">Offer</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Plan Change">Plan Change</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Promotion expiry">Promotion expiry</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Regulatory">Regulatory</button>
+          <button class="filter-option" type="button" role="menuitemradio" aria-checked="false" data-filter="Roaming">Roaming</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-card">
+      <div class="list-header-row" aria-hidden="true">
+        <span class="col-received">Received On:</span>
+        <span class="col-subject">Subject:</span>
+        <span class="col-type">Type:</span>
+      </div>
+      <ul class="message-list" id="message-list"></ul>
+      <div class="list-empty" id="list-empty" hidden>
+        <p>No messages match this filter.</p>
+      </div>
+      <div class="list-pagination" id="list-pagination" hidden></div>
+    </div>
+  </section>
+
+  <section id="view-detail" class="view" aria-label="Message preview" hidden>
+    <div class="detail-wrap">
+      <button class="back-btn" type="button" id="back-btn">
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Message Centre</span>
+      </button>
+      <article class="detail-card" id="detail-card"></article>
+    </div>
+  </section>
+
+  <section id="view-profile" class="view" aria-label="My Profile" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">My Profile</h1>
+      <p class="mc-subtitle">Manage your profile and notification settings.</p>
+    </div>
+    <div class="profile-card">
+      <a class="profile-item" href="#/">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Message Centre (For Launch)</span>
+          <span class="profile-item-desc">View your messages regarding changes to your plans, coverage or device.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="profile-item" href="#/preferences">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences (For Launch)</span>
+          <span class="profile-item-desc">Choose how you receive marketing communications and regulatory alerts.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="profile-item" href="#/preferences2">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences (Option 2)</span>
+          <span class="profile-item-desc">Review an alternative version of the notification preferences.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a class="profile-item" href="#/preferences3">
+        <span class="profile-item-text">
+          <span class="profile-item-title">Notification Preferences (Option 3)</span>
+          <span class="profile-item-desc">Review a third version of the notification preferences.</span>
+        </span>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section id="view-preferences" class="view" aria-label="Notification preferences" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <div class="pref-section-head">
+          <h2 class="pref-section-title">Marketing communications</h2>
+          <button class="info-btn" type="button" data-drawer="marketing" aria-label="What are marketing communications?" title="What are marketing communications?">
+            <svg class="ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+        </div>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option"><input type="radio" name="mkt-pref" value="all" checked><span>Alerts, announcements & exclusive offers</span></label>
+        <label class="pref-option"><input type="radio" name="mkt-pref" value="required"><span>Only required notifications</span></label>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <div class="pref-section-head">
+          <h2 class="pref-section-title">Regulatory alerts</h2>
+          <button class="info-btn" type="button" data-drawer="regulatory" aria-label="What are regulatory alerts?" title="What are regulatory alerts?">
+            <svg class="ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+        </div>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices. Your selected method will be used for eligible regulatory alerts.</p>
+        <label class="pref-option">
+          <input type="radio" name="reg-method" value="email" checked>
+          <span class="pref-method"><span class="pref-method-name">Email</span><span class="pref-method-contact">cyucezeytinci@freedommobile.ca</span></span>
+        </label>
+        <label class="pref-option">
+          <input type="radio" name="reg-method" value="sms">
+          <span class="pref-method"><span class="pref-method-name">SMS</span></span>
+        </label>
+        <a class="pref-link" href="#/profile">Update your contact information in My Profile
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </section>
+      <div class="pref-confirm" id="pref-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
+      <div class="pref-optout" id="pref-optout" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <div>
+          <p class="pref-optout-title">You've opted out of marketing communications.</p>
+          <p class="pref-optout-sub">You'll no longer receive alerts, announcements or exclusive offers. Select the first option above and save to opt back in.</p>
+        </div>
+      </div>
+      <div class="pref-actions">
+        <button class="btn-save" type="button" id="pref-save">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-preferences2" class="view" aria-label="Notification preferences (Option 2)" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <h2 class="pref-section-title">Marketing communications</h2>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option"><input type="radio" name="mkt-pref-2" value="yes" checked><span>Yes</span></label>
+        <label class="pref-option"><input type="radio" name="mkt-pref-2" value="no"><span>No — only service notifications</span></label>
+        <fieldset class="pref-channels" id="pref-channels">
+          <legend class="pref-label">How would you like to receive them? <span class="pref-hint">(Select all that apply)</span></legend>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="email" checked><span>Email</span></label>
+          <label class="pref-option pref-channel"><input type="checkbox" name="mkt-channel-2" value="sms"><span>SMS</span></label>
+        </fieldset>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices. Your selected method will be used for eligible regulatory alerts.</p>
+        <p class="pref-label">Preferred alert method:</p>
+        <label class="pref-option"><input type="radio" name="reg-method-2" value="email" checked><span>Email</span></label>
+        <label class="pref-option"><input type="radio" name="reg-method-2" value="sms"><span>SMS</span></label>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">My Account inbox</h2>
+        <p class="pref-question">Your detailed notifications are also available in your My Account Inbox / Message Centre.</p>
+        <a class="pref-link" href="#/">View Message Centre
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </section>
+      <div class="pref-confirm" id="pref2-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
+      <div class="pref-actions">
+        <button class="btn-save" type="button" id="pref2-save">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-preferences3" class="view" aria-label="Notification preferences (Option 3)" hidden>
+    <div class="mc-hero">
+      <h1 class="mc-title">Notification Preferences</h1>
+      <p class="mc-subtitle">Please select your notification preferences.</p>
+    </div>
+    <div class="pref-card">
+      <section class="pref-section">
+        <h2 class="pref-section-title">Marketing communications</h2>
+        <p class="pref-question">Would you like to receive alerts, announcements & exclusive offers from Freedom Mobile?</p>
+        <label class="pref-option">
+          <input type="checkbox" name="mkt-channel-3" value="email" checked>
+          <span class="pref-method"><span class="pref-method-name">Email</span><span class="pref-method-contact">cyucezeytinci@freedommobile.ca</span></span>
+        </label>
+        <label class="pref-option">
+          <input type="checkbox" name="mkt-channel-3" value="sms">
+          <span class="pref-method"><span class="pref-method-name">SMS</span><span class="pref-method-contact">(666) 780-1194</span></span>
+        </label>
+        <p class="pref-note">Marketing preferences are separate from your regulatory alert preference. You will continue to receive required notifications even if you opt out of marketing communications.</p>
+      </section>
+      <section class="pref-section">
+        <h2 class="pref-section-title">Regulatory alerts</h2>
+        <p class="pref-question">You will receive important notifications about your account, such as contract or promotion expiry notices. Your selected method will be used for eligible regulatory alerts.</p>
+        <p class="pref-label">Preferred alert method:</p>
+        <label class="pref-option">
+          <input type="radio" name="reg-method-3" value="email" checked>
+          <span class="pref-method"><span class="pref-method-name">Email</span><span class="pref-method-contact">cyucezeytinci@freedommobile.ca</span></span>
+        </label>
+        <label class="pref-option">
+          <input type="radio" name="reg-method-3" value="sms">
+          <span class="pref-method"><span class="pref-method-name">SMS</span><span class="pref-method-contact">(666) 780-1194</span></span>
+        </label>
+        <a class="pref-link" href="#/profile">Update your contact information in My Profile
+          <svg class="ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </section>
+      <div class="pref-confirm" id="pref3-confirm" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p class="pref-confirm-title">Your notification preferences have been saved.</p>
+          <p class="pref-confirm-sub">You can update these settings at any time from My Account.</p>
+        </div>
+      </div>
+      <div class="pref-optout" id="pref3-optout" role="status" tabindex="-1" hidden>
+        <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <div>
+          <p class="pref-optout-title">You've opted out of marketing communications.</p>
+          <p class="pref-optout-sub">You'll no longer receive alerts, announcements or exclusive offers. Select a method above and save to opt back in.</p>
+        </div>
+      </div>
+      <div class="pref-actions">
+        <button class="btn-save" type="button" id="pref3-save">Save</button>
+        <a class="btn-cancel" href="#/profile">Cancel</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="drawer-scrim" id="drawer-scrim" hidden></div>
+<aside class="drawer" id="info-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1" hidden>
+  <div class="drawer-head">
+    <button class="drawer-dismiss" type="button" id="drawer-dismiss">
+      <svg class="ic-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span>Close</span>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#/">Contact Us</a>
+      <a href="#/">Find a Store</a>
+      <a href="#/">Report a network issue</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#/">All</a>
+      <a href="#/">Account & Billing</a>
+      <a href="#/">Network & Coverage</a>
+      <a href="#/">Phones & Devices</a>
+      <a href="#/">Plans & Services</a>
+      <a href="#/">Home Internet</a>
+      <a href="#/">Device Repair</a>
+      <a href="#/">Network service status</a>
+    </div>
+    <div class="footer-col">
+      <h4>About Us</h4>
+      <a href="#/">Freedom</a>
+      <a href="#/">News Room</a>
+    </div>
+    <div class="footer-col">
+      <h4>More</h4>
+      <a href="#/">Terms of Service</a>
+      <a href="#/">Terms and Conditions</a>
+      <a href="#/">Privacy Policy</a>
+      <a href="#/">Wireless Code of Conduct</a>
+      <a href="#/">Internet Code</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Videotron Ltd. doing business as Freedom Mobile</p>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
