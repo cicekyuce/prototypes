@@ -35,13 +35,30 @@
     <p class="eyebrow">Freedom Mobile · Prototype dashboard</p>
     <h1>Push Notifications as MFA for Desktop Login</h1>
     <p class="tagline">Approve a My Account sign-in on a computer with a push notification to the Freedom app, the same pattern RBC uses. Pick a prototype below.</p>
-    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked the phone tab. Allow pop-ups for cicekyuce.github.io (the icon at the right of the address bar), then click "Open prototype (2 tabs)" again.</p>
+    <p class="popup-warning" id="popup-warning" hidden>Your browser blocked the phone tab. Allow pop-ups for cicekyuce.github.io (the icon at the right of the address bar), then click "Open option 1" or "Open option 2" again.</p>
 
     <section class="grid">
       <article class="card">
-        <span class="card-tag">Desktop + mobile · 2 tabs</span>
-        <h2>Desktop login with push approval</h2>
-        <p>Opens the Freedom desktop sign-in and the phone (lock screen, home screen and Freedom app) in two new tabs that stay in sync.</p>
+        <span class="card-tag">Option 1 · Desktop + mobile · 2 tabs</span>
+        <h2>Desktop login with push approval — email and password</h2>
+        <p>Opens the Freedom desktop sign-in and the phone (lock screen, home screen and Freedom app) in two tabs that stay in sync. After the password, the Freedom app notification is sent automatically.</p>
+        <ol>
+          <li>Sign in on the desktop tab (email, then password).</li>
+          <li>Switch to the phone tab: a push notification arrives.</li>
+          <li>Tap it, review the request, then approve or deny.</li>
+          <li>The desktop tab signs you in, or blocks the sign-in.</li>
+        </ol>
+        <div class="actions">
+          <a class="btn btn-primary" data-open-both href="desktop-password/">Open option 1 (2 tabs)</a>
+          <a class="btn-link" href="desktop-password/" target="freedom-push-mfa-desktop">Desktop tab only</a>
+          <a class="btn-link" href="mobile/" target="freedom-push-mfa-mobile">Phone tab only</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Option 2 · Desktop + mobile · 2 tabs</span>
+        <h2>Desktop login with push approval — no password, choose how to verify</h2>
+        <p>Same two synced tabs. "Sign in to My Account" skips the password and asks how to receive the security code, with Phone notification as the default.</p>
         <ol>
           <li>Sign in on the desktop tab: enter your email, then choose Phone notification (the default), text or email.</li>
           <li>Switch to the phone tab: a push notification arrives.</li>
@@ -49,7 +66,7 @@
           <li>The desktop tab signs you in, or blocks the sign-in.</li>
         </ol>
         <div class="actions">
-          <a class="btn btn-primary" id="open-both" href="desktop/">Open prototype (2 tabs)</a>
+          <a class="btn btn-primary" id="open-both" data-open-both href="desktop/">Open option 2 (2 tabs)</a>
           <a class="btn-link" href="desktop/" target="freedom-push-mfa-desktop">Desktop tab only</a>
           <a class="btn-link" href="mobile/" target="freedom-push-mfa-mobile">Phone tab only</a>
         </div>
@@ -85,7 +102,8 @@
       <h3>Direct links</h3>
       <p>Jump straight to a specific screen.</p>
       <ul>
-        <li><a href="desktop/" target="freedom-push-mfa-desktop">Desktop sign-in</a></li>
+        <li><a href="desktop-password/" target="freedom-push-mfa-desktop">Desktop sign-in — option 1 (password)</a></li>
+        <li><a href="desktop/" target="freedom-push-mfa-desktop">Desktop sign-in — option 2 (choose how to verify)</a></li>
         <li><a href="mobile/" target="freedom-push-mfa-mobile">Phone lock screen</a></li>
         <li><a href="mobile/#/home" target="freedom-push-mfa-mobile">Phone home screen</a></li>
         <li><a href="mobile/#/app" target="freedom-push-mfa-mobile">Freedom app overview</a></li>
@@ -103,14 +121,16 @@
   <script>
     // The phone opens in a new tab and this tab becomes the desktop sign-in
     // (browsers allow only one new tab per click without pop-up permission).
-    document.getElementById("open-both").addEventListener("click", function (event) {
-      event.preventDefault();
-      const phone = window.open("mobile/", "freedom-push-mfa-mobile");
-      if (!phone) {
-        document.getElementById("popup-warning").hidden = false;
-        return;
-      }
-      location.href = "desktop/";
+    document.querySelectorAll("[data-open-both]").forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        const phone = window.open("mobile/", "freedom-push-mfa-mobile");
+        if (!phone) {
+          document.getElementById("popup-warning").hidden = false;
+          return;
+        }
+        location.href = link.getAttribute("href");
+      });
     });
   </script>
 </body>
