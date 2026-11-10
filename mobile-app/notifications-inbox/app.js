@@ -89,10 +89,10 @@ const UNDO_WINDOW_MS = 5000;
 // Swipe geometry — keep in sync with --swipe-action-width in styles.css.
 const ACTION_WIDTH = 88;
 const OPEN_THRESHOLD = 40;
-// Locked rows give way by a few pixels only, and explain themselves once the
-// swipe is clearly deliberate.
-const LOCKED_MAX_OFFSET = 28;
-const LOCKED_HINT_THRESHOLD = 24;
+// Locked rows give way, then bounce back; they never travel far enough to
+// suggest an action is waiting behind them.
+const LOCKED_MAX_OFFSET = 60;
+const LOCKED_HINT_THRESHOLD = 28;
 const LOCKED_MESSAGE_MS = 5000;
 const DRAG_TOLERANCE = 6;
 
@@ -156,8 +156,21 @@ function closeOpenRow() {
 }
 
 function setRowOffset(row, offset, animate) {
+  // A leftover bounce transition would make the next drag lag behind the finger.
+  if (!animate) row.classList.remove("bouncing");
   row.classList.toggle("settling", Boolean(animate));
   row.style.transform = `translateX(${offset}px)`;
+}
+
+// Spring-style return used by rows that cannot be swiped open.
+function bounceRowBack(row) {
+  row.classList.remove("settling");
+  row.classList.add("bouncing");
+  row.style.transform = "translateX(0px)";
+  const clear = () => row.classList.remove("bouncing");
+  row.addEventListener("transitionend", clear, { once: true });
+  // Fallback in case the transition is interrupted and never reports its end.
+  window.setTimeout(clear, 500);
 }
 
 function matchesSearch(notification) {
@@ -351,7 +364,7 @@ function attachLockedSwipe(row, wrapper) {
     // Capture the pointer so the row still snaps back when the finger is
     // lifted outside it.
     row.setPointerCapture(event.pointerId);
-    row.classList.remove("settling");
+    row.classList.remove("settling", "bouncing");
   });
 
   row.addEventListener("pointermove", (event) => {
@@ -359,9 +372,11 @@ function attachLockedSwipe(row, wrapper) {
     const delta = event.clientX - startX;
     if (Math.abs(delta) > DRAG_TOLERANCE) moved = true;
     if (delta >= 0) return;
-    // Rubber band: the row follows the finger at a fraction of the distance.
-    const resistedOffset = -Math.min(LOCKED_MAX_OFFSET, -delta * 0.35);
-    if (-delta >= LOCKED_HINT_THRESHOLD) resisted = true;
+    // Rubber band: the row follows the finger, easing off as it approaches the
+    // limit so the resistance is felt rather than hit as a hard stop.
+    const travel = -delta;
+    const resistedOffset = -LOCKED_MAX_OFFSET * (1 - Math.exp(-travel / 110));
+    if (travel >= LOCKED_HINT_THRESHOLD) resisted = true;
     setRowOffset(row, resistedOffset, false);
   });
 
@@ -369,7 +384,7 @@ function attachLockedSwipe(row, wrapper) {
     if (!dragging) return;
     dragging = false;
     if (row.hasPointerCapture(event.pointerId)) row.releasePointerCapture(event.pointerId);
-    setRowOffset(row, 0, true);
+    bounceRowBack(row);
     if (resisted) showLockedMessage(wrapper);
   };
 
@@ -379,7 +394,7 @@ function attachLockedSwipe(row, wrapper) {
   row.addEventListener("lostpointercapture", () => {
     if (!dragging) return;
     dragging = false;
-    setRowOffset(row, 0, true);
+    bounceRowBack(row);
     if (resisted) showLockedMessage(wrapper);
   });
 

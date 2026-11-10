@@ -389,6 +389,18 @@ body {
   transition: transform 200ms ease;
 }
 
+/* Overshoots slightly on the way back, so a locked row reads as springing
+   back rather than being dragged into place. */
+.row.bouncing {
+  transition: transform 420ms cubic-bezier(0.22, 1.4, 0.4, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row.bouncing {
+    transition: transform 150ms ease;
+  }
+}
+
 .row-message {
   display: flex;
   gap: 5px;
