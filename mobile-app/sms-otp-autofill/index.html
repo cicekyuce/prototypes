@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Native SMS OTP AutoFill for MFA — Freedom app</title>
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <aside class="side-note">
+    <a class="btn-link crumb" href="../../">← Cicek's prototypes</a>
+    <p class="side-eyebrow">Mobile app · MFA</p>
+    <h1>Native SMS OTP AutoFill</h1>
+    <p>Sign in to the Freedom app, choose to get the security code by text, and fill it in with one tap from the keyboard, the same way the RBC app does.</p>
+    <ol class="side-steps" id="side-steps">
+      <li data-step="welcome">First launch: tap <b>Sign in to My Account</b></li>
+      <li data-step="drawer">Enter your email in the drawer</li>
+      <li data-step="signin">Enter a password, tap <b>Continue</b></li>
+      <li data-step="verify">Choose <b>Phone number</b>, tap <b>Continue</b></li>
+      <li data-step="code">Tap the code above the keypad to fill it</li>
+      <li data-step="done">Signed in</li>
+    </ol>
+    <div class="side-block">
+      <p class="side-label">Platform</p>
+      <div class="seg" role="radiogroup" aria-label="Platform">
+        <button type="button" role="radio" data-platform="ios" aria-checked="true">iOS</button>
+        <button type="button" role="radio" data-platform="android" aria-checked="false">Android</button>
+      </div>
+      <p class="side-hint" id="platform-hint"></p>
+    </div>
+    <p class="side-links"><button class="btn-link" type="button" id="reset-demo">Restart demo</button> · <button class="btn-link" type="button" id="toggle-notes">How it works</button></p>
+  </aside>
+
+  <div class="device" id="device" role="application" aria-label="Phone prototype">
+    <div class="status-bar" id="status-bar">
+      <span class="sb-time" id="sb-time">9:41</span>
+      <span class="sb-island"></span>
+      <span class="sb-icons" aria-hidden="true">
+        <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+        <span class="sb-carrier">5G+</span>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity="0.5"/></svg>
+      </span>
+    </div>
+
+    <!-- 1. First app launch -->
+    <section class="screen welcome" id="scr-welcome" hidden>
+      <div class="welcome-main">
+        <img class="welcome-logo" src="assets/freedom-logo-white.svg" alt="Freedom" />
+        <div class="welcome-art" role="img" aria-label="Customer smiling while using her phone"></div>
+        <h1>We've updated your login experience.</h1>
+        <p>Phone number and PIN sign-in have been replaced with email and password. Complete a one-time update to keep using My Account. Nothing else changes, including your plan and billing.</p>
+        <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Update My Account login</button>
+      </div>
+      <div class="welcome-foot">
+        <p>I've already updated my login.</p>
+        <button class="btn btn-block welcome-outline" type="button" id="open-drawer">Sign in to My Account</button>
+      </div>
+    </section>
+
+    <!-- 3. Sign in -->
+    <section class="screen flow" id="scr-signin" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="welcome">Back</button></header>
+      <form class="flow-body" id="signin-form" novalidate>
+        <div class="card">
+          <h1>Sign in.</h1>
+          <p class="lede">Please enter your email &amp; password below.</p>
+          <label class="field filled" id="email-field">
+            <span class="field-label">Email</span>
+            <input id="email" type="email" autocomplete="username" placeholder="Email" />
+            <button class="field-icon" type="button" id="clear-email" aria-label="Clear email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+          </label>
+          <label class="field" id="password-field">
+            <span class="field-label">Password</span>
+            <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+            <button class="field-icon" type="button" id="toggle-password" aria-label="Show password" hidden><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </label>
+          <p class="field-error" id="signin-error" hidden></p>
+          <button class="text-link" type="button" data-not-in-prototype>Forgot password?</button>
+          <button class="btn btn-primary btn-block" type="submit">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 4. Account verification: choose channel -->
+    <section class="screen flow" id="scr-verify" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="signin">Back</button></header>
+      <form class="flow-body" id="verify-form" novalidate>
+        <div class="card">
+          <h1>Account verification.</h1>
+          <p class="lede">How do you want to receive your security code?</p>
+          <label class="field option">
+            <span class="field-label">Phone number</span>
+            <span class="option-value">********94</span>
+            <input type="radio" name="channel" value="sms" />
+            <span class="radio" aria-hidden="true"></span>
+          </label>
+          <label class="field option">
+            <span class="field-label">Email</span>
+            <span class="option-value" id="masked-email">e***l@address.com</span>
+            <input type="radio" name="channel" value="email" />
+            <span class="radio" aria-hidden="true"></span>
+          </label>
+          <p class="field-error" id="verify-error" hidden>Choose how you want to receive your code.</p>
+          <button class="btn btn-primary btn-block" type="submit">Continue</button>
+          <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
+          <p class="help-row">New to Freedom? <button class="text-link chev" type="button" data-not-in-prototype>Create an account</button></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- 5. Enter code -->
+    <section class="screen flow" id="scr-code" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="verify">Back</button></header>
+      <form class="flow-body" id="code-form" novalidate>
+        <div class="card">
+          <h1>Account verification.</h1>
+          <p class="lede">We sent a code to <span id="code-dest">********94</span></p>
+          <!-- Single field, textContentType="oneTimeCode" (iOS) / autocomplete="one-time-code" so the OS can offer the code -->
+          <label class="field code-field" id="code-field">
+            <span class="field-label">Enter code</span>
+            <input id="code" type="text" inputmode="none" autocomplete="one-time-code" maxlength="6" placeholder="Enter code" readonly />
+          </label>
+          <p class="field-ok" id="code-ok" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="code-ok-text">Code filled from Messages</span></p>
+          <p class="field-error" id="code-error" hidden></p>
+          <p class="resend">Didn’t get a code? <button class="text-link" type="button" id="resend">Resend</button></p>
+          <button class="btn btn-primary btn-block" type="submit" id="code-submit">Continue</button>
+          <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
+          <p class="help-row">New to Freedom? <button class="text-link chev" type="button" data-not-in-prototype>Create an account</button></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- 6. Signed in -->
+    <section class="screen done" id="scr-done" hidden>
+      <div class="done-head">
+        <img src="assets/freedom-logo-white.svg" alt="Freedom" />
+        <p class="done-hi">Hi Alex,</p>
+        <p class="done-sub">You're signed in.</p>
+      </div>
+      <div class="done-body">
+        <div class="done-card">
+          <span class="done-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 12.5l4 4L18 8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><strong>Identity verified</strong><span id="done-text">Your code was filled from Messages, no typing needed.</span></div>
+        </div>
+        <div class="plan-card">
+          <p class="plan-eyebrow">My plan</p>
+          <p class="plan-name">Unlimited 5G+ · 100 GB</p>
+          <div class="plan-bar"><span style="width: 38%"></span></div>
+          <p class="plan-meta"><span>38 GB used</span><span>Renews Nov 28</span></p>
+        </div>
+        <button class="btn btn-secondary btn-block" type="button" id="restart">Restart demo</button>
+      </div>
+    </section>
+
+    <div class="splash" id="splash" hidden aria-hidden="true"><img src="assets/freedom-mark.svg" alt="" /></div>
+
+    <!-- 2. Bottom drawer -->
+    <div class="drawer-backdrop" id="drawer" hidden>
+      <form class="drawer" id="drawer-form" role="dialog" aria-modal="true" aria-labelledby="drawer-title" novalidate>
+        <button class="drawer-close" type="button" id="close-drawer" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <p class="drawer-eyebrow">Already updated?</p>
+        <h2 id="drawer-title">Sign in with your email and password.</h2>
+        <input class="drawer-input" id="drawer-email" type="email" placeholder="Enter your email" autocomplete="username" aria-label="Email" />
+        <p class="field-error" id="drawer-error" hidden>Enter a valid email address.</p>
+        <button class="btn btn-primary btn-block" type="submit">Sign in to My Account</button>
+        <button class="drawer-update" type="button" data-not-in-prototype>Update My Account login</button>
+      </form>
+    </div>
+
+    <!-- Incoming SMS / email notification -->
+    <button class="push-banner" id="banner" type="button" hidden>
+      <span class="pb-icon" id="pb-icon"></span>
+      <span class="pb-body">
+        <span class="pb-top"><strong id="pb-title">Freedom Mobile</strong><span>now</span></span>
+        <span class="pb-text" id="pb-text"></span>
+      </span>
+    </button>
+
+    <!-- iOS number pad with QuickType "From Messages" suggestion -->
+    <div class="keypad" id="keypad" hidden>
+      <div class="qt-bar">
+        <button class="qt-suggest" type="button" id="qt-suggest" disabled>
+          <span class="qt-from" id="qt-from"></span>
+          <span class="qt-code" id="qt-code"></span>
+        </button>
+        <span class="qt-key" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="7" r="5" fill="currentColor"/><circle cx="12" cy="6" r="1.6" fill="#d1d3d9"/><path d="M10.5 11h3v10l-1.5 1.5L10.5 21v-1.5l1-1-1-1V16l1-1-1-1z" fill="currentColor"/></svg></span>
+      </div>
+      <div class="kp-grid">
+        <button type="button" data-key="1">1<small>&nbsp;</small></button>
+        <button type="button" data-key="2">2<small>ABC</small></button>
+        <button type="button" data-key="3">3<small>DEF</small></button>
+        <button type="button" data-key="4">4<small>GHI</small></button>
+        <button type="button" data-key="5">5<small>JKL</small></button>
+        <button type="button" data-key="6">6<small>MNO</small></button>
+        <button type="button" data-key="7">7<small>PQRS</small></button>
+        <button type="button" data-key="8">8<small>TUV</small></button>
+        <button type="button" data-key="9">9<small>WXYZ</small></button>
+        <span></span>
+        <button type="button" data-key="0">0</button>
+        <button type="button" class="kp-del" data-key="del" aria-label="Delete"><svg viewBox="0 0 32 24" width="30" height="22" aria-hidden="true"><path d="M10 3h18a2 2 0 012 2v14a2 2 0 01-2 2H10l-8-9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 8l8 8M23 8l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Android: SMS User Consent API sheet (Google Play services) -->
+    <div class="consent-backdrop" id="consent" hidden>
+      <div class="consent" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+        <span class="consent-icon" aria-hidden="true"></span>
+        <h2 id="consent-title">Allow Freedom to read the below message and enter the code?</h2>
+        <p class="consent-msg" id="consent-msg"></p>
+        <div class="consent-actions">
+          <button type="button" id="consent-deny">Deny</button>
+          <button type="button" id="consent-allow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="home-indicator" id="home-indicator" type="button" aria-label="Home"></button>
+  </div>
+
+  <aside class="notes" id="notes">
+    <p class="side-eyebrow">How it works</p>
+    <h2>Proposed solution</h2>
+    <h3>1. One code field the OS can fill</h3>
+    <p>Use a single code input (not six boxes) marked as a one-time code: <code>textContentType = .oneTimeCode</code> on iOS, <code>autofillHints = SMS_OTP</code> / <code>autoComplete="sms-otp"</code> in React Native, and the number pad keyboard. The app never reads the user's messages.</p>
+    <h3>2. iOS: Security Code AutoFill</h3>
+    <p>When the text arrives, iOS shows <b>From Messages</b> above the keypad. One tap fills the field and the app submits automatically once it has 6 digits. Codes sent by email show <b>From Mail</b> (iOS 17+).</p>
+    <h3>3. Android: SMS User Consent</h3>
+    <p>The app starts the Google Play services SMS User Consent listener before sending the code. When the text arrives, Android asks once to share that single message. <b>Allow</b> fills and submits the code. The SMS Retriever API can make this zero-tap by adding the app hash to the text.</p>
+    <h3>4. SMS format</h3>
+    <pre id="sms-format"></pre>
+    <p>The last line binds the code to Freedom's domain, so iOS only offers it in the Freedom app (listed in its Associated Domains) and on freedommobile.ca, which helps block phishing. For zero-tap on Android, the SMS Retriever API would end the text with the app's 11-character hash instead.</p>
+    <h3>5. Security</h3>
+    <ul>
+      <li>6 digits, single use, expires after 10 minutes</li>
+      <li>"Never share this code" warning at the start of the text</li>
+      <li>3 wrong attempts lock the code; Resend issues a new one and voids the old one</li>
+      <li>Email stays available as the fallback channel</li>
+    </ul>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
