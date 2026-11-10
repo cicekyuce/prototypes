@@ -134,6 +134,7 @@ function applyRoute() {
 
   activeFilter = FILTERS.some((filter) => filter.id === category) ? category : "all";
   dismissDeleteError();
+  dismissLockedMessage();
   if (!isInbox) dismissUndo();
   showScreen(isInbox ? "inbox" : "home");
   renderFilters();
@@ -252,14 +253,19 @@ function undoDelete() {
   renderList();
 }
 
+function dismissLockedMessage() {
+  window.clearTimeout(lockedMessageTimer);
+  lockedMessageTimer = null;
+  infoBar.hidden = true;
+}
+
+// Only one bottom bar is ever on screen; they share the same position.
 function showLockedMessage(wrapper) {
   dismissUndo();
   dismissDeleteError();
   window.clearTimeout(lockedMessageTimer);
   infoBar.hidden = false;
-  lockedMessageTimer = window.setTimeout(() => {
-    infoBar.hidden = true;
-  }, LOCKED_MESSAGE_MS);
+  lockedMessageTimer = window.setTimeout(dismissLockedMessage, LOCKED_MESSAGE_MS);
 
   if (wrapper) {
     const lock = wrapper.querySelector(".sticker");
@@ -280,6 +286,7 @@ function dismissDeleteError() {
 // The notification is left in the list and the customer can try again.
 function showDeleteError(id) {
   dismissUndo();
+  dismissLockedMessage();
   failedDeleteId = id;
   errorBar.hidden = false;
   renderList();
@@ -308,6 +315,7 @@ function deleteNotification(id, wrapper) {
     return;
   }
   dismissDeleteError();
+  dismissLockedMessage();
   dismissUndo();
   const [removed] = notifications.splice(index, 1);
   pendingUndo = {
@@ -340,6 +348,9 @@ function attachLockedSwipe(row, wrapper) {
     moved = false;
     resisted = false;
     startX = event.clientX;
+    // Capture the pointer so the row still snaps back when the finger is
+    // lifted outside it.
+    row.setPointerCapture(event.pointerId);
     row.classList.remove("settling");
   });
 
@@ -364,6 +375,13 @@ function attachLockedSwipe(row, wrapper) {
 
   row.addEventListener("pointerup", finish);
   row.addEventListener("pointercancel", finish);
+  // Safety net: if the capture is lost mid-drag the row must not stay offset.
+  row.addEventListener("lostpointercapture", () => {
+    if (!dragging) return;
+    dragging = false;
+    setRowOffset(row, 0, true);
+    if (resisted) showLockedMessage(wrapper);
+  });
 
   row.addEventListener("click", (event) => {
     if (moved) {
@@ -426,6 +444,18 @@ function attachSwipe(row, notification, wrapper) {
 
   row.addEventListener("pointerup", finish);
   row.addEventListener("pointercancel", finish);
+  // Safety net: if the capture is lost mid-drag, settle the row either way.
+  row.addEventListener("lostpointercapture", () => {
+    if (!dragging) return;
+    dragging = false;
+    if (-offset >= OPEN_THRESHOLD) {
+      setRowOffset(row, -ACTION_WIDTH, true);
+      openRow = row;
+      return;
+    }
+    setRowOffset(row, 0, true);
+    if (openRow === row) openRow = null;
+  });
 
   row.addEventListener("click", (event) => {
     if (moved) {
