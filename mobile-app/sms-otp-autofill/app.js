@@ -136,7 +136,7 @@
   /* ---------- 3. Sign in ---------- */
   const syncFilled = (input, field) => field.classList.toggle("filled", input.value.length > 0);
   function prepSignin() {
-    $("email").value = state.email || "email@address.com";
+    $("email").value = state.email;
     $("password").value = "";
     $("password").type = "password";
     $("signin-error").hidden = true;
@@ -144,7 +144,8 @@
     syncFilled($("email"), $("email-field"));
     syncFilled($("password"), $("password-field"));
     $("toggle-password").hidden = true;
-    setTimeout(() => $("password").focus(), 260);
+    $("clear-email").hidden = !$("email").value;
+    setTimeout(() => $(state.email ? "password" : "email").focus(), 260);
   }
   $("email").addEventListener("input", () => { syncFilled($("email"), $("email-field")); $("clear-email").hidden = !$("email").value; });
   $("password").addEventListener("input", () => { syncFilled($("password"), $("password-field")); $("toggle-password").hidden = !$("password").value; });
@@ -173,7 +174,7 @@
 
   /* ---------- 4. Verification channel ---------- */
   const maskEmail = (email) => {
-    const [user, domain] = (email || "email@address.com").split("@");
+    const [user, domain] = (email || "cicek@address.com").split("@");
     return `${user[0]}***${user.length > 1 ? user[user.length - 1] : ""}@${domain}`;
   };
   function prepVerify() {
@@ -275,8 +276,8 @@
     const v = codeInput.value;
     $("code-field").classList.remove("invalid");
     if (state.attempts >= MAX_ATTEMPTS) return;
-    if (v.length !== 6) return showCodeError("Enter the 6-digit code.");
-    if (v !== state.code) {
+    if (v && v.length !== 6) return showCodeError("Enter the 6-digit code.");
+    if (v && v !== state.code) {
       state.attempts++;
       const left = MAX_ATTEMPTS - state.attempts;
       $("code-field").classList.add("invalid");
