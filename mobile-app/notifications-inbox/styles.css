@@ -472,6 +472,29 @@ body {
   background: var(--greyscale-900);
 }
 
+/* Regulatory / service notices: sticker colour still to be confirmed in Figma. */
+.sticker[data-category="regulatory"] {
+  background: var(--greyscale-900);
+  color: var(--greyscale-200);
+}
+
+.sticker.pulse {
+  animation: sticker-pulse 600ms ease;
+}
+
+@keyframes sticker-pulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.12); }
+  60% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticker.pulse {
+    animation: none;
+  }
+}
+
 .timestamp {
   flex: 1 0 0;
   min-width: 0;
@@ -534,6 +557,14 @@ body {
 
 .error-bar {
   background: var(--error-red);
+}
+
+/* Informational, not an error: a service notice simply cannot be deleted. */
+.info-bar {
+  background: var(--greyscale-200);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
 }
 
 .undo-button {

@@ -79,6 +79,11 @@
         <button type="button" class="undo-button" id="undo-button">Undo</button>
       </div>
 
+      <!-- Shown when a notification that cannot be deleted is swiped. -->
+      <div class="undo-bar info-bar" id="info-bar" role="status" aria-live="polite" hidden>
+        <span>Service notices can't be deleted — they're kept for your records</span>
+      </div>
+
       <!-- Delete failure message (UI not designed in Figma yet). -->
       <div class="undo-bar error-bar" id="error-bar" role="alert" hidden>
         <span>Notification couldn't be deleted</span>

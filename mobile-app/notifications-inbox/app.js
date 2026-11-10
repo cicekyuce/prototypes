@@ -11,6 +11,9 @@ const CATEGORIES = {
   rewards: { label: "Rewards", icon: "assets/tag-rewards.svg" },
   network: { label: "Network", icon: "assets/tag-network.svg" },
   billing: { label: "Billing", icon: "assets/tag-billing.svg" },
+  // No sticker variant exists in Figma for regulatory notices yet; the lock
+  // glyph below is a placeholder.
+  regulatory: { label: "Service notice", icon: null },
 };
 
 const FILTERS = [
@@ -27,6 +30,17 @@ const GROUPS = [
 ];
 
 const SEED_NOTIFICATIONS = [
+  {
+    // Regulatory notices must stay in the inbox, so this one cannot be deleted.
+    id: "n0",
+    group: "this-week",
+    title:
+      "Changes to your plan terms take effect on Dec. 15, 2026. Review what is changing and what it means for your monthly bill.",
+    category: "regulatory",
+    timestamp: "1 hour ago",
+    unread: true,
+    locked: true,
+  },
   {
     id: "n1",
     group: "this-week",
@@ -75,6 +89,11 @@ const UNDO_WINDOW_MS = 5000;
 // Swipe geometry — keep in sync with --swipe-action-width in styles.css.
 const ACTION_WIDTH = 88;
 const OPEN_THRESHOLD = 40;
+// Locked rows give way by a few pixels only, and explain themselves once the
+// swipe is clearly deliberate.
+const LOCKED_MAX_OFFSET = 28;
+const LOCKED_HINT_THRESHOLD = 24;
+const LOCKED_MESSAGE_MS = 5000;
 const DRAG_TOLERANCE = 6;
 
 let notifications = SEED_NOTIFICATIONS.map((notification) => ({ ...notification }));
@@ -83,6 +102,7 @@ let searchTerm = "";
 let openRow = null;
 let pendingUndo = null;
 let failedDeleteId = null;
+let lockedMessageTimer = null;
 
 const screens = {
   home: document.getElementById("screen-home"),
@@ -96,6 +116,7 @@ const undoBar = document.getElementById("undo-bar");
 const undoButton = document.getElementById("undo-button");
 const errorBar = document.getElementById("error-bar");
 const retryButton = document.getElementById("retry-button");
+const infoBar = document.getElementById("info-bar");
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, el]) => {
@@ -168,20 +189,37 @@ function renderFilters() {
   );
 }
 
+// Placeholder lock glyph, in the same stroke style as the Figma icons.
+function lockIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "10");
+  svg.setAttribute("height", "11");
+  svg.setAttribute("viewBox", "0 0 10 11");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("aria-hidden", "true");
+  svg.innerHTML =
+    '<rect x="1.4" y="4.6" width="7.2" height="5.6" rx="1.2" stroke="currentColor" stroke-width="1.2"/>' +
+    '<path d="M3.2 4.6V3.2a1.8 1.8 0 0 1 3.6 0v1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>';
+  return svg;
+}
+
 function createSticker(categoryId) {
   const category = CATEGORIES[categoryId];
   const sticker = document.createElement("span");
   sticker.className = "sticker";
   sticker.dataset.category = categoryId;
 
-  const icon = document.createElement("img");
-  icon.src = category.icon;
-  icon.alt = "";
-
   const label = document.createElement("span");
   label.textContent = category.label;
 
-  sticker.append(icon, label);
+  if (category.icon) {
+    const icon = document.createElement("img");
+    icon.src = category.icon;
+    icon.alt = "";
+    sticker.append(icon, label);
+  } else {
+    sticker.append(lockIcon(), label);
+  }
   return sticker;
 }
 
@@ -214,6 +252,26 @@ function undoDelete() {
   renderList();
 }
 
+function showLockedMessage(wrapper) {
+  dismissUndo();
+  dismissDeleteError();
+  window.clearTimeout(lockedMessageTimer);
+  infoBar.hidden = false;
+  lockedMessageTimer = window.setTimeout(() => {
+    infoBar.hidden = true;
+  }, LOCKED_MESSAGE_MS);
+
+  if (wrapper) {
+    const lock = wrapper.querySelector(".sticker");
+    if (lock) {
+      lock.classList.remove("pulse");
+      // Restart the animation on repeated attempts.
+      void lock.offsetWidth;
+      lock.classList.add("pulse");
+    }
+  }
+}
+
 function dismissDeleteError() {
   failedDeleteId = null;
   errorBar.hidden = true;
@@ -239,9 +297,13 @@ function deleteNotification(id, wrapper) {
   if (openRow) openRow = null;
   const index = notifications.findIndex((notification) => notification.id === id);
   if (index === -1) return;
-  // Deleting the last remaining notification fails, so the error state can be
+  if (notifications[index].locked) {
+    showLockedMessage();
+    return;
+  }
+  // Deleting the last deletable notification fails, so the error state can be
   // seen in the prototype; a real client fails when the backend call fails.
-  if (notifications.length === 1) {
+  if (notifications.filter((notification) => !notification.locked).length === 1) {
     showDeleteError(id);
     return;
   }
@@ -261,6 +323,62 @@ function deleteNotification(id, wrapper) {
     wrapper.style.height = "0px";
   });
   window.setTimeout(renderList, 180);
+}
+
+// Regulatory notices have no Delete action. The row gives way slightly, snaps
+// back and explains why, instead of offering an action that would be refused.
+function attachLockedSwipe(row, wrapper) {
+  let startX = 0;
+  let dragging = false;
+  let moved = false;
+  let resisted = false;
+
+  row.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 && event.pointerType === "mouse") return;
+    if (openRow) closeOpenRow();
+    dragging = true;
+    moved = false;
+    resisted = false;
+    startX = event.clientX;
+    row.classList.remove("settling");
+  });
+
+  row.addEventListener("pointermove", (event) => {
+    if (!dragging) return;
+    const delta = event.clientX - startX;
+    if (Math.abs(delta) > DRAG_TOLERANCE) moved = true;
+    if (delta >= 0) return;
+    // Rubber band: the row follows the finger at a fraction of the distance.
+    const resistedOffset = -Math.min(LOCKED_MAX_OFFSET, -delta * 0.35);
+    if (-delta >= LOCKED_HINT_THRESHOLD) resisted = true;
+    setRowOffset(row, resistedOffset, false);
+  });
+
+  const finish = (event) => {
+    if (!dragging) return;
+    dragging = false;
+    if (row.hasPointerCapture(event.pointerId)) row.releasePointerCapture(event.pointerId);
+    setRowOffset(row, 0, true);
+    if (resisted) showLockedMessage(wrapper);
+  };
+
+  row.addEventListener("pointerup", finish);
+  row.addEventListener("pointercancel", finish);
+
+  row.addEventListener("click", (event) => {
+    if (moved) {
+      event.preventDefault();
+      return;
+    }
+    row.dataset.unread = "false";
+  });
+
+  row.addEventListener("keydown", (event) => {
+    if (event.key === "Delete") {
+      event.preventDefault();
+      showLockedMessage(wrapper);
+    }
+  });
 }
 
 function attachSwipe(row, notification, wrapper) {
@@ -340,17 +458,20 @@ function createRow(notification) {
   wrapper.className = "swipe";
   wrapper.dataset.id = notification.id;
 
-  const action = document.createElement("div");
-  action.className = "swipe-action";
-  const deleteButton = document.createElement("button");
-  deleteButton.className = "delete-button";
-  deleteButton.type = "button";
-  deleteButton.setAttribute("aria-label", `Delete notification: ${notification.title}`);
-  const deleteLabel = document.createElement("span");
-  deleteLabel.textContent = "Delete";
-  deleteButton.append(trashIcon(), deleteLabel);
-  deleteButton.addEventListener("click", () => deleteNotification(notification.id, wrapper));
-  action.append(deleteButton);
+  let action = null;
+  if (!notification.locked) {
+    action = document.createElement("div");
+    action.className = "swipe-action";
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-button";
+    deleteButton.type = "button";
+    deleteButton.setAttribute("aria-label", `Delete notification: ${notification.title}`);
+    const deleteLabel = document.createElement("span");
+    deleteLabel.textContent = "Delete";
+    deleteButton.append(trashIcon(), deleteLabel);
+    deleteButton.addEventListener("click", () => deleteNotification(notification.id, wrapper));
+    action.append(deleteButton);
+  }
 
   const row = document.createElement("button");
   row.className = "row";
@@ -384,8 +505,14 @@ function createRow(notification) {
   message.append(status, body);
   row.append(message);
 
-  attachSwipe(row, notification, wrapper);
-  wrapper.append(action, row);
+  if (notification.locked) {
+    wrapper.classList.add("swipe-locked");
+    attachLockedSwipe(row, wrapper);
+    wrapper.append(row);
+  } else {
+    attachSwipe(row, notification, wrapper);
+    wrapper.append(action, row);
+  }
   return wrapper;
 }
 
