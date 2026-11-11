@@ -161,8 +161,6 @@ body {
 .ov-top img { height: 30px; width: auto; }
 .ov-menu { display: flex; flex-direction: column; gap: 6px; width: 30px; padding: 0; border: 0; background: none; }
 .ov-menu span { height: 2.5px; border-radius: 2px; background: var(--greyscale-100); }
-.ov-tabbar { position: relative; display: block; width: 100%; height: 46px; border: 0; background: var(--freedom-blue); color: #fff; font: inherit; font-size: 15px; font-weight: 700; }
-.ov-tabbar svg { position: absolute; right: 14px; top: 14px; }
 .ov-body { padding: 4px 16px 8px; }
 .ov-hi { margin: 18px 0 10px; font-size: 20px; font-weight: 700; color: var(--greyscale-100); }
 .ov-line { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 7px 12px; border: 1px solid var(--greyscale-900); border-radius: 6px; background: #fff; font: inherit; font-size: 14.5px; color: var(--greyscale-200); }
