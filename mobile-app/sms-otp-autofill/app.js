@@ -1,7 +1,7 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const ORDER = ["welcome", "drawer", "signin", "verify", "code", "done"];
-  const LIGHT = ["welcome", "drawer", "done"];
+  const LIGHT = ["welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
 
@@ -91,7 +91,7 @@
     if (route === "signin") prepSignin();
     if (route === "verify") prepVerify();
     if (route === "code") { state.channel = via; startCode(); }
-    if (route === "done") prepDone();
+    if (route === "done") $("scr-done").scrollTop = 0;
   }
   const go = (hash) => { location.hash = `#/${hash}`; };
   window.addEventListener("hashchange", render);
@@ -106,7 +106,7 @@
     setTimeout(() => el.remove(), 1800);
   }
   document.querySelectorAll("[data-not-in-prototype]").forEach((b) =>
-    b.addEventListener("click", () => toast("Not part of this prototype")));
+    b.addEventListener("click", (e) => { e.preventDefault(); toast("Not part of this prototype"); }));
 
   /* ---------- 2. Drawer ---------- */
   function openDrawer() {
@@ -375,14 +375,6 @@
   $("banner").addEventListener("click", () => hideBanner());
 
   /* ---------- 6. Done ---------- */
-  function prepDone() {
-    const texts = {
-      quicktype: `Your code was filled from ${sourceLabel()} with one tap. No typing needed.`,
-      consent: "You allowed Freedom to read that one text, and the code was filled for you.",
-      manual: "Your code was entered and verified.",
-    };
-    $("done-text").textContent = texts[state.source] || texts.manual;
-  }
 
   /* ---------- Restart / notes ---------- */
   function restart() {
@@ -392,7 +384,6 @@
     splash();
   }
   $("reset-demo").addEventListener("click", restart);
-  $("restart").addEventListener("click", restart);
   $("toggle-notes").addEventListener("click", () => {
     const n = $("notes");
     n.classList.toggle("open");
