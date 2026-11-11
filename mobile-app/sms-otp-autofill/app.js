@@ -1,7 +1,7 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const ORDER = ["welcome", "drawer", "signin", "verify", "code", "done"];
-  const LIGHT = ["welcome", "drawer"];
+  const ORDER = ["lock", "home", "welcome", "drawer", "signin", "verify", "code", "done"];
+  const LIGHT = ["lock", "home", "welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
 
@@ -28,7 +28,11 @@
   /* ---------- Clock ---------- */
   const tick = () => {
     const d = new Date();
-    $("sb-time").textContent = `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const t = `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const day = d.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+    ["sb-time", "lock-time", "os-clock"].forEach((id) => ($(id).textContent = t));
+    ["lock-date", "os-date"].forEach((id) => ($(id).textContent = day));
+    $("cal-day").textContent = d.getDate();
   };
   tick();
   setInterval(tick, 15000);
@@ -40,19 +44,24 @@
     $("device").classList.toggle("android", state.platform === "android");
     document.querySelectorAll("[data-platform]").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.platform === state.platform)));
     $("platform-hint").textContent = state.platform === "ios"
-      ? "iOS Security Code AutoFill: the code shows above the keypad as “From Messages”. Tap it to fill."
-      : "Android SMS User Consent: Android asks once to share the text with Freedom. Tap Allow to fill.";
-    document.querySelector('[data-step="code"]').innerHTML = state.platform === "ios"
-      ? "Tap <b>From Messages</b> above the keypad"
-      : "Tap <b>Allow</b> to share the text with Freedom";
+      ? "iOS Security Code AutoFill: the code shows above the keypad as “From Messages” (text) or “From Mail” (email). Tap it to fill."
+      : "Android: for a text, Android asks once to share it with Freedom (tap Allow). For an email, tap the code Gboard suggests above the keypad.";
+    setCodeStep();
     if (state.route === "code") startCode();
   }
   document.querySelectorAll("[data-platform]").forEach((b) => b.addEventListener("click", () => setPlatform(b.dataset.platform)));
 
+  function setCodeStep() {
+    const email = state.channel === "email";
+    document.querySelector('[data-step="code"]').innerHTML = state.platform === "ios"
+      ? `Tap <b>From ${email ? "Mail" : "Messages"}</b> above the keypad`
+      : email ? "Tap the <b>From Gmail</b> code above the keypad" : "Tap <b>Allow</b> to share the text with Freedom";
+  }
+
   /* ---------- Routing ---------- */
   function parse() {
     const parts = location.hash.replace(/^#\/?/, "").split("/");
-    const route = ORDER.includes(parts[0]) ? parts[0] : "welcome";
+    const route = ORDER.includes(parts[0]) ? parts[0] : "lock";
     return { route, via: parts[1] === "email" ? "email" : "sms" };
   }
 
@@ -79,7 +88,7 @@
     state.route = route;
 
     $("status-bar").classList.toggle("light", LIGHT.includes(route));
-    $("home-indicator").classList.toggle("light", route === "welcome");
+    $("home-indicator").classList.toggle("light", ["lock", "home", "welcome"].includes(route));
     if (route === "drawer") openDrawer(); else if (!$("drawer").hidden) closeDrawer();
 
     const idx = ORDER.indexOf(route);
@@ -108,6 +117,18 @@
   document.querySelectorAll("[data-not-in-prototype]").forEach((b) =>
     b.addEventListener("click", (e) => { e.preventDefault(); toast("Not part of this prototype"); }));
 
+  /* ---------- Lock + home screens ---------- */
+  $("scr-lock").addEventListener("click", () => go("home"));
+  $("open-freedom").addEventListener("click", () => {
+    const n = $("signin-notice");
+    n.hidden = true;
+    void n.offsetWidth;
+    n.hidden = false;
+    splash();
+    go("welcome");
+  });
+  $("signin-notice-close").addEventListener("click", () => { $("signin-notice").hidden = true; });
+
   /* ---------- 2. Drawer ---------- */
   function openDrawer() {
     $("drawer").classList.remove("leaving");
@@ -123,8 +144,8 @@
     setTimeout(() => { d.hidden = true; d.classList.remove("leaving"); }, 240);
   }
   $("open-drawer").addEventListener("click", () => go("drawer"));
-  $("close-drawer").addEventListener("click", () => go(""));
-  $("drawer").addEventListener("click", (e) => { if (e.target === $("drawer")) go(""); });
+  $("close-drawer").addEventListener("click", () => go("welcome"));
+  $("drawer").addEventListener("click", (e) => { if (e.target === $("drawer")) go("welcome"); });
   $("drawer-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const email = $("drawer-email").value.trim();
@@ -195,7 +216,7 @@
   /* ---------- 5. Code entry + autofill ---------- */
   const codeInput = $("code");
   const newCode = () => String(Math.floor(100000 + Math.random() * 900000));
-  const sourceLabel = () => (state.channel === "email" ? "Mail" : "Messages");
+  const sourceLabel = () => (state.channel !== "email" ? "Messages" : state.platform === "android" ? "Gmail" : "Mail");
 
   function setCodeValue(v) {
     codeInput.value = v;
@@ -225,6 +246,8 @@
     $("code-error").hidden = true;
     $("code-submit").disabled = false;
     $("code-dest").textContent = state.channel === "email" ? maskEmail(state.email) : "********94";
+    $("device").classList.toggle("email-code", state.channel === "email");
+    setCodeStep();
     resetSuggestion();
     later(openKeypad, 350);
     later(deliver, 1900);
@@ -236,9 +259,9 @@
     showBanner({
       icon: isEmail ? "mail" : "sms",
       title: "Freedom Mobile",
-      text: isEmail ? `Your verification code — ${emailText(state.code)}` : smsText(state.code),
+      text: isEmail ? `Mail · ${emailText(state.code)}` : smsText(state.code),
     });
-    if (state.platform === "ios") {
+    if (state.platform === "ios" || isEmail) {
       $("qt-from").textContent = `From ${sourceLabel()}`;
       $("qt-code").textContent = state.code;
       $("qt-suggest").disabled = false;
@@ -381,7 +404,6 @@
     state.email = "";
     state.route = null;
     if (location.hash === "#/" || location.hash === "") render(); else go("");
-    splash();
   }
   $("reset-demo").addEventListener("click", restart);
   $("toggle-notes").addEventListener("click", () => {
@@ -400,5 +422,4 @@
 
   setPlatform(state.platform);
   render();
-  if (state.route === "welcome") splash();
 })();

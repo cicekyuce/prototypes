@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Native SMS OTP AutoFill for MFA — Freedom app</title>
+  <title>Native OTP AutoFill for MFA — Freedom app</title>
   <link rel="stylesheet" href="base.css" />
   <link rel="stylesheet" href="app.css" />
 </head>
@@ -11,13 +11,15 @@
   <aside class="side-note">
     <a class="btn-link crumb" href="../../">← Cicek's prototypes</a>
     <p class="side-eyebrow">Mobile app · MFA</p>
-    <h1>Native SMS OTP AutoFill</h1>
-    <p>Sign in to the Freedom app, choose to get the security code by text, and fill it in with one tap from the keyboard, the same way the RBC app does.</p>
+    <h1>Native OTP AutoFill</h1>
+    <p>Sign in to the Freedom app, choose to get the security code by text or email, and fill it in with one tap from the keyboard, the same way the RBC app does.</p>
     <ol class="side-steps" id="side-steps">
+      <li data-step="lock">Lock screen: tap to unlock</li>
+      <li data-step="home">Home screen: open the <b>Freedom</b> app</li>
       <li data-step="welcome">First launch: tap <b>Sign in to My Account</b></li>
       <li data-step="drawer">Enter your email in the drawer</li>
       <li data-step="signin">Enter a password, tap <b>Continue</b></li>
-      <li data-step="verify">Choose <b>Phone number</b>, tap <b>Continue</b></li>
+      <li data-step="verify">Choose <b>Phone number</b> or <b>Email</b>, tap <b>Continue</b></li>
       <li data-step="code">Tap the code above the keypad to fill it</li>
       <li data-step="done">Overview</li>
     </ol>
@@ -43,8 +45,46 @@
       </span>
     </div>
 
+    <!-- Phone lock screen -->
+    <section class="screen os-lock" id="scr-lock" hidden>
+      <svg class="lock-glyph" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 018 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <p class="lock-date" id="lock-date">Thursday, October 29</p>
+      <p class="lock-time" id="lock-time">9:41</p>
+      <div class="lock-spacer"></div>
+      <button class="lock-unlock" type="button" id="lock-unlock">Swipe up or tap to open</button>
+    </section>
+
+    <!-- Phone home screen -->
+    <section class="screen os-home" id="scr-home" hidden>
+      <div class="os-widget">
+        <p class="os-widget-date" id="os-date">Thursday, October 29</p>
+        <p class="os-widget-time" id="os-clock">9:41</p>
+      </div>
+      <div class="os-grid">
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-calendar"><b id="cal-day">29</b></span><span>Calendar</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-photos"></span><span>Photos</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-camera"></span><span>Camera</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-mail"></span><span>Mail</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-maps"></span><span>Maps</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-weather"></span><span>Weather</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-clock"></span><span>Clock</span></button>
+        <button class="os-app" type="button" id="open-freedom"><span class="os-icon i-freedom"></span><span>Freedom</span></button>
+      </div>
+      <div class="os-dock">
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Phone"><span class="os-icon i-phone"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Safari"><span class="os-icon i-safari"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Messages"><span class="os-icon i-messages"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Music"><span class="os-icon i-music"></span></button>
+      </div>
+    </section>
+
     <!-- 1. First app launch -->
     <section class="screen welcome" id="scr-welcome" hidden>
+      <div class="signin-notice" id="signin-notice" role="status">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor"/></svg>
+        <p><strong>New! Signing in just got easier.</strong><span>Use your email address and password to access your account. No PIN required.</span></p>
+        <button class="signin-notice-close" type="button" id="signin-notice-close" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
       <div class="welcome-main">
         <img class="welcome-logo" src="assets/freedom-logo-white.svg" alt="Freedom" />
         <div class="welcome-art" role="img" aria-label="Customer smiling while using her phone"></div>
@@ -265,7 +305,7 @@
       </span>
     </button>
 
-    <!-- iOS number pad with QuickType "From Messages" suggestion -->
+    <!-- Number pad with the keyboard code suggestion (iOS "From Messages" / "From Mail", Android Gboard "From Gmail") -->
     <div class="keypad" id="keypad" hidden>
       <div class="qt-bar">
         <button class="qt-suggest" type="button" id="qt-suggest" disabled>
@@ -312,13 +352,15 @@
     <h3>1. One code field the OS can fill</h3>
     <p>Use a single code input (not six boxes) marked as a one-time code: <code>textContentType = .oneTimeCode</code> on iOS, <code>autofillHints = SMS_OTP</code> / <code>autoComplete="sms-otp"</code> in React Native, and the number pad keyboard. The app never reads the user's messages.</p>
     <h3>2. iOS: Security Code AutoFill</h3>
-    <p>When the text arrives, iOS shows <b>From Messages</b> above the keypad. One tap fills the field and the app submits automatically once it has 6 digits. Codes sent by email show <b>From Mail</b> (iOS 17+).</p>
+    <p>When the text arrives, iOS shows <b>From Messages</b> above the keypad. One tap fills the field and the app submits automatically once it has 6 digits. Codes sent by email show the same suggestion as <b>From Mail</b> (iOS 17+, Apple Mail).</p>
     <h3>3. Android: SMS User Consent</h3>
     <p>The app starts the Google Play services SMS User Consent listener before sending the code. When the text arrives, Android asks once to share that single message. <b>Allow</b> fills and submits the code. The SMS Retriever API can make this zero-tap by adding the app hash to the text.</p>
-    <h3>4. SMS format</h3>
+    <h3>4. Codes sent by email</h3>
+    <p>Customers who pick <b>Email</b> get the same one-tap fill. On iOS the code comes from Mail. Android has no system email autofill, so the prototype shows the code as a Gboard suggestion chip (<b>From Gmail</b>), which Gboard offers after the code is copied (for example with Gmail's <b>Copy code</b>). Use a subject and body that start with the code, such as "123456 is your Freedom verification code", so the OS can detect it.</p>
+    <h3>5. SMS format</h3>
     <pre id="sms-format"></pre>
     <p>The last line binds the code to Freedom's domain, so iOS only offers it in the Freedom app (listed in its Associated Domains) and on freedommobile.ca, which helps block phishing. For zero-tap on Android, the SMS Retriever API would end the text with the app's 11-character hash instead.</p>
-    <h3>5. Security</h3>
+    <h3>6. Security</h3>
     <ul>
       <li>6 digits, single use, expires after 10 minutes</li>
       <li>"Never share this code" warning at the start of the text</li>
