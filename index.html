@@ -171,7 +171,7 @@ h1 {
   </section>
 
   <section class="group">
-    <h2 class="group-title">Mobile app <span class="group-count">3</span></h2>
+    <h2 class="group-title">Mobile app <span class="group-count">4</span></h2>
     <div class="grid">
       <a class="card" href="mobile-app/notifications-inbox/">
         <span class="card-tag">Freedom Mobile</span>
@@ -189,6 +189,12 @@ h1 {
         <span class="card-tag">Freedom Mobile</span>
         <h3>Native OTP AutoFill for MFA</h3>
         <p>Freedom app sign-in journey (lock screen, home screen, first launch, sign-in drawer, email + password, account verification) where the security code, sent by text or email, fills in with one tap like RBC: iOS "From Messages" / "From Mail" keyboard suggestions, Android SMS User Consent and a Gboard suggestion for email codes.</p>
+        <span class="card-open">Open prototype →</span>
+      </a>
+      <a class="card" href="mobile-app/biometric-login/">
+        <span class="card-tag">Freedom Mobile</span>
+        <h3>Biometric login</h3>
+        <p>Face ID / fingerprint sign-in for the Freedom app, based on the Wealthsimple flow: turn-on offer after the first sign-in, sign-in that works, not recognized and retry, use password + security code (with OTP AutoFill), lockout, biometrics changed or removed, expired credential, no connection, different account, sign out and Login settings. 16 scenarios with dev notes for iOS and Android.</p>
         <span class="card-open">Open prototype →</span>
       </a>
     </div>
@@ -234,6 +240,30 @@ h1 {
         <li><a href="mobile-app/sms-otp-autofill/?platform=android#/code">Enter code — text, Android consent</a></li>
         <li><a href="mobile-app/sms-otp-autofill/?platform=ios#/code/email">Enter code — email, iOS (From Mail)</a></li>
         <li><a href="mobile-app/sms-otp-autofill/?platform=android#/code/email">Enter code — email, Android (From Gmail)</a></li>
+      </ul>
+    </section>
+
+    <section class="deeplinks">
+      <h3>Direct links</h3>
+      <p>Jump straight to a scenario of the Biometric login prototype.</p>
+      <ul>
+        <li><a href="mobile-app/biometric-login/?s=enroll&amp;platform=ios">First sign-in, turn on Face ID</a></li>
+        <li><a href="mobile-app/biometric-login/?s=notnow&amp;platform=ios">First sign-in, Not now</a></li>
+        <li><a href="mobile-app/biometric-login/?s=denied&amp;platform=ios">iOS: Face ID permission denied</a></li>
+        <li><a href="mobile-app/biometric-login/?s=nodevice&amp;platform=ios">Phone has no biometrics set up</a></li>
+        <li><a href="mobile-app/biometric-login/?s=success&amp;platform=ios">Biometric sign-in works</a></li>
+        <li><a href="mobile-app/biometric-login/?s=retry&amp;platform=ios">Not recognized, then works</a></li>
+        <li><a href="mobile-app/biometric-login/?s=fallback&amp;platform=ios">Not recognized, use password + code</a></li>
+        <li><a href="mobile-app/biometric-login/?s=cancel&amp;platform=ios">Cancel the prompt</a></li>
+        <li><a href="mobile-app/biometric-login/?s=lockout&amp;platform=ios">Too many tries, biometrics locked</a></li>
+        <li><a href="mobile-app/biometric-login/?s=changed&amp;platform=ios">Biometrics changed on the phone</a></li>
+        <li><a href="mobile-app/biometric-login/?s=removed&amp;platform=ios">Biometrics removed from the phone</a></li>
+        <li><a href="mobile-app/biometric-login/?s=expired&amp;platform=ios">Biometric credential expired</a></li>
+        <li><a href="mobile-app/biometric-login/?s=offline&amp;platform=ios">No connection after the scan</a></li>
+        <li><a href="mobile-app/biometric-login/?s=switch&amp;platform=ios">Sign in with a different account</a></li>
+        <li><a href="mobile-app/biometric-login/?s=signout&amp;platform=ios">Sign out, then sign back in</a></li>
+        <li><a href="mobile-app/biometric-login/?s=off&amp;platform=ios">Turn off in Login settings</a></li>
+        <li><a href="mobile-app/biometric-login/?s=retry&amp;platform=android">Android — fingerprint not recognized, then works</a></li>
       </ul>
     </section>
   </section>
