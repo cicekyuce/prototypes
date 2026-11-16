@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Biometric login — Freedom app</title>
+  <link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <aside class="side-note">
+    <a class="btn-link crumb" href="../../">← Cicek's prototypes</a>
+    <p class="side-eyebrow">Mobile app · Login</p>
+    <h1>Biometric login</h1>
+    <p>Sign in to the Freedom app with Face ID (iOS) or fingerprint (Android), based on the Wealthsimple flow. Pick a scenario, then follow its steps on the phone.</p>
+    <div class="side-block">
+      <p class="side-label">Platform</p>
+      <div class="seg" role="radiogroup" aria-label="Platform">
+        <button type="button" role="radio" data-platform="ios" aria-checked="true">iOS</button>
+        <button type="button" role="radio" data-platform="android" aria-checked="false">Android</button>
+      </div>
+    </div>
+    <div class="side-block">
+      <p class="side-label">Scenario</p>
+      <select class="scn-select" id="scn-select" aria-label="Scenario"></select>
+      <p class="side-hint" id="scn-desc"></p>
+    </div>
+    <ol class="side-steps" id="side-steps"></ol>
+    <div class="side-block sim" id="sim">
+      <p class="side-label">Biometric sensor</p>
+      <p class="side-hint sim-hint" id="sim-hint">Waiting for a Face ID prompt.</p>
+      <div class="sim-btns">
+        <button type="button" class="sim-btn ok" id="sim-match" disabled>Recognized</button>
+        <button type="button" class="sim-btn ko" id="sim-nomatch" disabled>Not recognized</button>
+      </div>
+    </div>
+    <p class="side-links"><button class="btn-link" type="button" id="reset-demo">Restart scenario</button> · <button class="btn-link" type="button" id="toggle-notes">Dev notes</button></p>
+  </aside>
+
+  <div class="device" id="device" role="application" aria-label="Phone prototype">
+    <div class="status-bar" id="status-bar">
+      <span class="sb-time" id="sb-time">9:41</span>
+      <span class="sb-island"></span>
+      <span class="sb-icons" aria-hidden="true">
+        <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+        <span class="sb-carrier">5G+</span>
+        <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity="0.5"/></svg>
+      </span>
+    </div>
+
+    <!-- Phone lock screen -->
+    <section class="screen os-lock" id="scr-lock" hidden>
+      <svg class="lock-glyph" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 018 0v2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <p class="lock-date" id="lock-date">Thursday, October 29</p>
+      <p class="lock-time" id="lock-time">9:41</p>
+      <div class="lock-spacer"></div>
+      <button class="lock-unlock" type="button" id="lock-unlock">Swipe up or tap to open</button>
+    </section>
+
+    <!-- Phone home screen -->
+    <section class="screen os-home" id="scr-home" hidden>
+      <div class="os-widget">
+        <p class="os-widget-date" id="os-date">Thursday, October 29</p>
+        <p class="os-widget-time" id="os-clock">9:41</p>
+      </div>
+      <div class="os-grid">
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-calendar"><b id="cal-day">29</b></span><span>Calendar</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-photos"></span><span>Photos</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-camera"></span><span>Camera</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-mail"></span><span>Mail</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-maps"></span><span>Maps</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-weather"></span><span>Weather</span></button>
+        <button class="os-app" type="button" data-not-in-prototype><span class="os-icon i-clock"></span><span>Clock</span></button>
+        <button class="os-app" type="button" id="open-freedom"><span class="os-icon i-freedom"></span><span>Freedom</span></button>
+      </div>
+      <div class="os-dock">
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Phone"><span class="os-icon i-phone"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Safari"><span class="os-icon i-safari"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Messages"><span class="os-icon i-messages"></span></button>
+        <button class="os-app" type="button" data-not-in-prototype aria-label="Music"><span class="os-icon i-music"></span></button>
+      </div>
+    </section>
+
+    <!-- 1. First app launch -->
+    <section class="screen welcome" id="scr-welcome" hidden>
+      <div class="signin-notice" id="signin-notice" role="status">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor"/></svg>
+        <p><strong>New! Signing in just got easier.</strong><span>Use your email address and password to access your account. No PIN required.</span></p>
+        <button class="signin-notice-close" type="button" id="signin-notice-close" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="welcome-main">
+        <img class="welcome-logo" src="assets/freedom-logo-white.svg" alt="Freedom" />
+        <div class="welcome-art" role="img" aria-label="Customer smiling while using her phone"></div>
+        <h1>We've updated your login experience.</h1>
+        <p>Phone number and PIN sign-in have been replaced with email and password. Complete a one-time update to keep using My Account. Nothing else changes, including your plan and billing.</p>
+        <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Update My Account login</button>
+      </div>
+      <div class="welcome-foot">
+        <p>I've already updated my login.</p>
+        <button class="btn btn-block welcome-outline" type="button" id="open-drawer">Sign in to My Account</button>
+      </div>
+    </section>
+
+    <!-- 3. Sign in -->
+    <section class="screen flow" id="scr-signin" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" id="signin-back">Back</button></header>
+      <form class="flow-body" id="signin-form" novalidate>
+        <div class="card">
+          <h1 id="signin-title">Sign in.</h1>
+          <p class="lede" id="signin-lede">Please enter your email &amp; password below.</p>
+          <label class="field" id="email-field">
+            <span class="field-label">Email</span>
+            <input id="email" type="email" autocomplete="username" placeholder="Email" />
+            <button class="field-icon" type="button" id="clear-email" aria-label="Clear email"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+          </label>
+          <label class="field" id="password-field">
+            <span class="field-label">Password</span>
+            <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+            <button class="field-icon" type="button" id="toggle-password" aria-label="Show password" hidden><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </label>
+          <p class="field-error" id="signin-error" hidden></p>
+          <button class="text-link" type="button" data-not-in-prototype>Forgot password?</button>
+          <button class="btn btn-primary btn-block" type="submit">Continue</button>
+          <p class="help-row" id="signin-switch-row" hidden>Not you? <button class="text-link chev" type="button" data-switch>Sign in with a different account</button></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- 4. Account verification: choose channel -->
+    <section class="screen flow" id="scr-verify" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="signin">Back</button></header>
+      <form class="flow-body" id="verify-form" novalidate>
+        <div class="card">
+          <h1>Account verification.</h1>
+          <p class="lede">How do you want to receive your security code?</p>
+          <label class="field option">
+            <span class="field-label">Phone number</span>
+            <span class="option-value">********94</span>
+            <input type="radio" name="channel" value="sms" />
+            <span class="radio" aria-hidden="true"></span>
+          </label>
+          <label class="field option">
+            <span class="field-label">Email</span>
+            <span class="option-value" id="masked-email">e***l@address.com</span>
+            <input type="radio" name="channel" value="email" />
+            <span class="radio" aria-hidden="true"></span>
+          </label>
+          <p class="field-error" id="verify-error" hidden>Choose how you want to receive your code.</p>
+          <button class="btn btn-primary btn-block" type="submit">Continue</button>
+          <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
+          <p class="help-row">New to Freedom? <button class="text-link chev" type="button" data-not-in-prototype>Create an account</button></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- 5. Enter code -->
+    <section class="screen flow" id="scr-code" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="verify">Back</button></header>
+      <form class="flow-body" id="code-form" novalidate>
+        <div class="card">
+          <h1>Account verification.</h1>
+          <p class="lede">We sent a code to <span id="code-dest">********94</span></p>
+          <!-- Single field, textContentType="oneTimeCode" (iOS) / autocomplete="one-time-code" so the OS can offer the code -->
+          <label class="field code-field" id="code-field">
+            <span class="field-label">Enter code</span>
+            <input id="code" type="text" inputmode="none" autocomplete="one-time-code" maxlength="6" placeholder="Enter code" readonly />
+          </label>
+          <p class="field-ok" id="code-ok" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="code-ok-text">Code filled from Messages</span></p>
+          <p class="field-error" id="code-error" hidden></p>
+          <p class="resend">Didn’t get a code? <button class="text-link" type="button" id="resend">Resend</button></p>
+          <button class="btn btn-primary btn-block" type="submit" id="code-submit">Continue</button>
+          <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
+          <p class="help-row">New to Freedom? <button class="text-link chev" type="button" data-not-in-prototype>Create an account</button></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- Returning customer: remembered account -->
+    <section class="screen flow" id="scr-returning" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /></header>
+      <div class="flow-body">
+        <div class="card">
+          <h1 id="ret-title">Welcome back, Cicek.</h1>
+          <p class="lede">Sign in to My Account.</p>
+          <div class="field filled locked">
+            <span class="field-label">Email</span>
+            <span class="locked-value" id="ret-email">cicek@address.com</span>
+          </div>
+          <div class="ret-banner" id="ret-banner" role="status" hidden>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor"/></svg>
+            <p id="ret-banner-text"></p>
+          </div>
+          <button class="btn btn-primary btn-block bio-btn" type="button" id="ret-bio"><span class="bio-ico" aria-hidden="true"></span><span id="ret-bio-label">Sign in with Face ID</span></button>
+          <button class="btn btn-outline btn-block" type="button" id="ret-password">Sign in with password</button>
+          <p class="help-row"><button class="text-link chev" type="button" data-switch>Sign in with a different account</button></p>
+          <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Biometric enrollment offer (after first successful sign-in) -->
+    <section class="screen flow" id="scr-enroll" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /></header>
+      <div class="flow-body">
+        <div class="card enroll">
+          <span class="enroll-ico" aria-hidden="true"><span class="ico-face"><svg class="fid-glyph" viewBox="0 0 48 48" width="56" height="56" aria-hidden="true"><path d="M4 14V9a5 5 0 015-5h5M34 4h5a5 5 0 015 5v5M44 34v5a5 5 0 01-5 5h-5M14 44H9a5 5 0 01-5-5v-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M16 17v4M32 17v4M24 18v10h-2.5M18 33c3.5 3 8.5 3 12 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ico-fp"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 14a16 16 0 0124 0"/><path d="M9 24a15 15 0 0130 0v3"/><path d="M15 34c1.5-3 2-6 2-10a7 7 0 0114 0c0 5-.8 9-2.5 13"/><path d="M24 24c0 6-1.5 11-4.5 15"/><path d="M33 34c-.6 2.4-1.4 4.6-2.6 6.6"/></g></svg></span></span>
+          <h1 id="enroll-title">Sign in faster with Face ID.</h1>
+          <p class="lede" id="enroll-lede">Skip your password and security code next time.</p>
+          <ul class="enroll-list">
+            <li id="enroll-li1">Look at your phone to sign in to the Freedom app.</li>
+            <li>Your face or fingerprint stays on your phone. Freedom never sees or stores it.</li>
+            <li>Turn it off anytime in <b>Menu → Login settings</b>.</li>
+          </ul>
+          <button class="btn btn-primary btn-block" type="button" id="enroll-on">Turn on Face ID</button>
+          <button class="btn btn-outline btn-block" type="button" id="enroll-skip">Not now</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login settings -->
+    <section class="screen flow" id="scr-settings" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="done">Back</button></header>
+      <div class="flow-body">
+        <div class="card">
+          <h1>Login settings.</h1>
+          <p class="lede">Choose how you sign in to the Freedom app on this phone.</p>
+          <div class="set-row">
+            <div class="set-text">
+              <p class="set-title" id="set-bio-title">Sign in with Face ID</p>
+              <p class="set-sub" id="set-bio-sub"></p>
+            </div>
+            <button class="switch" type="button" role="switch" aria-checked="false" id="set-bio" aria-labelledby="set-bio-title"><span></span></button>
+          </div>
+          <button class="text-link chev set-open" type="button" id="set-open-os" hidden>Open phone Settings</button>
+          <div class="set-row">
+            <div class="set-text"><p class="set-title">Email</p><p class="set-sub" id="set-email">cicek@address.com</p></div>
+          </div>
+          <div class="set-row">
+            <div class="set-text"><p class="set-title">Password</p><p class="set-sub">••••••••</p></div>
+            <button class="text-link" type="button" data-not-in-prototype>Change</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Signed in: Freedom app Overview -->
+    <section class="screen done" id="scr-done" hidden>
+      <div class="ov-sticky">
+      <header class="ov-top">
+        <img src="assets/freedom-logo.svg" alt="Freedom" />
+        <button type="button" class="ov-menu" aria-label="Menu" id="open-menu"><span></span><span></span><span></span></button>
+      </header>
+      </div>
+      <div class="ov-body">
+        <h1 class="ov-hi" id="ov-hi">Hi, Cicek</h1>
+        <button type="button" class="ov-line" data-not-in-prototype>(416) 721-8594<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+        <div class="ov-card">
+          <p class="ov-eyebrow">Amount due</p>
+          <p class="ov-amount">$117.52</p>
+          <dl class="ov-dl">
+            <dt>Payment Due Date:</dt><dd>Mar. 10, 2020</dd>
+            <dt>Billing Period:</dt><dd>Feb. 25 - Mar 24 2020</dd>
+            <dt>Auto Payment:</dt><dd>Mar. 09 2020</dd>
+          </dl>
+          <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Pay Now</button>
+          <button class="btn btn-outline btn-block" type="button" data-not-in-prototype>Download Bill</button>
+          <a class="ov-link ov-center" href="#" data-not-in-prototype>Manage Auto Pay</a>
+        </div>
+
+        <h2 class="ov-h">Roam Beyond Data</h2>
+        <div class="ov-card">
+          <p class="ov-usage"><strong>0GB</strong> used /3GB total</p>
+          <p class="ov-hs"><b>High Speed Data</b> | Reduced speeds after 100% of data is reached.</p>
+          <div class="ov-bar"><span style="width: 12%"></span></div>
+          <p class="ov-pct">12% of total data used</p>
+          <hr />
+          <a class="ov-link" href="#" data-not-in-prototype>View Usage Details</a>
+          <a class="ov-link" href="#" data-not-in-prototype>Buy a One-Time Pass</a>
+        </div>
+
+        <h2 class="ov-h">Freedom Nationwide + U.S. + Mexico</h2>
+        <div class="ov-card">
+          <p class="ov-usage"><strong>5.6GB</strong> used /25GB total</p>
+          <p class="ov-hs"><b>High Speed Data</b> | Reduced speeds after 100% of data is reached.</p>
+          <div class="ov-bar"><span style="width: 58%"></span></div>
+          <p class="ov-pct">58% of total data used</p>
+          <hr />
+          <a class="ov-link" href="#" data-not-in-prototype>View Usage Details</a>
+          <a class="ov-link" href="#" data-not-in-prototype>Buy a One-Time Pass</a>
+        </div>
+
+        <h2 class="ov-h">My Services</h2>
+        <p class="ov-sub">Optional copy dolor sit amet, consectetur adipiscing elit.</p>
+        <div class="ov-card">
+          <p class="ov-eyebrow">My lines</p>
+          <p class="ov-title">You have 4 line(s) on your account.</p>
+          <a class="ov-more" href="#" data-not-in-prototype>View all details <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Add A Line</button>
+        </div>
+        <div class="ov-card">
+          <p class="ov-eyebrow">My tab</p>
+          <p class="ov-title">3PR - Pixel 9a 128GB Obsidan</p>
+          <p class="ov-price"><strong>$10</strong>/mo.</p>
+          <p class="ov-fine">Commitment end date: Sep. 5, 2021 (19 months)</p>
+          <p class="ov-note">You may be eligible for a hardware upgrade.</p>
+          <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Upgrade My Phone</button>
+        </div>
+        <div class="ov-card">
+          <p class="ov-eyebrow">My plan</p>
+          <p class="ov-title">Can-U.S.-Mex 100GB + 5G+ and Roam Beyond 15GB</p>
+          <p class="ov-price"><strong>$54</strong>/mo.</p>
+          <p class="ov-fine">Activated on September 5, 2019</p>
+          <button class="btn btn-primary btn-block" type="button" data-not-in-prototype>Change My Plan</button>
+        </div>
+      </div>
+
+      <div class="ov-help">
+        <p class="ov-eyebrow">We're here to help</p>
+        <h2>Manage All Your Mobile Services</h2>
+        <ul>
+          <li><span>Data Roaming</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+          <li><span>Plan Details</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+          <li><span>Purchase add-ons</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+          <li><span>Usage Details</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+          <li><span>Notifications</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+          <li><span>And more...</span><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+        </ul>
+      </div>
+
+      <div class="ov-body ov-pass">
+        <div class="ov-card">
+          <p class="ov-eyebrow">Need more data?</p>
+          <p class="ov-title">Add More Data Anytime Without Changing Your Plan</p>
+          <button class="btn btn-outline btn-block" type="button" data-not-in-prototype>See all one-time passes</button>
+        </div>
+      </div>
+
+      <footer class="ov-foot">
+        <button type="button" class="ov-acc" data-not-in-prototype>Contact<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ov-acc" data-not-in-prototype>Support<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ov-acc" data-not-in-prototype>About<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ov-acc" data-not-in-prototype>More<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="ov-foot-row">
+          <button type="button" class="ov-feedback" data-not-in-prototype>Provide Feedback</button>
+          <span class="ov-social" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M15.5 8H14a1.5 1.5 0 0 0-1.5 1.5V21M10.5 13h5" fill="none" stroke="#fff" stroke-width="1.6"/></svg>
+            <svg viewBox="0 0 24 24" width="28" height="26"><path d="M22 5.9c-.7.3-1.5.6-2.3.7.8-.5 1.5-1.3 1.8-2.2-.8.5-1.7.8-2.6 1A4.1 4.1 0 0 0 12 9.1 11.6 11.6 0 0 1 3.5 4.8a4.1 4.1 0 0 0 1.3 5.5c-.7 0-1.3-.2-1.9-.5 0 2 1.4 3.7 3.3 4.1-.6.2-1.2.2-1.9.1.5 1.6 2 2.8 3.8 2.9A8.2 8.2 0 0 1 2 18.6 11.6 11.6 0 0 0 8.3 20.4c7.5 0 11.7-6.3 11.7-11.7v-.5c.8-.6 1.5-1.3 2-2.3z" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="17.3" cy="6.7" r="1" fill="#fff"/></svg>
+          </span>
+        </div>
+        <p class="ov-copy">© 2019 Freedom Mobile Inc.</p>
+      </footer>
+    </section>
+
+    <div class="splash" id="splash" hidden aria-hidden="true"><img src="assets/freedom-mark.svg" alt="" /></div>
+
+    <!-- 2. Bottom drawer -->
+    <div class="drawer-backdrop" id="drawer" hidden>
+      <form class="drawer" id="drawer-form" role="dialog" aria-modal="true" aria-labelledby="drawer-title" novalidate>
+        <button class="drawer-close" type="button" id="close-drawer" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <p class="drawer-eyebrow">Already updated?</p>
+        <h2 id="drawer-title">Sign in with your email and password.</h2>
+        <input class="drawer-input" id="drawer-email" type="email" placeholder="Enter your email" autocomplete="username" aria-label="Email" />
+        <p class="field-error" id="drawer-error" hidden>Enter a valid email address.</p>
+        <button class="btn btn-primary btn-block" type="submit">Sign in to My Account</button>
+        <button class="drawer-update" type="button" data-not-in-prototype>Update My Account login</button>
+      </form>
+    </div>
+
+    <!-- Incoming SMS / email notification -->
+    <button class="push-banner" id="banner" type="button" hidden>
+      <span class="pb-icon" id="pb-icon"></span>
+      <span class="pb-body">
+        <span class="pb-top"><strong id="pb-title">Freedom Mobile</strong><span>now</span></span>
+        <span class="pb-text" id="pb-text"></span>
+      </span>
+    </button>
+
+    <!-- Number pad with the keyboard code suggestion (iOS "From Messages" / "From Mail", Android Gboard "From Gmail") -->
+    <div class="keypad" id="keypad" hidden>
+      <div class="qt-bar">
+        <button class="qt-suggest" type="button" id="qt-suggest" disabled>
+          <span class="qt-from" id="qt-from"></span>
+          <span class="qt-code" id="qt-code"></span>
+        </button>
+        <span class="qt-key" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="7" r="5" fill="currentColor"/><circle cx="12" cy="6" r="1.6" fill="#d1d3d9"/><path d="M10.5 11h3v10l-1.5 1.5L10.5 21v-1.5l1-1-1-1V16l1-1-1-1z" fill="currentColor"/></svg></span>
+      </div>
+      <div class="kp-grid">
+        <button type="button" data-key="1">1<small>&nbsp;</small></button>
+        <button type="button" data-key="2">2<small>ABC</small></button>
+        <button type="button" data-key="3">3<small>DEF</small></button>
+        <button type="button" data-key="4">4<small>GHI</small></button>
+        <button type="button" data-key="5">5<small>JKL</small></button>
+        <button type="button" data-key="6">6<small>MNO</small></button>
+        <button type="button" data-key="7">7<small>PQRS</small></button>
+        <button type="button" data-key="8">8<small>TUV</small></button>
+        <button type="button" data-key="9">9<small>WXYZ</small></button>
+        <span></span>
+        <button type="button" data-key="0">0</button>
+        <button type="button" class="kp-del" data-key="del" aria-label="Delete"><svg viewBox="0 0 32 24" width="30" height="22" aria-hidden="true"><path d="M10 3h18a2 2 0 012 2v14a2 2 0 01-2 2H10l-8-9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 8l8 8M23 8l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Android: SMS User Consent API sheet (Google Play services) -->
+    <div class="consent-backdrop" id="consent" hidden>
+      <div class="consent" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+        <span class="consent-icon" aria-hidden="true"></span>
+        <h2 id="consent-title">Allow Freedom to read the below message and enter the code?</h2>
+        <p class="consent-msg" id="consent-msg"></p>
+        <div class="consent-actions">
+          <button type="button" id="consent-deny">Deny</button>
+          <button type="button" id="consent-allow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- App menu -->
+    <div class="drawer-backdrop" id="menu" hidden>
+      <div class="drawer menu" role="dialog" aria-modal="true" aria-label="Menu">
+        <button class="drawer-close" type="button" id="close-menu" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <p class="drawer-eyebrow">My Account</p>
+        <button class="menu-item" type="button" id="menu-settings">Login settings</button>
+        <button class="menu-item" type="button" data-not-in-prototype>Profile</button>
+        <button class="menu-item" type="button" data-not-in-prototype>Notifications</button>
+        <button class="menu-item signout" type="button" id="menu-signout">Sign out</button>
+      </div>
+    </div>
+
+    <!-- iOS Face ID HUD -->
+    <div class="fid-layer" id="fid" hidden>
+      <div class="fid-hud" id="fid-hud">
+        <span class="fid-face"><svg class="fid-glyph" viewBox="0 0 48 48" width="56" height="56" aria-hidden="true"><path d="M4 14V9a5 5 0 015-5h5M34 4h5a5 5 0 015 5v5M44 34v5a5 5 0 01-5 5h-5M14 44H9a5 5 0 01-5-5v-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M16 17v4M32 17v4M24 18v10h-2.5M18 33c3.5 3 8.5 3 12 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <svg class="fid-check" viewBox="0 0 48 48" width="56" height="56" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 24.5l6 6 12-13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="fid-label">Face ID</span>
+      </div>
+    </div>
+
+    <!-- iOS system alert (Face ID failure, permission) -->
+    <div class="ios-alert-layer" id="ios-alert" hidden>
+      <div class="ios-alert" role="alertdialog" aria-modal="true" aria-labelledby="ia-title">
+        <span class="ia-face" id="ia-face"><svg class="fid-glyph" viewBox="0 0 48 48" width="56" height="56" aria-hidden="true"><path d="M4 14V9a5 5 0 015-5h5M34 4h5a5 5 0 015 5v5M44 34v5a5 5 0 01-5 5h-5M14 44H9a5 5 0 01-5-5v-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M16 17v4M32 17v4M24 18v10h-2.5M18 33c3.5 3 8.5 3 12 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p class="ia-title" id="ia-title"></p>
+        <p class="ia-msg" id="ia-msg"></p>
+        <div class="ia-btns" id="ia-btns"></div>
+      </div>
+    </div>
+
+    <!-- Android BiometricPrompt -->
+    <div class="bp-layer" id="bp" hidden>
+      <div class="bp" role="dialog" aria-modal="true" aria-labelledby="bp-title">
+        <p class="bp-app"><span class="bp-icon" aria-hidden="true"></span>Freedom</p>
+        <p class="bp-title" id="bp-title">Sign in to Freedom</p>
+        <p class="bp-sub" id="bp-sub"></p>
+        <button class="bp-fp" type="button" id="bp-fp" aria-label="Touch the fingerprint sensor"><svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 14a16 16 0 0124 0"/><path d="M9 24a15 15 0 0130 0v3"/><path d="M15 34c1.5-3 2-6 2-10a7 7 0 0114 0c0 5-.8 9-2.5 13"/><path d="M24 24c0 6-1.5 11-4.5 15"/><path d="M33 34c-.6 2.4-1.4 4.6-2.6 6.6"/></g></svg></button>
+        <p class="bp-status" id="bp-status">Touch the fingerprint sensor</p>
+        <div class="bp-actions"><button type="button" id="bp-neg">Use password</button></div>
+      </div>
+    </div>
+
+    <!-- Freedom in-app dialog -->
+    <div class="fm-layer" id="fm" hidden>
+      <div class="fm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="fm-title">
+        <h2 id="fm-title"></h2>
+        <p id="fm-msg"></p>
+        <button class="btn btn-primary btn-block" type="button" id="fm-ok"></button>
+        <button class="btn btn-outline btn-block" type="button" id="fm-cancel">Cancel</button>
+      </div>
+    </div>
+
+    <div class="busy" id="busy" hidden><span class="busy-spin"></span><p id="busy-text">Signing in…</p></div>
+
+    <button class="home-indicator" id="home-indicator" type="button" aria-label="Home"></button>
+  </div>
+
+  <aside class="notes" id="notes">
+    <p class="side-eyebrow">Dev notes</p>
+    <h2>Biometric login: scenarios &amp; rules</h2>
+    <h3>How it works</h3>
+    <p>Turning on biometrics stores a device-bound credential (refresh token or private key) in the iOS Keychain / Android Keystore, protected by Face ID or fingerprint. A successful scan unlocks it and the app gets a new session. No biometric data leaves the phone. The phone plus the biometric count as two factors, so biometric sign-in <b>skips the password and the security code</b>. Signing in with a password still needs the code (text or email, with native OTP AutoFill).</p>
+    <h3>Scenarios</h3>
+    <table class="scn-table">
+      <thead><tr><th>#</th><th>Scenario</th><th>Expected behaviour</th></tr></thead>
+      <tbody id="scn-table"></tbody>
+    </table>
+    <h3>iOS</h3>
+    <ul>
+      <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). <code>localizedFallbackTitle = "Use password"</code>.</li>
+      <li><code>NSFaceIDUsageDescription</code>: "Use Face ID to sign in to your Freedom account quickly and securely."</li>
+      <li>Keychain item with <code>SecAccessControl .biometryCurrentSet</code>, so adding a face or finger invalidates it.</li>
+      <li>Errors: <code>authenticationFailed</code> → retry alert · <code>userFallback</code> → password · <code>userCancel</code> → returning screen · <code>biometryLockout</code> → locked banner · <code>biometryNotAvailable</code> (access denied) / <code>biometryNotEnrolled</code> → password only.</li>
+      <li>Touch ID iPhones use the same flow with "Touch ID" copy.</li>
+    </ul>
+    <h3>Android</h3>
+    <ul>
+      <li><code>BiometricPrompt</code> with <code>BIOMETRIC_STRONG</code> and a <code>CryptoObject</code> from a Keystore key with <code>setUserAuthenticationRequired(true)</code> and <code>setInvalidatedByBiometricEnrollment(true)</code>.</li>
+      <li>Negative button "Use password". Failed reads stay in the sheet ("Not recognized. Try again.").</li>
+      <li>Errors: <code>ERROR_LOCKOUT</code> (5 fails, 30 s) / <code>ERROR_LOCKOUT_PERMANENT</code> → locked banner · <code>ERROR_NEGATIVE_BUTTON</code> → password · <code>ERROR_USER_CANCELED</code> → returning screen · <code>KeyPermanentlyInvalidatedException</code> → biometrics changed · <code>BIOMETRIC_ERROR_NONE_ENROLLED</code> → password only.</li>
+    </ul>
+    <h3>Rules</h3>
+    <ul>
+      <li>One account per phone can use biometrics. Switching accounts turns it off and deletes the key on the phone and the server.</li>
+      <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Login settings. It shows again after biometrics change on the phone.</li>
+      <li>Turning it on and off needs a scan to confirm turning it on, and a confirmation to turn it off.</li>
+      <li>Sign out keeps biometrics on; the next sign-in can use it. <i>(Assumption to confirm.)</i></li>
+      <li>The server revokes the biometric credential when the password is changed or reset, the account is locked, or after inactivity (e.g. 90 days). The app then asks for the password.</li>
+      <li>The OS limits the number of tries (iOS 2 per prompt, 5 total; Android 5). The app doesn't count tries itself.</li>
+      <li>Biometric sign-in failures never lock the Freedom account; only password failures do.</li>
+    </ul>
+  </aside>
+
+
+  <script src="app.js"></script>
+</body>
+</html>
