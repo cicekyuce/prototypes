@@ -151,7 +151,8 @@
   }
   $("open-drawer").addEventListener("click", () => {
     if (!state.remembered) return go("drawer");
-    state.autoPrompt = true;
+    if (state.bio && state.device === "changed") return bioChanged();
+    if (state.bio && state.device !== "none" && !state.locked) return startBio("login");
     go("returning");
   });
   $("ret-back").addEventListener("click", () => go("welcome"));
@@ -451,8 +452,8 @@
       steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["No offer shows; the Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Biometric login is OFF. Tap the toggle", ["settings"]], ["Message: set up @Bio on the phone. Tap <b>Go to Settings</b>", ["os-modal"]], ["Phone Settings: set up @Bio, then go back to Freedom", ["os"]], ["Tap the toggle again and confirm with one scan", ["settings"]], ["Biometric login is ON", ["bio-on"]]],
       expect: "Don't offer biometrics if none are enrolled on the phone. Turning the toggle on opens a message asking to set up biometrics, with a button to the phone Settings. After setup, the toggle turns on with one scan." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
-      steps: [["Open Freedom from the home screen", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens on its own: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
-      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt on its own, also after sign out. Success skips password and code." },
+      steps: [["Open Freedom from the home screen", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
+      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen (no Welcome back page), also after sign out. Welcome back only shows if the prompt is cancelled or biometrics can't be used. Success skips password and code." },
     { id: "retry", group: "Sign in", title: "Not recognized, then works", start: RET,
       steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>", ["prompt"]], ["@Retry", ["nomatch"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "iOS: system alert with Try Face ID Again / Use password / Cancel. Android: the prompt stays open with “Not recognized. Try again.”" },
@@ -460,7 +461,7 @@
       steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["Enter your password (email is filled in)", ["signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Overview opens. Biometrics stay on", ["done"]]],
       expect: "Password sign-in always needs the security code. Biometric settings don't change." },
     { id: "cancel", group: "Sign in", title: "Cancel the prompt", start: RET,
-      steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on Welcome back (Back returns to pre-login): retry with @Bio, use password, or switch account", ["cancel"]]],
+      steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Welcome back opens: retry with @Bio, use password, or switch account", ["cancel"]]],
       expect: "Cancel doesn't count as a failure and doesn't reopen the prompt by itself." },
     { id: "lockout", group: "Sign in", title: "Too many tries, biometrics locked", start: RET,
       steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 5 times (retry each time)", ["prompt"]], ["@Bio is locked: tap <b>OK</b>, then <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
@@ -481,7 +482,7 @@
       steps: [["Open Freedom", ["home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Tap <b>Sign in with a different account</b>, then <b>Continue</b>", ["cancel"]], ["Sign in with a new email, password and code", ["welcome", "drawer", "signin", "verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Only one account per phone. Switching deletes the key on the phone and the server and forgets the saved email." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: { route: "done", bio: true, remembered: CICEK },
-      steps: [["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens on its own: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
+      steps: [["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. Logout returns to the pre-login screen; Sign in to My Account opens the prompt. (Assumption to confirm with security.)" },
     { id: "off", group: "Accounts", title: "Turn off in Manage biometric login", start: { route: "done", bio: true, remembered: CICEK },
       steps: [["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Turn <b>Biometric login</b> OFF, confirm", ["settings"]], ["Turn it ON again: one scan to confirm", ["bio-off"]], ["Tap back, then <b>Logout</b>", ["bio-on", "account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
@@ -673,10 +674,11 @@
     }
   }
   function afterLock() {
-    if (purpose === "login") { state.route = null; render(); } else bioCancelled();
+    if (purpose === "login") toReturning(); else bioCancelled();
   }
   function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else bioCancelled(); }
-  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); } else bioCancelled(); }
+  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); toReturning(); } else bioCancelled(); }
+  function toReturning() { if (state.route === "returning") { state.route = null; render(); } else go("returning"); }
   function bioCancelled() { toast(`${BioName()} not turned on`); if (state.route === "settings") prepSettings(); }
 
   function bioOk() {
