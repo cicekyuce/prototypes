@@ -465,7 +465,7 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["cancel"]]],
       expect: "Cancel closes the prompt and returns to the pre-login screen. It doesn't count as a failure and doesn't reopen the prompt by itself." },
     { id: "lockout", group: "Sign in", title: "Too many tries, biometrics locked", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 5 times (retry each time)", ["prompt"]], ["@Bio is locked: tap <b>OK</b>, then <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 5 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 5 times (the prompt stays open)", ["prompt"], "android"], ["Face ID is locked: tap <b>OK</b>, then <b>Sign in with password</b>", ["locked"], "ios"], ["Fingerprint is locked: on Welcome back, tap <b>Sign in with password</b>", ["locked"], "android"], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
       expect: "The phone locks biometrics after 5 fails (iOS: unlock with passcode; Android: 30 s, then permanent). The app hides the button and shows a banner. The Freedom account is not locked." },
     { id: "changed", group: "Sign in", title: "Biometrics changed on the phone", start: RET, device: "changed", offer: true,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Message: @Bio changed on this phone", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
@@ -652,9 +652,8 @@
       $("fid-hud").classList.add("shake");
       later(() => {
         $("fid").hidden = true;
-        const first = state.promptFails === 1;
-        alertIOS({ face: true, title: "Face Not Recognized", msg: first ? "Try Again" : "",
-          btns: [first && ["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Use password", usePassword], ["Cancel", cancelBio]].filter(Boolean) });
+        alertIOS({ face: true, title: "Face Not Recognized", msg: "Try Again",
+          btns: [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Use password", usePassword], ["Cancel", cancelBio]] });
       }, 650);
     } else {
       $("bp").classList.remove("shake"); void $("bp").offsetWidth; $("bp").classList.add("shake", "err");
