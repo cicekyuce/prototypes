@@ -496,7 +496,8 @@
     </table>
     <h3>iOS</h3>
     <ul>
-      <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). <code>localizedFallbackTitle = "Use password"</code>.</li>
+      <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). <code>localizedFallbackTitle = "Use password"</code> at sign-in. When turning it on, set <code>localizedFallbackTitle = ""</code> to hide the button, because a password can't turn on Face ID: it needs a successful scan.</li>
+      <li>Turning it on, not recognized then <b>Cancel</b>: Freedom modal “Face ID didn't recognize you” with <b>Try again</b> (new scan) / <b>Not now</b>. After 3 failed scans: “Too many tries”, turn it on later in Manage biometric login.</li>
       <li><code>NSFaceIDUsageDescription</code>: "Use Face ID to sign in to your Freedom account quickly and securely." iOS shows this permission alert once per install, the first time the app uses Face ID: when the customer taps <b>Turn on Face ID</b> on the offer or turns on <b>Biometric login</b> in Manage biometric login. <b>OK</b> continues to the scan; <b>Don't Allow</b> leads to scenario 3.</li>
       <li>Keychain item with <code>SecAccessControl .biometryCurrentSet</code>, so adding a face or finger invalidates it.</li>
       <li><b>3 tries (both platforms):</b> the phones lock biometrics after 5 fails, so Freedom keeps its own count. On the 3rd failed scan, stop the prompt (<code>LAContext.invalidate()</code> / <code>BiometricPrompt.cancelAuthentication()</code>), return to the pre-login screen and show the locked message. Message: "Face ID is paused after too many tries. Sign in with your password to use Face ID again." Only a password sign-in clears the count; unlocking the phone with its passcode does not, because the phone's own Face ID was never locked. <i>(Decision to confirm: also clear it after a time limit?)</i></li>
@@ -507,6 +508,7 @@
     <h3>Android</h3>
     <ul>
       <li><code>BiometricPrompt</code> with <code>BIOMETRIC_STRONG</code> and a <code>CryptoObject</code> from a Keystore key with <code>setUserAuthenticationRequired(true)</code> and <code>setInvalidatedByBiometricEnrollment(true)</code>.</li>
+      <li>Negative button: “Use password” at sign-in, “Not now” when turning it on. Not recognized then <b>Not now</b>: Freedom modal “Fingerprint not recognized” with <b>Try again</b> / <b>Not now</b>.</li>
       <li>Negative button "Use password". Failed reads stay in the sheet ("Not recognized. Try again.").</li>
       <li>Errors: <code>ERROR_LOCKOUT</code> / <code>ERROR_LOCKOUT_PERMANENT</code> → locked message · <code>ERROR_NEGATIVE_BUTTON</code> → password · <code>ERROR_USER_CANCELED</code> → pre-login screen · <code>KeyPermanentlyInvalidatedException</code> → biometrics changed · <code>BIOMETRIC_ERROR_NONE_ENROLLED</code> → password only.</li>
       <li>No fingerprint enrolled: the <b>Go to Settings</b> button opens enrollment with <code>Settings.ACTION_BIOMETRIC_ENROLL</code> (Android 11+, extra <code>BIOMETRIC_AUTHENTICATORS_ALLOWED = BIOMETRIC_STRONG</code>). Fall back to <code>ACTION_FINGERPRINT_ENROLL</code> (Android 9–10) or <code>ACTION_SECURITY_SETTINGS</code>.</li>
