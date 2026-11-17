@@ -464,9 +464,9 @@
     { id: "cancel", group: "Sign in", title: "Cancel the prompt", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["cancel"]]],
       expect: "Cancel closes the prompt and returns to the pre-login screen. It doesn't count as a failure and doesn't reopen the prompt by itself." },
-    { id: "lockout", group: "Sign in", title: "Too many tries, biometrics locked", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 3 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 3 times (the prompt stays open)", ["prompt"], "android"], ["Back on the pre-login screen, a message says @Bio is locked. Tap <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
-      expect: "After 3 failed scans the app stops the prompt, returns to the pre-login screen and shows the locked message, with Sign in with password. Tapping Sign in to My Account again shows the same message. A password sign-in clears it. The Freedom account is not locked." },
+    { id: "lockout", group: "Sign in", title: "Too many tries, biometrics paused", start: RET,
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 3 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 3 times (the prompt stays open)", ["prompt"], "android"], ["Back on the pre-login screen, a message says @Bio is paused. Tap <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
+      expect: "After 3 failed scans the app stops the prompt, returns to the pre-login screen and shows the paused message, with Sign in with password. Tapping Sign in to My Account again shows the same message. A password sign-in clears it. The Freedom account is not locked." },
     { id: "changed", group: "Sign in", title: "Biometrics changed on the phone", start: RET, device: "changed", offer: true,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Message: @Bio changed on this phone", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Adding a face or fingerprint invalidates the key (biometryCurrentSet / setInvalidatedByBiometricEnrollment). Ask for the password, then offer biometrics again." },
@@ -567,8 +567,7 @@
 
   /* ---------- Biometrics can't be used: message over the pre-login screen ---------- */
   function showLocked() {
-    const ios = state.platform === "ios";
-    dialog({ title: "Too many tries", msg: `${BioName()} is locked after too many tries. Sign in with your password, or unlock your phone with its ${ios ? "passcode" : "PIN, pattern or password"} to use ${bioName()} again.`,
+    dialog({ title: "Too many tries", msg: `${BioName()} is paused after too many tries. Sign in with your password to use ${bioName()} again.`,
       ok: "Sign in with password", cancel: "Close", onOk: toPassword });
   }
   function showNotSet() {
@@ -652,7 +651,7 @@
   function lockout() {
     state.locked = true;
     emit("locked");
-    setSim(false, `${BioName()} is now locked on this phone.`);
+    setSim(false, `${BioName()} is paused in Freedom.`);
     if (state.platform === "ios") {
       $("fid-hud").classList.add("shake");
       later(() => { $("fid").hidden = true; afterLock(); }, 650);
