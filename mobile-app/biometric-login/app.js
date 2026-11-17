@@ -433,8 +433,8 @@
   const FIRST = { route: "lock", bio: false, remembered: null };
   const SCENARIOS = [
     { id: "enroll", group: "Turn on", title: "First sign-in, turn on biometrics", start: FIRST, offer: true,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Sign in with email + password", ["welcome", "drawer", "signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Tap <b>Turn on @Bio</b>", ["enroll"]], ["Tap <b>Recognized</b> (or the prompt) to confirm", ["prompt"]], ["Overview opens with @Bio on", ["done"]]],
-      expect: "Offer shows once after the first password + code sign-in. Turning on asks for one scan, then opens the Overview with a confirmation." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Sign in with email + password", ["welcome", "drawer", "signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Tap <b>Turn on @Bio</b>", ["enroll"]], ["Tap <b>OK</b> on the iOS alert to allow Face ID", ["permission"], "ios"], ["Tap <b>Recognized</b> (or the prompt) to confirm", ["prompt"]], ["Overview opens with @Bio on", ["done"]]],
+      expect: "Offer shows once after the first password + code sign-in. On iOS, the first Face ID use shows the system permission alert (once per install). Turning on asks for one scan, then opens the Overview with a confirmation." },
     { id: "notnow", group: "Turn on", title: "First sign-in, choose Not now", start: FIRST, offer: true,
       steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Not now</b> on the offer", ["enroll"]], ["Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Biometric login is OFF", ["settings"]]],
       expect: "No biometric key is created. The offer doesn't show again; it's only in Manage biometric login." },
@@ -486,6 +486,7 @@
 
   const bioName = () => (state.platform === "ios" ? "Face ID" : "fingerprint");
   const BioName = () => (state.platform === "ios" ? "Face ID" : "Fingerprint");
+  const steps = () => scn.steps.filter((x) => !x[2] || x[2] === state.platform);
   const fill = (t) => t
     .replace("@code", state.platform === "ios" ? "Tap <b>From Messages</b> / <b>From Mail</b> above the keypad" : "Tap <b>Allow</b> (text) or the <b>From Gmail</b> code")
     .replace("@Prompt", state.platform === "ios" ? "Face ID" : "The fingerprint prompt")
@@ -511,7 +512,7 @@
     }
     sel.value = scn.id;
     $("scn-desc").textContent = scn.ios && state.platform === "android" ? "iOS only. Switch to iOS to see this one." : fill(scn.expect);
-    $("side-steps").innerHTML = scn.steps.map(([t]) => `<li>${fill(t)}</li>`).join("");
+    $("side-steps").innerHTML = steps().map(([t]) => `<li>${fill(t)}</li>`).join("");
     paintSteps();
     $("scn-table").innerHTML = SCENARIOS.map((x, i) => `<tr><td>${i + 1}</td><td><a href="?s=${x.id}&platform=${state.platform}">${(x.ios ? x.title : x.title.replace("Face ID", bioName()))}</a></td><td>${fill(x.expect)}</td></tr>`).join("");
   }
@@ -524,10 +525,10 @@
     });
   }
   function emit(key) {
-    const steps = scn.steps;
-    let i = steps.findIndex(([, k], j) => j >= Math.max(state.step, 0) && k.includes(key));
+    const list = steps();
+    let i = list.findIndex(([, k], j) => j >= Math.max(state.step, 0) && k.includes(key));
     if (i < 0 && ROUTES.has(key)) {
-      for (let j = state.step - 1; j >= 0; j--) if (steps[j][1].includes(key)) { i = j; break; }
+      for (let j = state.step - 1; j >= 0; j--) if (list[j][1].includes(key)) { i = j; break; }
     }
     if (i < 0 || i === state.step) return;
     state.step = i;
@@ -539,7 +540,7 @@
     closeAllPrompts();
     Object.assign(state, { bio: scn.start.bio, remembered: scn.start.remembered, email: scn.start.remembered || "",
       device: scn.device || "ok", offer: !!scn.offer, fails: 0, promptFails: 0, locked: false, autoPrompt: false,
-      mode: "new", iosAsked: false, offlineOnce: true, step: -1 });
+      mode: "new", iosAsked: !!scn.start.bio, offlineOnce: true, step: -1 });
     renderScenario();
     applyCopy();
     state.route = null;
@@ -746,21 +747,22 @@
   }
   $("enroll-on").addEventListener("click", () => {
     state.offer = false;
+    enrollBio();
+  });
+  function enrollBio() {
     if (state.platform === "ios" && !state.iosAsked) {
       state.iosAsked = true;
-      if (scn.id === "denied") {
-        emit("permission");
-        return alertIOS({ face: true, title: "Do you want to allow “Freedom” to use Face ID?", msg: "Use Face ID to sign in to your Freedom account quickly and securely.",
-          btns: [["Don't Allow", denied], ["OK", () => startBio("enroll"), "bold"]] });
-      }
+      emit("permission");
+      return alertIOS({ face: true, title: "Do you want to allow “Freedom” to use Face ID?", msg: "Use Face ID to sign in to your Freedom account quickly and securely.",
+        btns: [["Don't Allow", denied], ["OK", () => startBio("enroll"), "bold"]] });
     }
     startBio("enroll");
-  });
+  }
   function denied() {
     state.device = "denied";
     emit("denied");
     dialog({ title: "Face ID is off for Freedom", msg: "To use it, go to your iPhone Settings › Freedom and turn on Face ID. You can then turn it on in Manage biometric login.",
-      ok: "Continue", cancel: false, onOk: () => go("done") });
+      ok: "Continue", cancel: false, onOk: () => (state.route === "settings" ? prepSettings() : go("done")) });
   }
   $("enroll-skip").addEventListener("click", () => { state.offer = false; go("done"); later(() => toast("You can turn it on in Manage biometric login"), 400); });
 
@@ -824,7 +826,7 @@
     if (state.bio) {
       dialog({ title: `Turn off ${bioName()}?`, msg: "You'll sign in with your password and a security code on this phone.", ok: "Turn off",
         onOk: () => { state.bio = false; prepSettings(); toast(`${BioName()} sign-in is off`); emit("bio-off"); } });
-    } else startBio("enroll");
+    } else enrollBio();
   });
   $("set-open-os").addEventListener("click", () => toast("Opens the phone Settings app"));
 

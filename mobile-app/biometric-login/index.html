@@ -518,7 +518,7 @@
     <h3>iOS</h3>
     <ul>
       <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). <code>localizedFallbackTitle = "Use password"</code>.</li>
-      <li><code>NSFaceIDUsageDescription</code>: "Use Face ID to sign in to your Freedom account quickly and securely."</li>
+      <li><code>NSFaceIDUsageDescription</code>: "Use Face ID to sign in to your Freedom account quickly and securely." iOS shows this permission alert once per install, the first time the app uses Face ID: when the customer taps <b>Turn on Face ID</b> on the offer or turns on <b>Biometric login</b> in Manage biometric login. <b>OK</b> continues to the scan; <b>Don't Allow</b> leads to scenario 3.</li>
       <li>Keychain item with <code>SecAccessControl .biometryCurrentSet</code>, so adding a face or finger invalidates it.</li>
       <li>Errors: <code>authenticationFailed</code> → retry alert · <code>userFallback</code> → password · <code>userCancel</code> → returning screen · <code>biometryLockout</code> → locked banner · <code>biometryNotAvailable</code> (access denied) / <code>biometryNotEnrolled</code> → password only.</li>
       <li>Touch ID iPhones use the same flow with "Touch ID" copy.</li>
