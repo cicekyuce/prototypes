@@ -486,3 +486,32 @@ body {
 .fm-toggle:disabled { opacity: .45; cursor: default; }
 .fm-note { margin: 12px 0 0; font-size: 13px; line-height: 18px; color: var(--greyscale-500); }
 .fm-note[hidden] { display: none; }
+
+/* Simulated phone Settings */
+.os-set { display: block; padding-bottom: 30px; }
+.os-set.ios { background: #f2f2f7; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; }
+.os-set.and { background: #f6f8fc; font-family: Roboto, system-ui, sans-serif; }
+.os-nav { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 54px 12px 8px; }
+.os-nav h1 { margin: 0; font-size: 17px; font-weight: 600; color: #000; }
+.os-ret { position: absolute; left: 26px; top: 38px; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; font-weight: 600; color: #007aff; cursor: pointer; }
+.os-set.and .os-nav { justify-content: flex-start; gap: 18px; padding: 50px 16px 18px; }
+.os-set.and .os-nav h1 { font-size: 24px; font-weight: 400; }
+.os-arrow { padding: 0; border: 0; background: none; font-size: 24px; color: #1f1f1f; cursor: pointer; }
+.os-cap { margin: 24px 32px 6px; font-size: 13px; color: #6d6d72; }
+.os-group { margin: 0 16px 24px; border-radius: 10px; background: #fff; overflow: hidden; }
+.os-group.dim { opacity: .5; }
+.os-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 10px 16px; border: 0; border-bottom: .5px solid #c6c6c8; background: #fff; font: inherit; font-size: 16px; text-align: left; color: #000; }
+.os-row:last-child { border-bottom: 0; }
+button.os-row { cursor: pointer; }
+.os-row.blue { color: #007aff; }
+.os-val { color: #8a8a8e; }
+.os-check { color: #34c759; font-weight: 700; }
+.os-foot { margin: -16px 32px 0; font-size: 13px; line-height: 18px; color: #6d6d72; }
+.ios-sw { position: relative; flex: 0 0 auto; width: 51px; height: 31px; border-radius: 16px; background: #e9e9ea; transition: background .2s; }
+.ios-sw span { position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.2); transition: transform .2s; }
+.ios-sw.on { background: #34c759; }
+.ios-sw.on span { transform: translateX(20px); }
+.os-set.and .os-group { border-radius: 20px; }
+.os-set.and .os-row { justify-content: flex-start; gap: 18px; min-height: 64px; padding: 12px 20px; border: 0; font-size: 17px; }
+.os-plus, .os-fp { display: grid; place-items: center; width: 24px; font-size: 22px; color: #0b57d0; }
+.os-set.and .os-foot { margin: -10px 28px 0; font-size: 14px; line-height: 20px; color: #444746; }
