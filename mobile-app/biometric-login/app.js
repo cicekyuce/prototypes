@@ -596,7 +596,7 @@
   function startBio(p, retry) {
     purpose = p;
     closeKeypad(true);
-    if (!retry) state.promptFails = 0;
+    if (!retry) { state.promptFails = 0; if (p !== "login") { state.fails = 0; state.locked = false; } }
     if (state.platform === "ios") {
       $("fid-hud").className = "fid-hud";
       $("fid").hidden = false;
@@ -606,6 +606,7 @@
       $("bp-title").textContent = p === "login" ? "Sign in to Freedom" : "Turn on fingerprint sign-in";
       $("bp-sub").textContent = p === "login" ? state.remembered : "Confirm it's you";
       $("bp-status").textContent = "Touch the fingerprint sensor";
+      $("bp-neg").textContent = p === "login" ? "Use password" : "Not now";
       $("bp").className = "bp-layer";
       $("bp").hidden = false;
     }
@@ -641,7 +642,9 @@
       later(() => {
         $("fid").hidden = true;
         alertIOS({ face: true, title: "Face Not Recognized", msg: "Try Again",
-          btns: [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Use password", usePassword], ["Cancel", cancelBio]] });
+          btns: purpose === "login"
+            ? [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Use password", usePassword], ["Cancel", cancelBio]]
+            : [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Cancel", cancelBio]] });
       }, 650);
     } else {
       $("bp").classList.remove("shake"); void $("bp").offsetWidth; $("bp").classList.add("shake", "err");
@@ -662,12 +665,24 @@
     }
   }
   function afterLock() {
-    if (purpose !== "login") return bioCancelled();
+    if (purpose !== "login") {
+      state.fails = 0; state.locked = false;
+      if (state.route === "settings") prepSettings();
+      return dialog({ title: "Too many tries", msg: `${BioName()} didn't recognize you, so it wasn't turned on. You can try again later in Manage biometric login.`, ok: "OK", cancel: false });
+    }
     if (state.route !== "welcome") go("welcome");
     later(showLocked, 250);
   }
-  function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else bioCancelled(); }
-  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); if (state.route !== "welcome") go("welcome"); } else bioCancelled(); }
+  function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else enrollStopped(); }
+  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); if (state.route !== "welcome") go("welcome"); } else enrollStopped(); }
+  function enrollStopped() {
+    if (!state.promptFails) return bioCancelled();
+    if (state.route === "settings") prepSettings();
+    const ios = state.platform === "ios";
+    dialog({ title: ios ? "Face ID didn't recognize you" : "Fingerprint not recognized",
+      msg: `Make sure your ${ios ? "face is in view" : "finger covers the sensor"} and try again. You can also turn it on later in Manage biometric login.`,
+      ok: "Try again", cancel: "Not now", onOk: () => startBio(purpose, true) });
+  }
   function bioCancelled() { toast(`${BioName()} not turned on`); if (state.route === "settings") prepSettings(); }
 
   function bioOk() {
