@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const ORDER = ["lock", "home", "welcome", "drawer", "returning", "signin", "verify", "code", "enroll", "done", "settings"];
+  const ORDER = ["lock", "home", "welcome", "drawer", "returning", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn"];
   const LIGHT = ["lock", "home", "welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
@@ -102,7 +102,9 @@
     if (route === "signin") prepSignin();
     if (route === "verify") prepVerify();
     if (route === "code") { state.channel = via; startCode(); }
-    if (route === "done") { $("scr-done").scrollTop = 0; const n = (state.email || CICEK).split("@")[0].split(/[._-]/)[0]; $("ov-hi").textContent = `Hi, ${n.charAt(0).toUpperCase()}${n.slice(1)}`; }
+    if (route === "done") $("scr-done").scrollTop = 0;
+    if (route !== "done") closeShop(true);
+    if (route === "learn") $("scr-learn").scrollTop = 0;
   }
   const go = (hash) => { location.hash = `#/${hash}`; };
   window.addEventListener("hashchange", render);
@@ -434,13 +436,13 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Sign in with email + password", ["welcome", "drawer", "signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Tap <b>Turn on @Bio</b>", ["enroll"]], ["Tap <b>Recognized</b> (or the prompt) to confirm", ["prompt"]], ["Overview opens with @Bio on", ["done"]]],
       expect: "Offer shows once after the first password + code sign-in. Turning on asks for one scan, then opens the Overview with a confirmation." },
     { id: "notnow", group: "Turn on", title: "First sign-in, choose Not now", start: FIRST, offer: true,
-      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Not now</b> on the offer", ["enroll"]], ["Overview opens. Open the <b>Menu</b>", ["done"]], ["Tap <b>Login settings</b>: it's off", ["settings"]]],
-      expect: "No biometric key is created. The offer doesn't show again; it's only in Login settings." },
+      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Not now</b> on the offer", ["enroll"]], ["Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Biometric login is OFF", ["settings"]]],
+      expect: "No biometric key is created. The offer doesn't show again; it's only in Manage biometric login." },
     { id: "denied", group: "Turn on", title: "iOS: Face ID permission denied", start: FIRST, offer: true, ios: true,
-      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Turn on Face ID</b>", ["enroll"]], ["Tap <b>Don't Allow</b> on the iOS alert", ["permission"]], ["Read the message, then tap <b>Continue</b>", ["denied"]], ["Open the <b>Menu</b> → <b>Login settings</b>", ["done"]], ["Toggle is off and disabled", ["settings"]]],
+      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Turn on Face ID</b>", ["enroll"]], ["Tap <b>Don't Allow</b> on the iOS alert", ["permission"]], ["Read the message, then tap <b>Continue</b>", ["denied"]], ["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Toggle is OFF and disabled", ["settings"]]],
       expect: "iOS only (Android has no permission prompt). App explains how to allow Face ID in Settings › Freedom; toggle stays off and disabled until allowed." },
     { id: "nodevice", group: "Turn on", title: "Phone has no biometrics set up", start: FIRST, offer: true, device: "none",
-      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["No offer shows; the Overview opens. Open the <b>Menu</b>", ["done"]], ["Tap <b>Login settings</b>: toggle is disabled", ["settings"]]],
+      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["No offer shows; the Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Toggle is OFF and disabled", ["settings"]]],
       expect: "Don't offer biometrics if none are enrolled on the phone. Settings explains how to set them up and links to phone Settings." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
       steps: [["Open Freedom from the home screen", ["home"]], ["@Prompt opens on its own: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
@@ -462,7 +464,7 @@
       expect: "Adding a face or fingerprint invalidates the key (biometryCurrentSet / setInvalidatedByBiometricEnrollment). Ask for the password, then offer biometrics again." },
     { id: "removed", group: "Sign in", title: "Biometrics removed from the phone", start: RET, device: "none",
       steps: [["Open Freedom", ["home"]], ["No prompt: banner explains @Bio isn't set up", ["returning"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
-      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: hide the button, explain, use password. Turn biometrics back on in Login settings after setup." },
+      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: hide the button, explain, use password. Turn biometrics back on in Manage biometric login after setup." },
     { id: "expired", group: "Sign in", title: "Biometric credential expired", start: RET, device: "expired", offer: true,
       steps: [["Open Freedom", ["home"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: please sign in again", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "The server revokes the credential after a password change or reset, an account lock or 90 days without use. The scan works, but the server refuses it." },
@@ -473,10 +475,10 @@
       steps: [["Open Freedom", ["home"]], ["@Cancel", ["prompt"]], ["Tap <b>Sign in with a different account</b>, then <b>Continue</b>", ["cancel"]], ["Sign in with a new email, password and code", ["welcome", "drawer", "signin", "verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Only one account per phone. Switching deletes the key on the phone and the server and forgets the saved email." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: { route: "done", bio: true, remembered: CICEK },
-      steps: [["On the Overview, open the <b>Menu</b>", ["done"]], ["Tap <b>Sign out</b>", ["menu"]], ["Welcome back: tap <b>Sign in with @Bio</b>", ["returning"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
+      steps: [["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Welcome back: tap <b>Sign in with @Bio</b>", ["returning"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. No prompt opens by itself after sign out. (Assumption to confirm with security.)" },
-    { id: "off", group: "Accounts", title: "Turn off in Login settings", start: { route: "done", bio: true, remembered: CICEK },
-      steps: [["Open the <b>Menu</b> → <b>Login settings</b>", ["done"]], ["Turn off <b>Sign in with @Bio</b>, confirm", ["settings"]], ["Turn it on again: one scan to confirm", ["bio-off"]], ["Tap <b>Back</b>, open the <b>Menu</b>, tap <b>Sign out</b>", ["bio-on", "done", "menu"]], ["Welcome back: @Bio is ready", ["returning"]]],
+    { id: "off", group: "Accounts", title: "Turn off in Manage biometric login", start: { route: "done", bio: true, remembered: CICEK },
+      steps: [["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Turn <b>Biometric login</b> OFF, confirm", ["settings"]], ["Turn it ON again: one scan to confirm", ["bio-off"]], ["Tap back, then <b>Logout</b>", ["bio-on", "account"]], ["Welcome back: @Bio is ready", ["returning"]]],
       expect: "Turning off deletes the key on the phone and the server. Turning on needs a scan. Password + code apply while it's off." },
   ];
   const params = new URLSearchParams(location.search);
@@ -550,7 +552,9 @@
     $("enroll-title").textContent = ios ? "Sign in faster with Face ID." : "Sign in faster with your fingerprint.";
     $("enroll-on").textContent = `Turn on ${bioName()}`;
     $("enroll-li1").textContent = ios ? "Look at your phone to sign in to the Freedom app." : "Touch the sensor to sign in to the Freedom app.";
-    $("set-bio-title").textContent = `Sign in with ${bioName()}`;
+    $("set-h").textContent = ios ? "Sign in faster with Face ID or Touch ID." : "Sign in faster with biometric ID.";
+    $("set-lede").textContent = ios ? "Use your Face ID or Touch ID to log in faster." : "Use face or fingerprint recognition to log in faster.";
+    $("learn-how").textContent = ios ? "Face ID or Touch ID" : "Face or Fingerprint";
   }
 
   /* ---------- Welcome back ---------- */
@@ -562,7 +566,7 @@
     $("ret-password").className = `btn btn-block ${usable ? "btn-outline" : "btn-primary"}`;
     let msg = "";
     if (state.locked) msg = `${BioName()} is locked after too many tries. Sign in with your password, or unlock your phone with its passcode to use ${bioName()} again.`;
-    else if (state.bio && state.device === "none") msg = `${BioName()} isn't set up on this phone anymore. Sign in with your password. You can turn it back on in Login settings.`;
+    else if (state.bio && state.device === "none") msg = `${BioName()} isn't set up on this phone anymore. Sign in with your password. You can turn it back on in Manage biometric login.`;
     $("ret-banner-text").textContent = msg;
     $("ret-banner").hidden = !msg;
     if (state.autoPrompt) {
@@ -612,7 +616,7 @@
     emit("prompt");
   }
   function closeAllPrompts() {
-    ["fid", "bp", "ios-alert", "fm", "busy", "menu"].forEach((id) => ($(id).hidden = true));
+    ["fid", "bp", "ios-alert", "fm", "busy", "shop"].forEach((id) => ($(id).hidden = true));
     setSim(false);
   }
   function bioMatch() {
@@ -755,31 +759,66 @@
   function denied() {
     state.device = "denied";
     emit("denied");
-    dialog({ title: "Face ID is off for Freedom", msg: "To use it, go to your iPhone Settings › Freedom and turn on Face ID. You can then turn it on in Login settings.",
+    dialog({ title: "Face ID is off for Freedom", msg: "To use it, go to your iPhone Settings › Freedom and turn on Face ID. You can then turn it on in Manage biometric login.",
       ok: "Continue", cancel: false, onOk: () => go("done") });
   }
-  $("enroll-skip").addEventListener("click", () => { state.offer = false; go("done"); later(() => toast("You can turn it on in Login settings"), 400); });
+  $("enroll-skip").addEventListener("click", () => { state.offer = false; go("done"); later(() => toast("You can turn it on in Manage biometric login"), 400); });
 
-  /* ---------- Menu + settings ---------- */
-  $("open-menu").addEventListener("click", () => { $("menu").hidden = false; emit("menu"); });
-  $("close-menu").addEventListener("click", () => { $("menu").hidden = true; });
-  $("menu").addEventListener("click", (e) => { if (e.target === $("menu")) $("menu").hidden = true; });
-  $("menu-settings").addEventListener("click", () => { $("menu").hidden = true; go("settings"); });
-  $("menu-signout").addEventListener("click", () => {
-    $("menu").hidden = true;
+  /* ---------- Overview header, tab bar, Shop drawer, My Account ---------- */
+  const ICO = {
+    home: '<path d="M4 10.2 12 4l8 6.2V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 16h6"/>',
+    services: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11.5 17.5h1"/>',
+    usage: '<path d="M11 4.1A8 8 0 1 0 19.9 13H11z"/><path d="M14 2.6a8 8 0 0 1 7.4 7.4H14z"/>',
+    billing: '<path d="M4 8V6.5A2.5 2.5 0 0 1 6.5 4H17v4"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M16 14h1.5"/>'
+  };
+  const tabIco = (k) => `<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg>`;
+  const SHOP_BAG = '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M11 11V9a5 5 0 0 1 10 0v2" fill="none" stroke="#f26f21" stroke-width="2.2" stroke-linecap="round"/><path d="M6.5 11h19l-1.3 14.2a2 2 0 0 1-2 1.8H9.8a2 2 0 0 1-2-1.8z" fill="#f26f21"/><path d="M12 15.5a4 4 0 0 0 8 0" fill="none" stroke="#06223f" stroke-width="2" stroke-linecap="round"/></svg>';
+  const SHOP_X = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#f26f21" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  function tabbar(open) {
+    const tab = (k, label) => `<button type="button" class="tb-tab${k === "home" ? " on" : ""}" data-tab="${k}"${k === "home" ? ' aria-current="page"' : ""}>${tabIco(k)}<span>${label}</span></button>`;
+    return tab("home", "Home") + tab("services", "Services")
+      + `<span class="tb-mid"><button type="button" class="tb-shop" data-tab="shop" aria-label="${open ? "Close shop" : "Shop"}" aria-expanded="${open}">${open ? SHOP_X : SHOP_BAG}</button></span>`
+      + tab("usage", "Usage") + tab("billing", "Billing");
+  }
+  $("ov-tabs").innerHTML = tabbar(false);
+  $("shop-tabs").innerHTML = tabbar(true);
+  function openShop() { $("shop").hidden = false; $("shop").classList.remove("leaving"); emit("shop"); }
+  function closeShop(now) {
+    const el = $("shop");
+    if (el.hidden) return;
+    if (now) { el.hidden = true; return; }
+    el.classList.add("leaving");
+    later(() => { el.hidden = true; el.classList.remove("leaving"); }, 220);
+  }
+  document.querySelectorAll(".tabbar").forEach((bar) => bar.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tab]");
+    if (!b) return;
+    const k = b.dataset.tab;
+    if (k === "shop") return $("shop").hidden ? openShop() : closeShop();
+    if (k === "home") { closeShop(); $("scr-done").scrollTo({ top: 0, behavior: "smooth" }); return; }
+    toast(`${b.textContent.trim()} isn't part of this prototype`);
+  }));
+  $("shop").addEventListener("click", (e) => { if (e.target === $("shop") || e.target.classList.contains("shop-scrim")) closeShop(); });
+  $("ov-banner-close").addEventListener("click", () => { $("ov-banner").hidden = true; });
+  $("open-account").addEventListener("click", () => go("account"));
+  $("acc-bio").addEventListener("click", () => go("settings"));
+  $("set-learn").addEventListener("click", () => go("learn"));
+  $("acc-logout").addEventListener("click", () => {
     busy("Signing out…");
     later(() => { $("busy").hidden = true; state.autoPrompt = false; go("returning"); }, 700);
   });
   function prepSettings() {
     const sw = $("set-bio");
     const blocked = state.device === "none" || state.device === "denied";
-    sw.setAttribute("aria-checked", String(state.bio && !blocked));
+    const on = state.bio && !blocked;
+    sw.setAttribute("aria-checked", String(on));
+    sw.querySelector(".tog-txt").textContent = on ? "ON" : "OFF";
     sw.disabled = blocked;
-    $("set-bio-sub").textContent = state.device === "none" ? `Set up ${bioName()} in your phone settings first.`
-      : state.device === "denied" ? "Allow Face ID for Freedom in your iPhone Settings."
-      : state.bio ? "On. No password or code needed on this phone." : "Off. You sign in with your password and a code.";
+    const sub = $("set-bio-sub");
+    sub.textContent = state.device === "none" ? `Set up ${bioName()} in your phone settings first.`
+      : state.device === "denied" ? "Allow Face ID for Freedom in your iPhone Settings." : "";
+    sub.hidden = !blocked;
     $("set-open-os").hidden = !blocked;
-    $("set-email").textContent = state.email || CICEK;
   }
   $("set-bio").addEventListener("click", () => {
     if (state.bio) {

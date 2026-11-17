@@ -209,7 +209,7 @@
           <ul class="enroll-list">
             <li id="enroll-li1">Look at your phone to sign in to the Freedom app.</li>
             <li>Your face or fingerprint stays on your phone. Freedom never sees or stores it.</li>
-            <li>Turn it off anytime in <b>Menu → Login settings</b>.</li>
+            <li>Turn it off anytime in <b>My Account → Manage biometric login</b>.</li>
           </ul>
           <button class="btn btn-primary btn-block" type="button" id="enroll-on">Turn on Face ID</button>
           <button class="btn btn-outline btn-block" type="button" id="enroll-skip">Not now</button>
@@ -217,29 +217,47 @@
       </div>
     </section>
 
-    <!-- Login settings -->
-    <section class="screen flow" id="scr-settings" hidden>
-      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" data-back="done">Back</button></header>
-      <div class="flow-body">
-        <div class="card">
-          <h1>Login settings.</h1>
-          <p class="lede">Choose how you sign in to the Freedom app on this phone.</p>
-          <div class="set-row">
-            <div class="set-text">
-              <p class="set-title" id="set-bio-title">Sign in with Face ID</p>
-              <p class="set-sub" id="set-bio-sub"></p>
-            </div>
-            <button class="switch" type="button" role="switch" aria-checked="false" id="set-bio" aria-labelledby="set-bio-title"><span></span></button>
-          </div>
-          <button class="text-link chev set-open" type="button" id="set-open-os" hidden>Open phone Settings</button>
-          <div class="set-row">
-            <div class="set-text"><p class="set-title">Email</p><p class="set-sub" id="set-email">cicek@address.com</p></div>
-          </div>
-          <div class="set-row">
-            <div class="set-text"><p class="set-title">Password</p><p class="set-sub">••••••••</p></div>
-            <button class="text-link" type="button" data-not-in-prototype>Change</button>
-          </div>
+    <!-- My Account (profile settings icon) -->
+    <section class="screen fm-page" id="scr-account" hidden>
+      <header class="fm-head"><button class="fm-back" type="button" data-back="done" aria-label="Back"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>My Account</h1></header>
+      <div class="fm-body">
+        <nav class="fm-list" aria-label="My Account">
+          <button class="fm-row" type="button" data-not-in-prototype><span>My profile</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Manage network features</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Manage notification settings</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" id="acc-bio"><span>Manage biometric login</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Manage SIM/eSIM</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Contact us</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </nav>
+        <button class="fm-logout" type="button" id="acc-logout">Logout</button>
+      </div>
+    </section>
+
+    <!-- Manage biometric login -->
+    <section class="screen fm-page" id="scr-settings" hidden>
+      <header class="fm-head"><button class="fm-back" type="button" data-back="account" aria-label="Back"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>Manage biometric login</h1></header>
+      <div class="fm-body">
+        <h2 class="fm-h" id="set-h">Sign in faster with Face ID or Touch ID.</h2>
+        <p class="fm-p" id="set-lede">Use your Face ID or Touch ID to log in faster.</p>
+        <button class="fm-link" type="button" id="set-learn">Learn more about biometric login<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="fm-toggle-row">
+          <span class="fm-toggle-label" id="set-bio-title">Biometric login</span>
+          <button class="fm-toggle" type="button" role="switch" aria-checked="true" id="set-bio" aria-labelledby="set-bio-title"><span class="tog-txt">ON</span><span class="tog-knob"></span></button>
         </div>
+        <p class="fm-note" id="set-bio-sub" hidden></p>
+        <button class="text-link chev set-open" type="button" id="set-open-os" hidden>Open phone Settings</button>
+      </div>
+    </section>
+
+    <!-- Learn more about biometric login -->
+    <section class="screen fm-page" id="scr-learn" hidden>
+      <header class="fm-head"><button class="fm-back" type="button" data-back="settings" aria-label="Back"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>Biometric usage</h1></header>
+      <div class="fm-body">
+        <h2 class="fm-h">About biometric login.</h2>
+        <p class="fm-p">Biometric login lets you access your account faster using <span id="learn-how">Face ID or Touch ID</span> instead of your password.</p>
+        <p class="fm-p">Biometric verification is performed by your device. Freedom Mobile does not collect or store your biometric information.</p>
+        <p class="fm-p">For your security, only your own biometrics should be saved on this device. Anyone whose face or fingerprint is saved on this device may be able to access your account.</p>
+        <p class="fm-p">If your device is lost or stolen, contact us right away. You can turn off biometric login at any time and continue to log in with your password. To learn more, see our <a href="#" data-not-in-prototype>Privacy Policy</a>.</p>
       </div>
     </section>
 
@@ -248,11 +266,19 @@
       <div class="ov-sticky">
       <header class="ov-top">
         <img src="assets/freedom-logo.svg" alt="Freedom" />
-        <button type="button" class="ov-menu" aria-label="Menu" id="open-menu"><span></span><span></span><span></span></button>
+        <div class="ov-icons">
+          <button type="button" class="ov-ico" aria-label="Notifications" data-not-in-prototype><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg></button>
+          <button type="button" class="ov-ico" aria-label="Profile settings" id="open-account"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.6"/><path d="M3.5 20.5c0-4 2.9-7 6.5-7 1 0 1.9.2 2.7.6"/><circle cx="17.5" cy="17.5" r="1.6"/><path d="M17.5 13.6v1.2M17.5 20.2v1.2M13.6 17.5h1.2M20.2 17.5h1.2M14.7 14.7l.9.9M19.4 19.4l.9.9M14.7 20.3l.9-.9M19.4 15.6l.9-.9"/></svg></button>
+        </div>
       </header>
+      <div class="ov-banner" id="ov-banner">
+        <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14 16 5l11 9v12a1.5 1.5 0 0 1-1.5 1.5h-19A1.5 1.5 0 0 1 5 26z" stroke="#fff" stroke-width="1.6"/><path d="M11 17.5a7.5 7.5 0 0 1 10 0M13 20a4.3 4.3 0 0 1 6 0" stroke="#f26f21" stroke-width="1.6"/><circle cx="16" cy="23" r="1" fill="#f26f21"/></svg>
+        <p>Good news! Freedom Home Internet is now available in your area. <a href="#" data-not-in-prototype>Learn more<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="#f26f21" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+        <button type="button" class="ov-banner-x" id="ov-banner-close" aria-label="Dismiss"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
       </div>
       <div class="ov-body">
-        <h1 class="ov-hi" id="ov-hi">Hi, Cicek</h1>
+        <h1 class="ov-hi" id="ov-hi">Hi, Cicek.</h1>
         <button type="button" class="ov-line" data-not-in-prototype>(416) 721-8594<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
         <div class="ov-card">
@@ -351,6 +377,7 @@
         </div>
         <p class="ov-copy">© 2019 Freedom Mobile Inc.</p>
       </footer>
+      <nav class="tabbar" id="ov-tabs" aria-label="Main"></nav>
     </section>
 
     <div class="splash" id="splash" hidden aria-hidden="true"><img src="assets/freedom-mark.svg" alt="" /></div>
@@ -415,16 +442,21 @@
       </div>
     </div>
 
-    <!-- App menu -->
-    <div class="drawer-backdrop" id="menu" hidden>
-      <div class="drawer menu" role="dialog" aria-modal="true" aria-label="Menu">
-        <button class="drawer-close" type="button" id="close-menu" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-        <p class="drawer-eyebrow">My Account</p>
-        <button class="menu-item" type="button" id="menu-settings">Login settings</button>
-        <button class="menu-item" type="button" data-not-in-prototype>Profile</button>
-        <button class="menu-item" type="button" data-not-in-prototype>Notifications</button>
-        <button class="menu-item signout" type="button" id="menu-signout">Sign out</button>
+    <!-- Shop drawer (centre tab) -->
+    <div class="shop-layer" id="shop" hidden>
+      <div class="shop-scrim"></div>
+      <div class="shop-sheet" role="dialog" aria-modal="true" aria-label="Shop">
+        <nav class="fm-list">
+          <button class="fm-row" type="button" data-not-in-prototype><span>Upgrade my device</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Change my plan</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Add-ons and one-time passes</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Add-a-line</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Get phone protection</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Perks</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="fm-row" type="button" data-not-in-prototype><span>Find a store</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </nav>
       </div>
+      <nav class="tabbar" id="shop-tabs" aria-label="Main"></nav>
     </div>
 
     <!-- iOS Face ID HUD -->
@@ -500,7 +532,7 @@
     <h3>Rules</h3>
     <ul>
       <li>One account per phone can use biometrics. Switching accounts turns it off and deletes the key on the phone and the server.</li>
-      <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Login settings. It shows again after biometrics change on the phone.</li>
+      <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Manage biometric login. It shows again after biometrics change on the phone.</li>
       <li>Turning it on and off needs a scan to confirm turning it on, and a confirmation to turn it off.</li>
       <li>Sign out keeps biometrics on; the next sign-in can use it. <i>(Assumption to confirm.)</i></li>
       <li>The server revokes the biometric credential when the password is changed or reset, the account is locked, or after inactivity (e.g. 90 days). The app then asks for the password.</li>
