@@ -681,7 +681,7 @@
     later(() => {
       $("busy").hidden = true;
       if (state.device === "expired") {
-        return dialog({ title: "Please sign in again", msg: `For your security, sign in with your password and a security code. You can then turn ${bioName()} back on.`,
+        return dialog({ title: "Please sign in again", msg: `For your security, your biometric login has expired. Sign in with your password and a security code to verify your identity. You can then turn ${bioName()} back on.`,
           ok: "Sign in with password", cancel: false, onOk: () => { state.bio = false; state.device = "ok"; toPassword(); } });
       }
       if (state.device === "offline" && state.offlineOnce) {
