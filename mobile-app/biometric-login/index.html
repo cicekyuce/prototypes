@@ -245,7 +245,6 @@
           <button class="fm-toggle" type="button" role="switch" aria-checked="true" id="set-bio" aria-labelledby="set-bio-title"><span class="tog-txt">ON</span><span class="tog-knob"></span></button>
         </div>
         <p class="fm-note" id="set-bio-sub" hidden></p>
-        <button class="text-link chev set-open" type="button" id="set-open-os" hidden>Open phone Settings</button>
       </div>
     </section>
 
@@ -260,6 +259,9 @@
         <p class="fm-p">If your device is lost or stolen, contact us right away. You can turn off biometric login at any time and continue to log in with your password. To learn more, see our <a href="#" data-not-in-prototype>Privacy Policy</a>.</p>
       </div>
     </section>
+
+    <!-- Simulated phone Settings (opened from the set-up message) -->
+    <section class="screen os-set" id="scr-os" hidden></section>
 
     <!-- 6. Signed in: Freedom app Overview -->
     <section class="screen done" id="scr-done" hidden>
@@ -522,12 +524,14 @@
       <li>Keychain item with <code>SecAccessControl .biometryCurrentSet</code>, so adding a face or finger invalidates it.</li>
       <li>Errors: <code>authenticationFailed</code> → retry alert · <code>userFallback</code> → password · <code>userCancel</code> → returning screen · <code>biometryLockout</code> → locked banner · <code>biometryNotAvailable</code> (access denied) / <code>biometryNotEnrolled</code> → password only.</li>
       <li>Touch ID iPhones use the same flow with "Touch ID" copy.</li>
+      <li>Phone not set up / Face ID not allowed: tapping the OFF toggle in Manage biometric login opens a message with <b>Go to Settings</b>. iOS apps can only open their own page, Settings › Freedom (<code>UIApplication.openSettingsURLString</code>), which is right for "not allowed". There is no public link to Face ID &amp; Passcode, so for "not set up" the copy gives the path and the button opens Settings. <i>(Decision to confirm.)</i></li>
     </ul>
     <h3>Android</h3>
     <ul>
       <li><code>BiometricPrompt</code> with <code>BIOMETRIC_STRONG</code> and a <code>CryptoObject</code> from a Keystore key with <code>setUserAuthenticationRequired(true)</code> and <code>setInvalidatedByBiometricEnrollment(true)</code>.</li>
       <li>Negative button "Use password". Failed reads stay in the sheet ("Not recognized. Try again.").</li>
       <li>Errors: <code>ERROR_LOCKOUT</code> (5 fails, 30 s) / <code>ERROR_LOCKOUT_PERMANENT</code> → locked banner · <code>ERROR_NEGATIVE_BUTTON</code> → password · <code>ERROR_USER_CANCELED</code> → returning screen · <code>KeyPermanentlyInvalidatedException</code> → biometrics changed · <code>BIOMETRIC_ERROR_NONE_ENROLLED</code> → password only.</li>
+      <li>No fingerprint enrolled: the <b>Go to Settings</b> button opens enrollment with <code>Settings.ACTION_BIOMETRIC_ENROLL</code> (Android 11+, extra <code>BIOMETRIC_AUTHENTICATORS_ALLOWED = BIOMETRIC_STRONG</code>). Fall back to <code>ACTION_FINGERPRINT_ENROLL</code> (Android 9–10) or <code>ACTION_SECURITY_SETTINGS</code>.</li>
     </ul>
     <h3>Rules</h3>
     <ul>

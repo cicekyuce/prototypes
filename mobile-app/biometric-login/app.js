@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const ORDER = ["lock", "home", "welcome", "drawer", "returning", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn"];
+  const ORDER = ["lock", "home", "welcome", "drawer", "returning", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn", "os"];
   const LIGHT = ["lock", "home", "welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
@@ -105,6 +105,8 @@
     if (route === "done") $("scr-done").scrollTop = 0;
     if (route !== "done") closeShop(true);
     if (route === "learn") $("scr-learn").scrollTop = 0;
+    if (route === "os") { if (!state.osMode) state.osMode = state.device; renderOS(); }
+    if (route === "settings") state.osMode = null;
   }
   const go = (hash) => { location.hash = `#/${hash}`; };
   window.addEventListener("hashchange", render);
@@ -439,11 +441,11 @@
       steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Not now</b> on the offer", ["enroll"]], ["Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Biometric login is OFF", ["settings"]]],
       expect: "No biometric key is created. The offer doesn't show again; it's only in Manage biometric login." },
     { id: "denied", group: "Turn on", title: "iOS: Face ID permission denied", start: FIRST, offer: true, ios: true,
-      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Turn on Face ID</b>", ["enroll"]], ["Tap <b>Don't Allow</b> on the iOS alert", ["permission"]], ["Read the message, then tap <b>Continue</b>", ["denied"]], ["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Toggle is OFF and disabled", ["settings"]]],
-      expect: "iOS only (Android has no permission prompt). App explains how to allow Face ID in Settings › Freedom; toggle stays off and disabled until allowed." },
+      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["Tap <b>Turn on Face ID</b>", ["enroll"]], ["Tap <b>Don't Allow</b> on the iOS alert", ["permission"]], ["Read the message, then tap <b>Continue</b>", ["denied"]], ["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Biometric login is OFF. Tap the toggle", ["settings"]], ["Message: allow Face ID for Freedom. Tap <b>Go to Settings</b>", ["os-modal"]], ["Phone Settings: turn on <b>Face ID</b> for Freedom, then go back to Freedom", ["os"]], ["Tap the toggle again and confirm with one scan", ["settings"]], ["Biometric login is ON", ["bio-on"]]],
+      expect: "iOS only (Android has no permission prompt). App explains how to allow Face ID. Later, tapping the OFF toggle opens a message with a button to Settings › Freedom; once allowed, the toggle turns on with one scan." },
     { id: "nodevice", group: "Turn on", title: "Phone has no biometrics set up", start: FIRST, offer: true, device: "none",
-      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["No offer shows; the Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Toggle is OFF and disabled", ["settings"]]],
-      expect: "Don't offer biometrics if none are enrolled on the phone. Settings explains how to set them up and links to phone Settings." },
+      steps: [["Sign in with email, password and code", ["lock", "home", "welcome", "drawer", "signin", "verify", "code"]], ["No offer shows; the Overview opens. Tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Manage biometric login</b>", ["account"]], ["Biometric login is OFF. Tap the toggle", ["settings"]], ["Message: set up @Bio on the phone. Tap <b>Go to Settings</b>", ["os-modal"]], ["Phone Settings: set up @Bio, then go back to Freedom", ["os"]], ["Tap the toggle again and confirm with one scan", ["settings"]], ["Biometric login is ON", ["bio-on"]]],
+      expect: "Don't offer biometrics if none are enrolled on the phone. Turning the toggle on opens a message asking to set up biometrics, with a button to the phone Settings. After setup, the toggle turns on with one scan." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
       steps: [["Open Freedom from the home screen", ["home"]], ["@Prompt opens on its own: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
       expect: "Prompt opens on its own when the app opens (not after sign out). Success skips password and code." },
@@ -815,20 +817,66 @@
     const on = state.bio && !blocked;
     sw.setAttribute("aria-checked", String(on));
     sw.querySelector(".tog-txt").textContent = on ? "ON" : "OFF";
-    sw.disabled = blocked;
     const sub = $("set-bio-sub");
     sub.textContent = state.device === "none" ? `Set up ${bioName()} in your phone settings first.`
       : state.device === "denied" ? "Allow Face ID for Freedom in your iPhone Settings." : "";
     sub.hidden = !blocked;
-    $("set-open-os").hidden = !blocked;
   }
   $("set-bio").addEventListener("click", () => {
+    if (state.device === "none" || state.device === "denied") return askPhoneSetup();
     if (state.bio) {
       dialog({ title: `Turn off ${bioName()}?`, msg: "You'll sign in with your password and a security code on this phone.", ok: "Turn off",
         onOk: () => { state.bio = false; prepSettings(); toast(`${BioName()} sign-in is off`); emit("bio-off"); } });
     } else enrollBio();
   });
-  $("set-open-os").addEventListener("click", () => toast("Opens the phone Settings app"));
+  function askPhoneSetup() {
+    const ios = state.platform === "ios";
+    dialog(state.device === "denied"
+      ? { title: "Allow Face ID for Freedom", msg: "Face ID is turned off for the Freedom app. Go to your iPhone Settings › Freedom and turn on Face ID. Then come back to turn on biometric login.", ok: "Go to Settings", onOk: () => go("os") }
+      : { title: ios ? "Set up Face ID on your iPhone" : "Set up your fingerprint", msg: ios
+          ? "To use biometric login, first set up Face ID in your iPhone Settings › Face ID & Passcode. Then come back to turn on biometric login."
+          : "To use biometric login, first add a fingerprint in your phone Settings › Security › Fingerprint Unlock. Then come back to turn on biometric login.", ok: "Go to Settings", onOk: () => go("os") });
+    emit("os-modal");
+  }
+
+  /* ---------- Simulated phone Settings ---------- */
+  const IOS_SW = (on) => `<span class="ios-sw${on ? " on" : ""}"><span></span></span>`;
+  function renderOS() {
+    const ios = state.platform === "ios";
+    const ok = state.device === "ok";
+    const el = $("scr-os");
+    el.className = `screen os-set ${ios ? "ios" : "and"}`;
+    if (ios && state.osMode === "denied") {
+      el.innerHTML = `<div class="os-nav"><button type="button" class="os-ret" data-os="back">◀ Freedom</button><h1>Freedom</h1></div>
+        <p class="os-cap">ALLOW FREEDOM TO ACCESS</p>
+        <div class="os-group"><button type="button" class="os-row" data-os="toggle"><span>Face ID</span>${IOS_SW(ok)}</button>
+          <div class="os-row"><span>Notifications</span><span class="os-val">Banners ›</span></div>
+          <div class="os-row"><span>Cellular Data</span>${IOS_SW(true)}</div></div>`;
+    } else if (ios) {
+      el.innerHTML = `<div class="os-nav"><button type="button" class="os-ret" data-os="back">◀ Freedom</button><h1>Face ID &amp; Passcode</h1></div>
+        <p class="os-cap">USE FACE ID FOR:</p>
+        <div class="os-group${ok ? "" : " dim"}"><div class="os-row"><span>iPhone Unlock</span>${IOS_SW(ok)}</div><div class="os-row"><span>Other Apps</span><span class="os-val">${ok ? "1 App " : ""}›</span></div></div>
+        <div class="os-group">${ok ? '<div class="os-row"><span>Face ID is set up</span><span class="os-check">✓</span></div>' : '<button type="button" class="os-row blue" data-os="setup">Set Up Face ID</button>'}</div>
+        <p class="os-foot">Face ID lets you securely unlock iPhone, authorize purchases and sign in to apps.</p>`;
+    } else {
+      el.innerHTML = `<div class="os-nav"><button type="button" class="os-arrow" data-os="back" aria-label="Back to Freedom">←</button><h1>Fingerprint Unlock</h1></div>
+        <div class="os-group">${ok ? '<div class="os-row"><span class="os-fp">◉</span><span>Fingerprint 1</span></div>' : ""}
+          <button type="button" class="os-row" data-os="setup"><span class="os-plus">+</span><span>Add fingerprint</span></button></div>
+        <p class="os-foot">Use your fingerprint to unlock your phone and verify it's you, like when you sign in to apps.</p>`;
+    }
+  }
+  $("scr-os").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-os]");
+    if (!b) return;
+    const ios = state.platform === "ios";
+    if (b.dataset.os === "back") {
+      if (state.device === "ok") later(() => toast("You can now turn on biometric login"), 400);
+      return go("settings");
+    }
+    if (b.dataset.os === "toggle") { state.device = state.device === "ok" ? "denied" : "ok"; state.iosAsked = true; return renderOS(); }
+    busy(ios ? "Setting up Face ID…" : "Adding fingerprint…");
+    later(() => { $("busy").hidden = true; state.device = "ok"; renderOS(); toast(ios ? "Face ID is set up" : "Fingerprint added"); }, 1200);
+  });
 
   setPlatform(state.platform);
   applyScenario();
