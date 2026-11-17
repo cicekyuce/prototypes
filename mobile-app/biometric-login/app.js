@@ -454,7 +454,7 @@
       expect: "Don't offer biometrics if none are enrolled on the phone. Turning the toggle on opens a message asking to set up biometrics, with a button to the phone Settings. After setup, the toggle turns on with one scan." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
-      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen (no Welcome back page), also after sign out. Welcome back only shows if the prompt is cancelled or biometrics can't be used. Success skips password and code." },
+      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen (no Welcome back page), also after sign out. Cancel returns to the pre-login screen. Welcome back only shows when biometrics can't be used (locked or removed). Success skips password and code." },
     { id: "retry", group: "Sign in", title: "Not recognized, then works", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>", ["prompt"]], ["@Retry", ["nomatch"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "iOS: system alert with Try Face ID Again / Use password / Cancel. Android: the prompt stays open with “Not recognized. Try again.”" },
@@ -462,8 +462,8 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["Enter your password (email is filled in)", ["signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Overview opens. Biometrics stay on", ["done"]]],
       expect: "Password sign-in always needs the security code. Biometric settings don't change." },
     { id: "cancel", group: "Sign in", title: "Cancel the prompt", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Welcome back opens: retry with @Bio, use password, or switch account", ["cancel"]]],
-      expect: "Cancel doesn't count as a failure and doesn't reopen the prompt by itself." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["cancel"]]],
+      expect: "Cancel closes the prompt and returns to the pre-login screen. It doesn't count as a failure and doesn't reopen the prompt by itself." },
     { id: "lockout", group: "Sign in", title: "Too many tries, biometrics locked", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 5 times (retry each time)", ["prompt"]], ["@Bio is locked: tap <b>OK</b>, then <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
       expect: "The phone locks biometrics after 5 fails (iOS: unlock with passcode; Android: 30 s, then permanent). The app hides the button and shows a banner. The Freedom account is not locked." },
@@ -480,7 +480,7 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: no internet connection. Tap <b>Try again</b>", ["dialog"]], ["Overview opens. No new scan needed", ["done"]]],
       expect: "A network error is not an authentication failure: keep biometrics on and let them try again without scanning again." },
     { id: "switch", group: "Accounts", title: "Sign in with a different account", start: RET, offer: true,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Tap <b>Sign in with a different account</b>, then <b>Continue</b>", ["cancel"]], ["Sign in with a new email, password and code", ["welcome", "drawer", "signin", "verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["Tap <b>Sign in with a different account</b>, then <b>Continue</b>", ["signin"]], ["Sign in with a new email, password and code", ["welcome", "drawer", "signin", "verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Only one account per phone. Switching deletes the key on the phone and the server and forgets the saved email." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: SIGNED_IN,
       steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
@@ -678,7 +678,7 @@
     if (purpose === "login") toReturning(); else bioCancelled();
   }
   function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else bioCancelled(); }
-  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); toReturning(); } else bioCancelled(); }
+  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); if (state.route !== "welcome") go("welcome"); } else bioCancelled(); }
   function toReturning() { if (state.route === "returning") { state.route = null; render(); } else go("returning"); }
   function bioCancelled() { toast(`${BioName()} not turned on`); if (state.route === "settings") prepSettings(); }
 
