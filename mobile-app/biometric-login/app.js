@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const ORDER = ["lock", "home", "welcome", "drawer", "returning", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn", "os"];
+  const ORDER = ["lock", "home", "welcome", "drawer", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn", "os"];
   const LIGHT = ["lock", "home", "welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
@@ -95,7 +95,6 @@
 
     if (!["fid", "bp", "ios-alert"].every((id) => $(id).hidden)) closeAllPrompts();
     emit(route);
-    if (route === "returning") prepReturning();
     if (route === "settings") prepSettings();
     if (route === "enroll") { $("enroll-on").focus({ preventScroll: true }); }
 
@@ -153,9 +152,9 @@
     if (!state.remembered) return go("drawer");
     if (state.bio && state.device === "changed") return bioChanged();
     if (state.bio && state.device !== "none" && !state.locked) return startBio("login");
-    go("returning");
+    if (state.locked) return showLocked();
+    showNotSet();
   });
-  $("ret-back").addEventListener("click", () => go("welcome"));
   $("close-drawer").addEventListener("click", () => go("welcome"));
   $("drawer").addEventListener("click", (e) => { if (e.target === $("drawer")) go("welcome"); });
   $("drawer-form").addEventListener("submit", (e) => {
@@ -436,6 +435,7 @@
 
   /* ---------- Scenarios ---------- */
   const CICEK = "cicek@address.com";
+  const MAX_TRIES = 3;
   const RET = { route: "lock", bio: true, remembered: CICEK };
   const SIGNED_IN = { route: "lock", bio: true, remembered: CICEK, session: true };
   const FIRST = { route: "lock", bio: false, remembered: null };
@@ -454,7 +454,7 @@
       expect: "Don't offer biometrics if none are enrolled on the phone. Turning the toggle on opens a message asking to set up biometrics, with a button to the phone Settings. After setup, the toggle turns on with one scan." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
-      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen (no Welcome back page), also after sign out. Cancel returns to the pre-login screen. Welcome back only shows when biometrics can't be used (locked or removed). Success skips password and code." },
+      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen, also after sign out. Cancel returns to the pre-login screen. There is no Welcome back page. Success skips password and code." },
     { id: "retry", group: "Sign in", title: "Not recognized, then works", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>", ["prompt"]], ["@Retry", ["nomatch"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "iOS: system alert with Try Face ID Again / Use password / Cancel. Android: the prompt stays open with “Not recognized. Try again.”" },
@@ -465,14 +465,14 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["cancel"]]],
       expect: "Cancel closes the prompt and returns to the pre-login screen. It doesn't count as a failure and doesn't reopen the prompt by itself." },
     { id: "lockout", group: "Sign in", title: "Too many tries, biometrics locked", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 5 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 5 times (the prompt stays open)", ["prompt"], "android"], ["Face ID is locked: tap <b>OK</b>, then <b>Sign in with password</b>", ["locked"], "ios"], ["Fingerprint is locked: on Welcome back, tap <b>Sign in with password</b>", ["locked"], "android"], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
-      expect: "The phone locks biometrics after 5 fails (iOS: unlock with passcode; Android: 30 s, then permanent). The app hides the button and shows a banner. The Freedom account is not locked." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 3 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 3 times (the prompt stays open)", ["prompt"], "android"], ["Back on the pre-login screen, a message says @Bio is locked. Tap <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
+      expect: "After 3 failed scans the app stops the prompt, returns to the pre-login screen and shows the locked message, with Sign in with password. Tapping Sign in to My Account again shows the same message. A password sign-in clears it. The Freedom account is not locked." },
     { id: "changed", group: "Sign in", title: "Biometrics changed on the phone", start: RET, device: "changed", offer: true,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Message: @Bio changed on this phone", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Adding a face or fingerprint invalidates the key (biometryCurrentSet / setInvalidatedByBiometricEnrollment). Ask for the password, then offer biometrics again." },
     { id: "removed", group: "Sign in", title: "Biometrics removed from the phone", start: RET, device: "none",
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["No prompt: banner explains @Bio isn't set up", ["returning"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
-      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: hide the button, explain, use password. Turn biometrics back on in Manage biometric login after setup." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["No prompt: a message says @Bio isn't set up. Tap <b>Sign in with password</b>", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
+      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: no prompt; a message over the pre-login screen explains and offers password sign-in. Turn biometrics back on in Manage biometric login after setup." },
     { id: "expired", group: "Sign in", title: "Biometric credential expired", start: RET, device: "expired", offer: true,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: please sign in again", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "The server revokes the credential after a password change or reset, an account lock or 90 days without use. The scan works, but the server refuses it." },
@@ -557,7 +557,6 @@
 
   function applyCopy() {
     const ios = state.platform === "ios";
-    $("ret-bio-label").textContent = `Sign in with ${bioName()}`;
     $("enroll-title").textContent = ios ? "Sign in faster with Face ID." : "Sign in faster with your fingerprint.";
     $("enroll-on").textContent = `Turn on ${bioName()}`;
     $("enroll-li1").textContent = ios ? "Look at your phone to sign in to the Freedom app." : "Touch the sensor to sign in to the Freedom app.";
@@ -566,32 +565,22 @@
     $("learn-how").textContent = ios ? "Face ID or Touch ID" : "Face or Fingerprint";
   }
 
-  /* ---------- Welcome back ---------- */
-  function prepReturning() {
-    const usable = state.bio && state.device !== "none" && !state.locked;
-    $("ret-email").textContent = state.remembered || CICEK;
-    $("ret-title").textContent = state.remembered === CICEK ? "Welcome back, Cicek." : "Welcome back.";
-    $("ret-bio").hidden = !usable;
-    $("ret-password").className = `btn btn-block ${usable ? "btn-outline" : "btn-primary"}`;
-    let msg = "";
-    if (state.locked) msg = `${BioName()} is locked after too many tries. Sign in with your password, or unlock your phone with its passcode to use ${bioName()} again.`;
-    else if (state.bio && state.device === "none") msg = `${BioName()} isn't set up on this phone anymore. Sign in with your password. You can turn it back on in Manage biometric login.`;
-    $("ret-banner-text").textContent = msg;
-    $("ret-banner").hidden = !msg;
-    if (state.autoPrompt) {
-      state.autoPrompt = false;
-      if (state.bio && state.device === "changed") later(bioChanged, 1700);
-      else if (usable) later(() => startBio("login"), 1700);
-    }
+  /* ---------- Biometrics can't be used: message over the pre-login screen ---------- */
+  function showLocked() {
+    const ios = state.platform === "ios";
+    dialog({ title: "Too many tries", msg: `${BioName()} is locked after too many tries. Sign in with your password, or unlock your phone with its ${ios ? "passcode" : "PIN, pattern or password"} to use ${bioName()} again.`,
+      ok: "Sign in with password", cancel: "Close", onOk: toPassword });
+  }
+  function showNotSet() {
+    dialog({ title: `${BioName()} isn't set up`, msg: `${BioName()} isn't set up on this phone anymore. Sign in with your password. You can turn it back on in Manage biometric login.`,
+      ok: "Sign in with password", cancel: "Close", onOk: toPassword });
   }
   function bioChanged() {
     dialog({ title: `${BioName()} changed on this phone`, msg: `A ${state.platform === "ios" ? "face" : "fingerprint"} was added or changed in your phone settings. For your security, sign in with your password. You can then turn ${bioName()} back on.`,
       ok: "Sign in with password", cancel: false, onOk: () => { state.bio = false; state.device = "ok"; toPassword(); } });
   }
   function toPassword() { state.mode = "returning"; state.email = state.remembered || CICEK; go("signin"); }
-  $("ret-bio").addEventListener("click", () => startBio("login"));
-  $("ret-password").addEventListener("click", toPassword);
-  $("signin-back").addEventListener("click", () => go(state.mode === "returning" ? "returning" : "welcome"));
+  $("signin-back").addEventListener("click", () => go("welcome"));
   document.querySelectorAll("[data-switch]").forEach((b) => b.addEventListener("click", () => {
     dialog({ title: "Sign in with a different account?",
       msg: state.bio ? `${BioName()} sign-in will be turned off for ${state.remembered} on this phone.` : `${state.remembered || "This account"} will be forgotten on this phone.`,
@@ -645,7 +634,7 @@
     if ($("sim-match").disabled) return;
     state.fails++;
     state.promptFails++;
-    if (state.fails >= 5) return lockout();
+    if (state.fails >= MAX_TRIES) return lockout();
     emit("nomatch");
     if (state.platform === "ios") {
       setSim(false, "Not recognized.");
@@ -665,8 +654,8 @@
     emit("locked");
     setSim(false, `${BioName()} is now locked on this phone.`);
     if (state.platform === "ios") {
-      $("fid").hidden = true;
-      alertIOS({ face: true, title: "Face ID is locked", msg: "Too many attempts. Enter your iPhone passcode to use Face ID again.", btns: [["OK", afterLock, "bold"]] });
+      $("fid-hud").classList.add("shake");
+      later(() => { $("fid").hidden = true; afterLock(); }, 650);
     } else {
       $("bp").classList.add("err");
       $("bp-status").textContent = "Too many attempts. Try again later.";
@@ -674,11 +663,12 @@
     }
   }
   function afterLock() {
-    if (purpose === "login") toReturning(); else bioCancelled();
+    if (purpose !== "login") return bioCancelled();
+    if (state.route !== "welcome") go("welcome");
+    later(showLocked, 250);
   }
   function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else bioCancelled(); }
   function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); if (state.route !== "welcome") go("welcome"); } else bioCancelled(); }
-  function toReturning() { if (state.route === "returning") { state.route = null; render(); } else go("returning"); }
   function bioCancelled() { toast(`${BioName()} not turned on`); if (state.route === "settings") prepSettings(); }
 
   function bioOk() {
@@ -738,6 +728,7 @@
     $("fm-msg").textContent = msg;
     $("fm-ok").textContent = ok;
     $("fm-cancel").hidden = !cancel;
+    $("fm-cancel").textContent = typeof cancel === "string" ? cancel : "Cancel";
     fmOk = onOk;
     $("fm").hidden = false;
     emit("dialog");
