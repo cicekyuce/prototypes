@@ -575,7 +575,7 @@
       ok: "Sign in with password", cancel: "Close", onOk: toPassword });
   }
   function bioChanged() {
-    dialog({ title: `${BioName()} changed on this phone`, msg: `A ${state.platform === "ios" ? "face" : "fingerprint"} was added or changed in your phone settings. For your security, sign in with your password. You can then turn ${bioName()} back on.`,
+    dialog({ title: `${BioName()} changed on this phone`, msg: `A ${state.platform === "ios" ? "face" : "fingerprint"} was added or changed on this phone. For your security, sign in with your password. Then tap Turn on ${bioName()} when asked, or go to Profile settings › Manage biometric login.`,
       ok: "Sign in with password", cancel: false, onOk: () => { state.bio = false; state.device = "ok"; toPassword(); } });
   }
   function toPassword() { state.mode = "returning"; state.email = state.remembered || CICEK; go("signin"); }
