@@ -343,9 +343,6 @@ body {
 .scn-table td:first-child { color: var(--greyscale-500); }
 .scn-table a { font-weight: 700; color: var(--freedom-blue); }
 
-.field.locked { cursor: default; background: #f1f1f3; }
-.field.locked .field-label { display: block; }
-.locked-value { font-size: 15px; line-height: 22px; color: var(--greyscale-500); }
 .card .btn-block + .btn-block { margin-top: 12px; }
 .bio-btn { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .bio-ico { width: 20px; height: 20px; background: currentColor; -webkit-mask: var(--bio-mask) center / contain no-repeat; mask: var(--bio-mask) center / contain no-repeat; }

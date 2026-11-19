@@ -15,7 +15,7 @@
     attempts: 0,
     source: "manual",
     bio: false, remembered: null, device: "ok", offer: false, fails: 0, promptFails: 0, locked: false,
-    autoPrompt: false, mode: "new", iosAsked: false, offlineOnce: true,
+    autoPrompt: false, iosAsked: false, offlineOnce: true,
   };
   let timers = [];
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
@@ -168,12 +168,6 @@
   /* ---------- 3. Sign in ---------- */
   const syncFilled = (input, field) => field.classList.toggle("filled", input.value.length > 0);
   function prepSignin() {
-    const ret = state.mode === "returning";
-    $("signin-title").textContent = ret ? "Welcome back." : "Sign in.";
-    $("signin-lede").innerHTML = ret ? "Enter your password to continue." : "Please enter your email &amp; password below.";
-    $("email").readOnly = ret;
-    $("email-field").classList.toggle("locked", ret);
-    $("signin-switch-row").hidden = !ret;
     $("email").value = state.email;
     $("password").value = "";
     $("password").type = "password";
@@ -182,7 +176,7 @@
     syncFilled($("email"), $("email-field"));
     syncFilled($("password"), $("password-field"));
     $("toggle-password").hidden = true;
-    $("clear-email").hidden = ret || !$("email").value;
+    $("clear-email").hidden = !$("email").value;
     setTimeout(() => $(state.email ? "password" : "email").focus(), 260);
   }
   $("email").addEventListener("input", () => { syncFilled($("email"), $("email-field")); $("clear-email").hidden = !$("email").value; });
@@ -332,7 +326,10 @@
     closeKeypad();
     const btn = $("code-submit");
     btn.classList.add("loading");
-    later(() => { btn.classList.remove("loading"); go(afterCode()); }, 900);
+    later(() => {
+      btn.classList.remove("loading"); go(afterCode());
+      if (state.notice) { const t = state.notice; state.notice = null; setTimeout(() => toast(t), 500); }
+    }, 900);
   }
   function showCodeError(text) {
     $("code-ok").hidden = true;
@@ -480,8 +477,8 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: no internet connection. Tap <b>Try again</b>", ["dialog"]], ["Overview opens. No new scan needed", ["done"]]],
       expect: "A network error is not an authentication failure: keep biometrics on and let them try again without scanning again." },
     { id: "switch", group: "Accounts", title: "Sign in with a different account", start: RET, offer: true,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["Tap <b>Sign in with a different account</b>, then <b>Continue</b>", ["signin"]], ["Sign in with a new email, password and code", ["welcome", "drawer", "signin", "verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
-      expect: "Only one account per phone. Switching deletes the key on the phone and the server and forgets the saved email." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["On Sign in, clear the email and enter a different one, then the password", ["signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
+      expect: "The regular Sign in page opens with the saved email filled in, and the customer can change it. When the code is verified for a different account, the app turns off biometrics for the old account (key deleted on the phone and the server), shows a notice and offers biometrics for the new account. If they go back before finishing, nothing changes." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: SIGNED_IN,
       steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. Logout returns to the pre-login screen; Sign in to My Account opens the prompt. (Assumption to confirm with security.)" },
@@ -548,7 +545,7 @@
     closeAllPrompts();
     Object.assign(state, { session: !!scn.start.session, bio: scn.start.bio, remembered: scn.start.remembered, email: scn.start.remembered || "",
       device: scn.device || "ok", offer: !!scn.offer, fails: 0, promptFails: 0, locked: false, autoPrompt: false,
-      mode: "new", iosAsked: !!scn.start.bio, offlineOnce: true, step: -1 });
+      iosAsked: !!scn.start.bio, offlineOnce: true, step: -1 });
     renderScenario();
     applyCopy();
     state.route = null;
@@ -578,13 +575,8 @@
     dialog({ title: `${BioName()} changed on this phone`, msg: `A ${state.platform === "ios" ? "face" : "fingerprint"} was added or changed on this phone. For your security, sign in with your password. Then tap Turn on ${bioName()} when asked, or go to Profile settings › Manage biometric login.`,
       ok: "Sign in with password", cancel: false, onOk: () => { state.bio = false; state.device = "ok"; toPassword(); } });
   }
-  function toPassword() { state.mode = "returning"; state.email = state.remembered || CICEK; go("signin"); }
+  function toPassword() { state.email = state.remembered || CICEK; go("signin"); }
   $("signin-back").addEventListener("click", () => go("welcome"));
-  document.querySelectorAll("[data-switch]").forEach((b) => b.addEventListener("click", () => {
-    dialog({ title: "Sign in with a different account?",
-      msg: state.bio ? `${BioName()} sign-in will be turned off for ${state.remembered} on this phone.` : `${state.remembered || "This account"} will be forgotten on this phone.`,
-      ok: "Continue", onOk: () => { state.bio = false; state.remembered = null; state.email = ""; state.mode = "new"; state.offer = true; state.locked = false; go("welcome"); } });
-  }));
 
   /* ---------- Biometric prompt (simulated) ---------- */
   let purpose = null;
@@ -753,6 +745,12 @@
 
   /* ---------- After code / enrollment offer ---------- */
   function afterCode() {
+    const prev = state.remembered;
+    if (prev && state.email.toLowerCase() !== prev.toLowerCase()) {
+      state.bio = false; state.offer = true;
+      emit("switched");
+      state.notice = `${BioName()} sign-in was turned off for ${prev}`;
+    }
     state.remembered = state.email;
     state.locked = false;
     state.fails = 0;
