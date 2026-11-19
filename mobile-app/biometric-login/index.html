@@ -121,7 +121,6 @@
           <p class="field-error" id="signin-error" hidden></p>
           <button class="text-link" type="button" data-not-in-prototype>Forgot password?</button>
           <button class="btn btn-primary btn-block" type="submit">Continue</button>
-          <p class="help-row" id="signin-switch-row" hidden>Not you? <button class="text-link chev" type="button" data-switch>Sign in with a different account</button></p>
         </div>
       </form>
     </section>
@@ -515,7 +514,7 @@
     </ul>
     <h3>Rules</h3>
     <ul>
-      <li>One account per phone can use biometrics. Switching accounts turns it off and deletes the key on the phone and the server.</li>
+      <li>One account per phone can use biometrics. Password fallback opens the regular Okta Sign in page with the saved email pre-filled (<code>login_hint</code>); the customer can edit it. After the code step, compare the signed-in account (ID token <code>sub</code>) with the saved one. If it differs, turn off biometrics for the old account, delete its key on the phone and the server, show a notice and offer biometrics for the new account.</li>
       <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Manage biometric login. It shows again after biometrics change on the phone.</li>
       <li>Turning it on and off needs a scan to confirm turning it on, and a confirmation to turn it off.</li>
       <li>Sign out keeps biometrics on; the next sign-in can use it. <i>(Assumption to confirm.)</i></li>
