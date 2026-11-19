@@ -153,7 +153,9 @@
     if (state.bio && state.device === "changed") return bioChanged();
     if (state.bio && state.device !== "none" && !state.locked) return startBio("login");
     if (state.locked) return showLocked();
-    showNotSet();
+    if (state.bio) return showNotSet();
+    state.email = state.remembered;
+    go("drawer");
   });
   $("close-drawer").addEventListener("click", () => go("welcome"));
   $("drawer").addEventListener("click", (e) => { if (e.target === $("drawer")) go("welcome"); });
@@ -483,8 +485,8 @@
       steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. Logout returns to the pre-login screen; Sign in to My Account opens the prompt. (Assumption to confirm with security.)" },
     { id: "off", group: "Accounts", title: "Turn off in Manage biometric login", start: SIGNED_IN,
-      steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Turn <b>Biometric login</b> OFF, confirm", ["settings"]], ["Turn it ON again: one scan to confirm", ["bio-off"]], ["Tap back, then <b>Logout</b>", ["bio-on", "account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
-      expect: "Turning off deletes the key on the phone and the server. Turning on needs a scan. Password + code apply while it's off." },
+      steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["Tap the <b>profile settings</b> icon → <b>Manage biometric login</b>", ["done", "account"]], ["Turn <b>Biometric login</b> OFF, confirm", ["settings"]], ["Tap back, then <b>Logout</b>", ["bio-off", "account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["No prompt: enter your email and password", ["drawer", "signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Sign in faster with @Bio: tap <b>Turn on @Bio</b>", ["enroll"]], ["@Prompt opens: tap <b>Recognized</b>", ["prompt"]], ["Overview opens. @Bio is on again", ["done"]]],
+      expect: "Turning off deletes the key on the phone and the server. While it's off, Sign in to My Account goes straight to email, password and code, with no prompt or message. After that sign-in the app offers @Bio again. Turning it on needs a scan." },
   ];
   const params = new URLSearchParams(location.search);
   let scn = SCENARIOS.find((x) => x.id === params.get("s")) || SCENARIOS[0];
@@ -835,7 +837,7 @@
     if (state.device === "none" || state.device === "denied") return askPhoneSetup();
     if (state.bio) {
       dialog({ title: `Turn off ${bioName()}?`, msg: "You'll sign in with your password and a security code on this phone.", ok: "Turn off",
-        onOk: () => { state.bio = false; prepSettings(); toast(`${BioName()} sign-in is off`); emit("bio-off"); } });
+        onOk: () => { state.bio = false; state.offer = true; prepSettings(); toast(`${BioName()} sign-in is off`); emit("bio-off"); } });
     } else enrollBio();
   });
   function askPhoneSetup() {
