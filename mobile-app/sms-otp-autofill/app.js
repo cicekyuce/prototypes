@@ -284,7 +284,7 @@
     resetSuggestion();
     later(openKeypad, 350);
     if (fail("no-delivery")) {
-      later(() => showNote(`Still no code? It can take a minute. Tap <b>Resend</b>, or <button class="text-link" type="button" data-go="verify">choose another method</button>.`), 6000);
+      later(() => showNote(`Still no code? It can take a couple of minutes. Tap <b>Resend</b>, or <button class="text-link" type="button" data-go="verify">choose another method</button>.`), 6000);
       return;
     }
     if (fail("stale")) {
