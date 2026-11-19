@@ -44,7 +44,6 @@
         </optgroup>
         <optgroup label="Getting the code">
           <option value="no-delivery">Code never arrives</option>
-          <option value="no-autofill">Code arrives but isn't suggested</option>
           <option value="resend-limit">Too many resend requests</option>
         </optgroup>
       </select>
@@ -393,10 +392,9 @@
       <li><b>Code has expired:</b> "This code has expired." Resend sends a new one.</li>
       <li><b>Older code suggested:</b> the keyboard offers a code from an earlier message. It's rejected as a wrong attempt, then the new code arrives.</li>
       <li><b>No internet connection / service error:</b> the code is kept in the field and Continue retries.</li>
-      <li><b>Sign-in locked:</b> after too many failed attempts on the account, sign-in is paused for 30 minutes.</li>
+      <li><b>Sign-in locked:</b> after too many failed attempts on the account, sign-in is paused.</li>
       <li><b>Code never arrives:</b> after a few seconds the screen points to Resend or the other method.</li>
-      <li><b>Code isn't suggested:</b> the message arrives but the OS doesn't offer it (for example the format isn't recognized, or Android consent times out), so the customer types it.</li>
-      <li><b>Too many resends:</b> Resend is paused for 15 minutes; the last code still works.</li>
+      <li><b>Too many resends:</b> "You've requested too many codes. Please use the code we already sent or try again later."</li>
     </ul>
   </aside>
 

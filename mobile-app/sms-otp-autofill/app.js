@@ -56,9 +56,12 @@
 
   function setCodeStep() {
     const email = state.channel === "email";
-    document.querySelector('[data-step="code"]').innerHTML = state.platform === "ios"
-      ? `Tap <b>From ${email ? "Mail" : "Messages"}</b> above the keypad`
-      : email ? "Tap the <b>From Gmail</b> code above the keypad" : "Tap <b>Allow</b> to share the text with Freedom";
+    const fill = state.platform === "ios"
+      ? `<b>From ${email ? "Mail" : "Messages"}</b> above the keypad`
+      : email ? "the <b>From Gmail</b> code above the keypad" : "<b>Allow</b> to share the text with Freedom";
+    document.querySelector('[data-step="code"]').innerHTML = state.scenario === "resend-limit"
+      ? `Tap <b>Resend</b>, then tap ${fill}`
+      : `Tap ${fill}`;
   }
 
   /* ---------- Error scenarios ---------- */
@@ -68,9 +71,8 @@
     stale: "The keyboard offers a code from an earlier message, so it's rejected. The new code arrives a few seconds later; tap it.",
     network: "Tap the code: verification fails because the phone is offline. Tap Continue to try again.",
     server: "Tap the code: our system can't verify it right now. Tap Continue to try again.",
-    locked: "Tap the code: sign-in is locked for 30 minutes after too many failed attempts. Restart the demo to try again.",
+    locked: "Tap the code: sign-in is locked after too many failed attempts. Restart the demo to try again.",
     "no-delivery": "No message arrives. After a few seconds the screen points to Resend or another method. Tap Resend to get the code.",
-    "no-autofill": "The message arrives but the keyboard doesn't offer the code. Type it from the notification.",
     "resend-limit": "Tap Resend: it's paused after too many requests. The code you already have still works.",
   };
   const fail = (s) => state.scenario === s && !state.recovered;
@@ -79,6 +81,7 @@
     state.scenario = SCENARIO_HINTS[s] ? s : "none";
     $("scenario").value = state.scenario;
     $("scenario-hint").textContent = SCENARIO_HINTS[state.scenario];
+    setCodeStep();
     if (state.route === "code") startCode();
   }
   $("scenario").addEventListener("change", () => setScenario($("scenario").value));
@@ -295,16 +298,11 @@
   function deliver({ code = state.code, banner = true } = {}) {
     state.delivered = true;
     const isEmail = state.channel === "email";
-    const noAutofill = fail("no-autofill");
     if (banner) showBanner({
       icon: isEmail ? "mail" : "sms",
       title: "Freedom Mobile",
       text: isEmail ? `Mail · ${emailText(code)}` : smsText(code),
-    }, noAutofill ? 20000 : 6000);
-    if (noAutofill) {
-      later(() => showNote(`The ${isEmail ? "email" : "text"} arrived, but the keyboard didn't offer the code. Type it from the notification.`), 1200);
-      return;
-    }
+    });
     state.suggested = code;
     if (state.platform === "ios" || isEmail) {
       $("qt-from").textContent = `From ${sourceLabel()}`;
@@ -357,7 +355,7 @@
         resetSuggestion();
         later(openKeypad, 300);
         later(deliver, 2500);
-        return showCodeError(`That code doesn't match. It may be from an earlier message. ${left} attempt${left > 1 ? "s" : ""} left.`);
+        return showCodeError("That code doesn't match. It may be from an earlier message.");
       }
       if (!left) {
         $("code-submit").disabled = true;
@@ -400,7 +398,7 @@
       $("code-submit").disabled = true;
       $("resend").disabled = true;
       resetSuggestion();
-      return "For your security, sign-in is locked for 30 minutes after too many failed attempts. Try again later or message an agent.";
+      return "For your security, sign-in is locked after too many failed attempts. Try again later or message an agent.";
     }
     return "";
   }
@@ -436,7 +434,7 @@
   $("resend").addEventListener("click", () => {
     if (state.scenario === "resend-limit") {
       $("code-field").classList.remove("invalid");
-      return showCodeError("You've asked for too many codes. Try again in 15 minutes, or use the code we already sent.");
+      return showCodeError("You've requested too many codes. Please use the code we already sent or try again later.");
     }
     toast(state.channel === "email" ? "New code sent by email" : "New code sent by text");
     startCode(true);
