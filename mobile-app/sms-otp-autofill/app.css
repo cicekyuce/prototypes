@@ -17,6 +17,8 @@ body {
 .side-steps li.past::before { content: "✓"; background: var(--success-bg); color: var(--success); }
 .side-block { padding: 14px; margin-bottom: 14px; border-radius: 12px; background: #fff; }
 .side-label { margin: 0 0 8px !important; font-size: 12px !important; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--greyscale-500) !important; }
+.side-select { width: 100%; padding: 8px 10px; border: 1px solid var(--greyscale-800, #ccc); border-radius: 8px; background: #fff; font: inherit; font-size: 14px; color: var(--greyscale-100); cursor: pointer; }
+.side-block label.side-label { display: block; }
 .side-hint { margin: 10px 0 0 !important; font-size: 12.5px !important; line-height: 18px !important; }
 .seg { display: flex; padding: 3px; border-radius: 10px; background: var(--greyscale-950); }
 .seg button { flex: 1; padding: 7px 0; border: 0; border-radius: 8px; background: none; font-size: 14px; font-weight: 700; color: var(--greyscale-500); cursor: pointer; }
@@ -123,6 +125,8 @@ body {
 .field input[type="password"] { letter-spacing: .25em; }
 .field-icon { position: absolute; right: 12px; top: 50%; display: flex; padding: 4px; border: 0; background: none; color: var(--greyscale-700); transform: translateY(-50%); cursor: pointer; }
 .field-error { margin: -6px 0 12px; font-size: 12.5px; line-height: 17px; color: var(--error-red); }
+.field-note { margin: -6px 0 12px; font-size: 12.5px; line-height: 17px; color: var(--greyscale-400); animation: fade .2s; }
+.field-note .text-link { font-size: 12.5px; }
 .field-ok { display: flex; align-items: center; gap: 6px; margin: -6px 0 12px; font-size: 12.5px; color: var(--success); animation: fade .2s; }
 .text-link { padding: 0; border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--freedom-blue); cursor: pointer; }
 .text-link:hover { text-decoration: underline; }

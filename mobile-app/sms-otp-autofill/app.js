@@ -14,6 +14,9 @@
     delivered: false,
     attempts: 0,
     source: "manual",
+    scenario: "none",
+    recovered: false,
+    blocked: false,
   };
   let timers = [];
   const later = (fn, ms) => timers.push(setTimeout(fn, ms));
@@ -57,6 +60,28 @@
       ? `Tap <b>From ${email ? "Mail" : "Messages"}</b> above the keypad`
       : email ? "Tap the <b>From Gmail</b> code above the keypad" : "Tap <b>Allow</b> to share the text with Freedom";
   }
+
+  /* ---------- Error scenarios ---------- */
+  const SCENARIO_HINTS = {
+    none: "The code arrives and fills with one tap.",
+    expired: "Tap the code: it's rejected as expired. Tap Resend to get a new code that works.",
+    stale: "The keyboard offers a code from an earlier message, so it's rejected. The new code arrives a few seconds later; tap it.",
+    network: "Tap the code: verification fails because the phone is offline. Tap Continue to try again.",
+    server: "Tap the code: our system can't verify it right now. Tap Continue to try again.",
+    locked: "Tap the code: sign-in is locked for 30 minutes after too many failed attempts. Restart the demo to try again.",
+    "no-delivery": "No message arrives. After a few seconds the screen points to Resend or another method. Tap Resend to get the code.",
+    "no-autofill": "The message arrives but the keyboard doesn't offer the code. Type it from the notification.",
+    "resend-limit": "Tap Resend: it's paused after too many requests. The code you already have still works.",
+  };
+  const fail = (s) => state.scenario === s && !state.recovered;
+  const blocked = () => state.attempts >= MAX_ATTEMPTS || state.blocked;
+  function setScenario(s) {
+    state.scenario = SCENARIO_HINTS[s] ? s : "none";
+    $("scenario").value = state.scenario;
+    $("scenario-hint").textContent = SCENARIO_HINTS[state.scenario];
+    if (state.route === "code") startCode();
+  }
+  $("scenario").addEventListener("change", () => setScenario($("scenario").value));
 
   /* ---------- Routing ---------- */
   function parse() {
@@ -232,8 +257,12 @@
     $("code-field").style.setProperty("--caret", `${w}px`);
   }
 
-  function startCode() {
+  function startCode(resend) {
     clearTimers();
+    state.recovered = !!resend;
+    state.blocked = false;
+    $("resend").disabled = false;
+    hideNote();
     hideBanner(true);
     $("consent").hidden = true;
     state.code = newCode();
@@ -245,32 +274,48 @@
     $("code-ok").hidden = true;
     $("code-error").hidden = true;
     $("code-submit").disabled = false;
+    $("code-submit").classList.remove("loading");
     $("code-dest").textContent = state.channel === "email" ? maskEmail(state.email) : "********94";
     $("device").classList.toggle("email-code", state.channel === "email");
     setCodeStep();
     resetSuggestion();
     later(openKeypad, 350);
+    if (fail("no-delivery")) {
+      later(() => showNote(`Still no code? It can take a minute. Tap <b>Resend</b>, or <button class="text-link" type="button" data-go="verify">choose another method</button>.`), 6000);
+      return;
+    }
+    if (fail("stale")) {
+      state.staleCode = newCode();
+      later(() => deliver({ code: state.staleCode, banner: false }), 1900);
+      return;
+    }
     later(deliver, 1900);
   }
 
-  function deliver() {
+  function deliver({ code = state.code, banner = true } = {}) {
     state.delivered = true;
     const isEmail = state.channel === "email";
-    showBanner({
+    const noAutofill = fail("no-autofill");
+    if (banner) showBanner({
       icon: isEmail ? "mail" : "sms",
       title: "Freedom Mobile",
-      text: isEmail ? `Mail · ${emailText(state.code)}` : smsText(state.code),
-    });
+      text: isEmail ? `Mail · ${emailText(code)}` : smsText(code),
+    }, noAutofill ? 20000 : 6000);
+    if (noAutofill) {
+      later(() => showNote(`The ${isEmail ? "email" : "text"} arrived, but the keyboard didn't offer the code. Type it from the notification.`), 1200);
+      return;
+    }
+    state.suggested = code;
     if (state.platform === "ios" || isEmail) {
       $("qt-from").textContent = `From ${sourceLabel()}`;
-      $("qt-code").textContent = state.code;
+      $("qt-code").textContent = code;
       $("qt-suggest").disabled = false;
       $("qt-suggest").classList.remove("new");
       void $("qt-suggest").offsetWidth;
       $("qt-suggest").classList.add("new");
     } else if (!isEmail) {
       later(() => {
-        $("consent-msg").textContent = smsText(state.code);
+        $("consent-msg").textContent = smsText(code);
         closeKeypad();
         $("consent").hidden = false;
       }, 1100);
@@ -278,6 +323,7 @@
   }
 
   function resetSuggestion() {
+    state.suggested = "";
     $("qt-from").textContent = "";
     $("qt-code").textContent = "";
     $("qt-suggest").disabled = true;
@@ -287,7 +333,8 @@
     state.source = source;
     closeKeypad();
     hideBanner();
-    setCodeValue(state.code);
+    setCodeValue(state.suggested || state.code);
+    hideNote();
     $("code-field").classList.add("autofilled");
     $("code-ok-text").textContent = source === "consent" ? "Code filled from your text message" : `Code filled from ${sourceLabel()}`;
     $("code-ok").hidden = false;
@@ -298,12 +345,20 @@
   function submitCode() {
     const v = codeInput.value;
     $("code-field").classList.remove("invalid");
-    if (state.attempts >= MAX_ATTEMPTS) return;
+    if (blocked()) return;
     if (v && v.length !== 6) return showCodeError("Enter the 6-digit code.");
     if (v && v !== state.code) {
       state.attempts++;
       const left = MAX_ATTEMPTS - state.attempts;
+      $("code-field").classList.remove("autofilled");
       $("code-field").classList.add("invalid");
+      if (fail("stale") && v === state.staleCode && left) {
+        state.recovered = true;
+        resetSuggestion();
+        later(openKeypad, 300);
+        later(deliver, 2500);
+        return showCodeError(`That code doesn't match. It may be from an earlier message. ${left} attempt${left > 1 ? "s" : ""} left.`);
+      }
       if (!left) {
         $("code-submit").disabled = true;
         closeKeypad();
@@ -315,16 +370,54 @@
     closeKeypad();
     const btn = $("code-submit");
     btn.classList.add("loading");
-    later(() => { btn.classList.remove("loading"); go("done"); }, 900);
+    const offline = fail("network") || fail("server");
+    later(() => {
+      btn.classList.remove("loading");
+      const err = verifyError();
+      if (!err) return go("done");
+      $("code-field").classList.remove("autofilled");
+      $("code-field").classList.add("invalid");
+      showCodeError(err);
+    }, offline ? 1800 : 900);
   }
+  function verifyError() {
+    if (fail("expired")) {
+      state.blocked = true;
+      $("code-submit").disabled = true;
+      resetSuggestion();
+      return "This code has expired. Tap Resend to get a new one.";
+    }
+    if (fail("network")) {
+      state.recovered = true;
+      return "No internet connection. Check your Wi-Fi or mobile data, then tap Continue to try again.";
+    }
+    if (fail("server")) {
+      state.recovered = true;
+      return "We couldn't verify your code right now. Tap Continue to try again.";
+    }
+    if (fail("locked")) {
+      state.blocked = true;
+      $("code-submit").disabled = true;
+      $("resend").disabled = true;
+      resetSuggestion();
+      return "For your security, sign-in is locked for 30 minutes after too many failed attempts. Try again later or message an agent.";
+    }
+    return "";
+  }
+  function showNote(html) {
+    $("code-note").innerHTML = html;
+    $("code-note").hidden = false;
+  }
+  function hideNote() { $("code-note").hidden = true; }
   function showCodeError(text) {
+    hideNote();
     $("code-ok").hidden = true;
     $("code-error").textContent = text;
     $("code-error").hidden = false;
   }
 
   function typeKey(k) {
-    if (state.route !== "code" || state.attempts >= MAX_ATTEMPTS) return;
+    if (state.route !== "code" || blocked()) return;
     $("code-field").classList.remove("autofilled", "invalid");
     $("code-ok").hidden = true;
     $("code-error").hidden = true;
@@ -341,8 +434,16 @@
     if (!e.target.closest("#code-field, button, a")) closeKeypad();
   });
   $("resend").addEventListener("click", () => {
+    if (state.scenario === "resend-limit") {
+      $("code-field").classList.remove("invalid");
+      return showCodeError("You've asked for too many codes. Try again in 15 minutes, or use the code we already sent.");
+    }
     toast(state.channel === "email" ? "New code sent by email" : "New code sent by text");
-    startCode();
+    startCode(true);
+  });
+  $("code-note").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-go]");
+    if (b) go(b.dataset.go);
   });
   $("qt-suggest").addEventListener("click", () => { if (!$("qt-suggest").disabled) autofill("quicktype"); });
   $("consent-allow").addEventListener("click", () => { $("consent").hidden = true; autofill("consent"); });
@@ -357,7 +458,7 @@
   document.querySelectorAll("#keypad [data-key]").forEach((b) => b.addEventListener("click", () => typeKey(b.dataset.key)));
 
   function openKeypad() {
-    if (state.route !== "code" || !$("consent").hidden || state.attempts >= MAX_ATTEMPTS) return;
+    if (state.route !== "code" || !$("consent").hidden || blocked()) return;
     $("code-field").classList.add("focus");
     placeCaret();
     const k = $("keypad");
@@ -375,7 +476,7 @@
 
   /* ---------- Banner ---------- */
   let bannerTimer;
-  function showBanner({ icon, title, text }) {
+  function showBanner({ icon, title, text }, ms = 6000) {
     const b = $("banner");
     clearTimeout(bannerTimer);
     $("pb-icon").className = `pb-icon ${icon}`;
@@ -385,7 +486,7 @@
     b.hidden = true;
     void b.offsetWidth;
     b.hidden = false;
-    bannerTimer = setTimeout(hideBanner, 6000);
+    bannerTimer = setTimeout(hideBanner, ms);
   }
   function hideBanner(instant) {
     const b = $("banner");
@@ -421,5 +522,6 @@
   }
 
   setPlatform(state.platform);
+  setScenario(new URLSearchParams(location.search).get("error") || "none");
   render();
 })();

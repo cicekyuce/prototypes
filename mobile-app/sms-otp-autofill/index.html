@@ -31,6 +31,25 @@
       </div>
       <p class="side-hint" id="platform-hint"></p>
     </div>
+    <div class="side-block">
+      <label class="side-label" for="scenario">Error scenario</label>
+      <select class="side-select" id="scenario">
+        <option value="none">No error (happy path)</option>
+        <optgroup label="After the code is tapped">
+          <option value="expired">Code has expired</option>
+          <option value="stale">Keyboard suggests an older code</option>
+          <option value="network">No internet connection</option>
+          <option value="server">Service error</option>
+          <option value="locked">Sign-in locked</option>
+        </optgroup>
+        <optgroup label="Getting the code">
+          <option value="no-delivery">Code never arrives</option>
+          <option value="no-autofill">Code arrives but isn't suggested</option>
+          <option value="resend-limit">Too many resend requests</option>
+        </optgroup>
+      </select>
+      <p class="side-hint" id="scenario-hint"></p>
+    </div>
     <p class="side-links"><button class="btn-link" type="button" id="reset-demo">Restart demo</button> · <button class="btn-link" type="button" id="toggle-notes">How it works</button></p>
   </aside>
 
@@ -163,6 +182,7 @@
           </label>
           <p class="field-ok" id="code-ok" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="code-ok-text">Code filled from Messages</span></p>
           <p class="field-error" id="code-error" hidden></p>
+          <p class="field-note" id="code-note" hidden></p>
           <p class="resend">Didn’t get a code? <button class="text-link" type="button" id="resend">Resend</button></p>
           <button class="btn btn-primary btn-block" type="submit" id="code-submit">Continue</button>
           <p class="help-row">Need help? <button class="text-link chev" type="button" data-not-in-prototype>Message an agent</button></p>
@@ -366,6 +386,17 @@
       <li>"Never share this code" warning at the start of the text</li>
       <li>3 wrong attempts lock the code; Resend issues a new one and voids the old one</li>
       <li>Email stays available as the fallback channel</li>
+    </ul>
+    <h3>7. Error scenarios</h3>
+    <p>Pick one in the side panel. Each shows the message the customer sees and how they recover.</p>
+    <ul>
+      <li><b>Code has expired:</b> "This code has expired." Resend sends a new one.</li>
+      <li><b>Older code suggested:</b> the keyboard offers a code from an earlier message. It's rejected as a wrong attempt, then the new code arrives.</li>
+      <li><b>No internet connection / service error:</b> the code is kept in the field and Continue retries.</li>
+      <li><b>Sign-in locked:</b> after too many failed attempts on the account, sign-in is paused for 30 minutes.</li>
+      <li><b>Code never arrives:</b> after a few seconds the screen points to Resend or the other method.</li>
+      <li><b>Code isn't suggested:</b> the message arrives but the OS doesn't offer it (for example the format isn't recognized, or Android consent times out), so the customer types it.</li>
+      <li><b>Too many resends:</b> Resend is paused for 15 minutes; the last code still works.</li>
     </ul>
   </aside>
 
