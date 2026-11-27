@@ -470,8 +470,8 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Message: @Bio changed on this phone", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "Adding a face or fingerprint invalidates the key (biometryCurrentSet / setInvalidatedByBiometricEnrollment). Ask for the password, then offer biometrics again." },
     { id: "removed", group: "Sign in", title: "Biometrics removed from the phone", start: RET, device: "none",
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["No prompt: a message says @Bio isn't set up. Tap <b>Sign in with password</b>", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
-      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: no prompt; a message over the pre-login screen explains and offers password sign-in. Turn biometrics back on in Manage biometric login after setup." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["No prompt: a message says @Bio isn't set up. Tap <b>Sign in with password</b>", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Sign in faster with @Bio: tap <b>Turn on @Bio</b>", ["enroll"]], ["Message: set up @Bio on the phone. Tap <b>Go to Settings</b>", ["os-modal"]], ["Phone Settings: set up @Bio, then go back to Freedom", ["os"]], ["Tap <b>Turn on @Bio</b> again", ["enroll"]], ["@Prompt opens: tap <b>Recognized</b>", ["prompt"]], ["Overview opens with @Bio on", ["done"]]],
+      expect: "biometryNotEnrolled / BIOMETRIC_ERROR_NONE_ENROLLED: no prompt; a message over the pre-login screen explains and offers password sign-in. The old key is deleted. After the code, the app offers @Bio again; if it's still not set up on the phone, Turn on opens a message that links to phone Settings. Back in Freedom, one scan turns it on." },
     { id: "expired", group: "Sign in", title: "Biometric credential expired", start: RET, device: "expired", offer: true,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: please sign in again", ["dialog"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Offer to turn on @Bio again", ["enroll"]], ["Overview opens", ["done"]]],
       expect: "The server revokes the credential after a password change or reset, an account lock or 90 days without use. The scan works, but the server refuses it." },
@@ -547,7 +547,7 @@
     closeAllPrompts();
     Object.assign(state, { session: !!scn.start.session, bio: scn.start.bio, remembered: scn.start.remembered, email: scn.start.remembered || "",
       device: scn.device || "ok", offer: !!scn.offer, fails: 0, promptFails: 0, locked: false, autoPrompt: false,
-      iosAsked: !!scn.start.bio, offlineOnce: true, step: -1 });
+      iosAsked: !!scn.start.bio, offlineOnce: true, setupOffer: false, osFrom: null, step: -1 });
     renderScenario();
     applyCopy();
     state.route = null;
@@ -571,7 +571,7 @@
   }
   function showNotSet() {
     dialog({ title: `${BioName()} isn't set up`, msg: `${BioName()} isn't set up on this phone anymore. Sign in with your password. You can turn it back on in Manage biometric login.`,
-      ok: "Sign in with password", cancel: "Close", onOk: toPassword });
+      ok: "Sign in with password", cancel: "Close", onOk: () => { state.bio = false; state.offer = true; state.setupOffer = true; toPassword(); } });
   }
   function bioChanged() {
     dialog({ title: `${BioName()} changed on this phone`, msg: `A ${state.platform === "ios" ? "face" : "fingerprint"} was added or changed on this phone. For your security, sign in with your password. Then tap Turn on ${bioName()} when asked, or go to Profile settings › Manage biometric login.`,
@@ -756,10 +756,11 @@
     state.remembered = state.email;
     state.locked = false;
     state.fails = 0;
-    return state.offer && !state.bio && state.device !== "none" ? "enroll" : "done";
+    return state.offer && !state.bio && (state.device !== "none" || state.setupOffer) ? "enroll" : "done";
   }
   $("enroll-on").addEventListener("click", () => {
     state.offer = false;
+    if (state.device === "none" || state.device === "denied") return askPhoneSetup();
     enrollBio();
   });
   function enrollBio() {
@@ -841,6 +842,7 @@
     } else enrollBio();
   });
   function askPhoneSetup() {
+    state.osFrom = state.route;
     const ios = state.platform === "ios";
     dialog(state.device === "denied"
       ? { title: "Allow Face ID for Freedom", msg: "Face ID is turned off for the Freedom app. Go to your iPhone Settings › Freedom and turn on Face ID. Then come back to turn on biometric login.", ok: "Go to Settings", onOk: () => go("os") }
@@ -881,8 +883,9 @@
     if (!b) return;
     const ios = state.platform === "ios";
     if (b.dataset.os === "back") {
-      if (state.device === "ok") later(() => toast("You can now turn on biometric login"), 400);
-      return go("settings");
+      const to = state.osFrom || "settings";
+      if (state.device === "ok") later(() => toast(to === "enroll" ? `You can now turn on ${bioName()}` : "You can now turn on biometric login"), 400);
+      return go(to);
     }
     if (b.dataset.os === "toggle") { state.device = state.device === "ok" ? "denied" : "ok"; state.iosAsked = true; return renderOS(); }
     busy(ios ? "Setting up Face ID…" : "Adding fingerprint…");
