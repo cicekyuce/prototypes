@@ -48,7 +48,7 @@
     document.querySelectorAll("[data-platform]").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.platform === state.platform)));
     $("platform-hint").textContent = state.platform === "ios"
       ? "iOS Security Code AutoFill: the code shows above the keypad as “From Messages” (text) or “From Mail” (email). Tap it to fill."
-      : "Android: for a text, Android asks once to share it with Freedom (tap Allow). For an email, tap the code Gboard suggests above the keypad.";
+      : "Android: the keyboard suggests the code above the keypad as “From Messages” (text) or “From Gmail” (email). Tap it to fill.";
     setCodeStep();
     if (state.route === "code") startCode();
   }
@@ -58,7 +58,7 @@
     const email = state.channel === "email";
     const fill = state.platform === "ios"
       ? `<b>From ${email ? "Mail" : "Messages"}</b> above the keypad`
-      : email ? "the <b>From Gmail</b> code above the keypad" : "<b>Allow</b> to share the text with Freedom";
+      : `the <b>From ${email ? "Gmail" : "Messages"}</b> code above the keypad`;
     document.querySelector('[data-step="code"]').innerHTML = state.scenario === "resend-limit"
       ? `Tap <b>Resend</b>, then tap ${fill}`
       : `Tap ${fill}`;
@@ -100,7 +100,6 @@
     clearTimers();
     hideBanner(true);
     closeKeypad(true);
-    $("consent").hidden = true;
 
     const screen = route === "drawer" ? "welcome" : route;
     const back = prev && ORDER.indexOf(route) < ORDER.indexOf(prev);
@@ -267,7 +266,6 @@
     $("resend").disabled = false;
     hideNote();
     hideBanner(true);
-    $("consent").hidden = true;
     state.code = newCode();
     state.delivered = false;
     state.attempts = 0;
@@ -279,7 +277,6 @@
     $("code-submit").disabled = false;
     $("code-submit").classList.remove("loading");
     $("code-dest").textContent = state.channel === "email" ? maskEmail(state.email) : "********94";
-    $("device").classList.toggle("email-code", state.channel === "email");
     setCodeStep();
     resetSuggestion();
     later(openKeypad, 350);
@@ -304,20 +301,12 @@
       text: isEmail ? `Mail · ${emailText(code)}` : smsText(code),
     });
     state.suggested = code;
-    if (state.platform === "ios" || isEmail) {
-      $("qt-from").textContent = `From ${sourceLabel()}`;
-      $("qt-code").textContent = code;
-      $("qt-suggest").disabled = false;
-      $("qt-suggest").classList.remove("new");
-      void $("qt-suggest").offsetWidth;
-      $("qt-suggest").classList.add("new");
-    } else if (!isEmail) {
-      later(() => {
-        $("consent-msg").textContent = smsText(code);
-        closeKeypad();
-        $("consent").hidden = false;
-      }, 1100);
-    }
+    $("qt-from").textContent = `From ${sourceLabel()}`;
+    $("qt-code").textContent = code;
+    $("qt-suggest").disabled = false;
+    $("qt-suggest").classList.remove("new");
+    void $("qt-suggest").offsetWidth;
+    $("qt-suggest").classList.add("new");
   }
 
   function resetSuggestion() {
@@ -334,7 +323,7 @@
     setCodeValue(state.suggested || state.code);
     hideNote();
     $("code-field").classList.add("autofilled");
-    $("code-ok-text").textContent = source === "consent" ? "Code filled from your text message" : `Code filled from ${sourceLabel()}`;
+    $("code-ok-text").textContent = `Code filled from ${sourceLabel()}`;
     $("code-ok").hidden = false;
     $("code-error").hidden = true;
     later(() => submitCode(), 650);
@@ -444,8 +433,6 @@
     if (b) go(b.dataset.go);
   });
   $("qt-suggest").addEventListener("click", () => { if (!$("qt-suggest").disabled) autofill("quicktype"); });
-  $("consent-allow").addEventListener("click", () => { $("consent").hidden = true; autofill("consent"); });
-  $("consent-deny").addEventListener("click", () => { $("consent").hidden = true; openKeypad(); });
 
   document.addEventListener("keydown", (e) => {
     if (state.route !== "code" || $("keypad").hidden) return;
@@ -456,7 +443,7 @@
   document.querySelectorAll("#keypad [data-key]").forEach((b) => b.addEventListener("click", () => typeKey(b.dataset.key)));
 
   function openKeypad() {
-    if (state.route !== "code" || !$("consent").hidden || blocked()) return;
+    if (state.route !== "code" || blocked()) return;
     $("code-field").classList.add("focus");
     placeCaret();
     const k = $("keypad");

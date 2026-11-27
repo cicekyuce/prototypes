@@ -324,7 +324,7 @@
       </span>
     </button>
 
-    <!-- Number pad with the keyboard code suggestion (iOS "From Messages" / "From Mail", Android Gboard "From Gmail") -->
+    <!-- Number pad with the keyboard code suggestion (iOS "From Messages" / "From Mail", Android Gboard "From Messages" / "From Gmail") -->
     <div class="keypad" id="keypad" hidden>
       <div class="qt-bar">
         <button class="qt-suggest" type="button" id="qt-suggest" disabled>
@@ -349,18 +349,6 @@
       </div>
     </div>
 
-    <!-- Android: SMS User Consent API sheet (Google Play services) -->
-    <div class="consent-backdrop" id="consent" hidden>
-      <div class="consent" role="dialog" aria-modal="true" aria-labelledby="consent-title">
-        <span class="consent-icon" aria-hidden="true"></span>
-        <h2 id="consent-title">Allow Freedom to read the below message and enter the code?</h2>
-        <p class="consent-msg" id="consent-msg"></p>
-        <div class="consent-actions">
-          <button type="button" id="consent-deny">Deny</button>
-          <button type="button" id="consent-allow">Allow</button>
-        </div>
-      </div>
-    </div>
 
     <button class="home-indicator" id="home-indicator" type="button" aria-label="Home"></button>
   </div>
@@ -372,8 +360,8 @@
     <p>Use a single code input (not six boxes) marked as a one-time code: <code>textContentType = .oneTimeCode</code> on iOS, <code>autofillHints = SMS_OTP</code> / <code>autoComplete="sms-otp"</code> in React Native, and the number pad keyboard. The app never reads the user's messages.</p>
     <h3>2. iOS: Security Code AutoFill</h3>
     <p>When the text arrives, iOS shows <b>From Messages</b> above the keypad. One tap fills the field and the app submits automatically once it has 6 digits. Codes sent by email show the same suggestion as <b>From Mail</b> (iOS 17+, Apple Mail).</p>
-    <h3>3. Android: SMS User Consent</h3>
-    <p>The app starts the Google Play services SMS User Consent listener before sending the code. When the text arrives, Android asks once to share that single message. <b>Allow</b> fills and submits the code. The SMS Retriever API can make this zero-tap by adding the app hash to the text.</p>
+    <h3>3. Android: keyboard suggestion</h3>
+    <p>When the text arrives in Google Messages, Gboard shows the code above the keypad as <b>From Messages</b>. One tap fills the field and the app submits automatically, the same as on iOS. Mark the field with <code>autofillHints = SMS_OTP</code>. If a customer uses a keyboard that doesn't suggest codes, the SMS User Consent API (a one-time Allow prompt) or the SMS Retriever API (zero-tap, needs the app hash in the text) are fallbacks.</p>
     <h3>4. Codes sent by email</h3>
     <p>Customers who pick <b>Email</b> get the same one-tap fill. On iOS the code comes from Mail. Android has no system email autofill, so the prototype shows the code as a Gboard suggestion chip (<b>From Gmail</b>), which Gboard offers after the code is copied (for example with Gmail's <b>Copy code</b>). Use a subject and body that start with the code, such as "123456 is your Freedom verification code", so the OS can detect it.</p>
     <h3>5. SMS format</h3>
