@@ -99,7 +99,6 @@
     if (route === "enroll") { $("enroll-on").focus({ preventScroll: true }); }
 
     if (route === "signin") prepSignin();
-    if (route === "welcome") $("other-account").hidden = !state.remembered;
     if (route === "verify") prepVerify();
     if (route === "code") { state.channel = via; startCode(); }
     if (route === "done") $("scr-done").scrollTop = 0;
@@ -158,7 +157,6 @@
     state.email = state.remembered;
     go("drawer");
   });
-  $("other-account").addEventListener("click", () => { state.email = ""; go("signin"); });
   $("close-drawer").addEventListener("click", () => go("welcome"));
   $("drawer").addEventListener("click", (e) => { if (e.target === $("drawer")) go("welcome"); });
   $("drawer-form").addEventListener("submit", (e) => {
@@ -481,8 +479,8 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: no internet connection. Tap <b>Try again</b>", ["dialog"]], ["Overview opens. No new scan needed", ["done"]]],
       expect: "A network error is not an authentication failure: keep biometrics on and let them try again without scanning again." },
     { id: "switch", group: "Accounts", title: "Sign in with a different account", start: RET, offer: true,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen, tap <b>Sign in with another account</b>", ["cancel", "welcome"]], ["Sign in opens with empty fields: enter the other email and its password", ["signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
-      expect: "The prompt can't have extra buttons, so Sign in with another account is a link on the pre-login screen. It opens the regular Sign in page with empty fields (Use password keeps the saved email filled in). When the code is verified for a different account, the app turns off biometrics for the old account (key deleted on the phone and the server), shows a notice and offers biometrics for the new account. If they go back before finishing, nothing changes." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["On Sign in, clear the email and enter a different one, then the password", ["signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
+      expect: "The regular Sign in page opens with the saved email filled in, and the customer can change it. When the code is verified for a different account, the app turns off biometrics for the old account (key deleted on the phone and the server), shows a notice and offers biometrics for the new account. If they go back before finishing, nothing changes." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: SIGNED_IN,
       steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. Logout returns to the pre-login screen; Sign in to My Account opens the prompt. (Assumption to confirm with security.)" },
