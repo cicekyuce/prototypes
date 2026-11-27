@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const ORDER = ["lock", "home", "welcome", "drawer", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn", "os"];
+  const ORDER = ["lock", "home", "welcome", "drawer", "again", "signin", "verify", "code", "enroll", "done", "account", "settings", "learn", "os"];
   const LIGHT = ["lock", "home", "welcome", "drawer"];
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const MAX_ATTEMPTS = 3;
@@ -98,6 +98,7 @@
     if (route === "settings") prepSettings();
     if (route === "enroll") { $("enroll-on").focus({ preventScroll: true }); }
 
+    if (route === "again") prepAgain();
     if (route === "signin") prepSignin();
     if (route === "verify") prepVerify();
     if (route === "code") { state.channel = via; startCode(); }
@@ -208,7 +209,7 @@
 
   /* ---------- 4. Verification channel ---------- */
   const maskEmail = (email) => {
-    const [user, domain] = (email || "cicek@address.com").split("@");
+    const [user, domain] = (email || "cyucezeytinci@freedommobile.ca").split("@");
     return `${user[0]}***${user.length > 1 ? user[user.length - 1] : ""}@${domain}`;
   };
   function prepVerify() {
@@ -433,7 +434,7 @@
   }
 
   /* ---------- Scenarios ---------- */
-  const CICEK = "cicek@address.com";
+  const CICEK = "cyucezeytinci@freedommobile.ca";
   const MAX_TRIES = 3;
   const RET = { route: "lock", bio: true, remembered: CICEK };
   const SIGNED_IN = { route: "lock", bio: true, remembered: CICEK, session: true };
@@ -453,16 +454,16 @@
       expect: "Don't offer biometrics if none are enrolled on the phone. Turning the toggle on opens a message asking to set up biometrics, with a button to the phone Settings. After setup, the toggle turns on with one scan." },
     { id: "success", group: "Sign in", title: "Biometric sign-in works", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Signing in…", ["match"]], ["Overview opens. No password or code", ["done"]]],
-      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen, also after sign out. Cancel returns to the pre-login screen. There is no Welcome back page. Success skips password and code." },
+      expect: "The app opens on the pre-login screen. Tapping Sign in to My Account opens the prompt over that screen, also after sign out. If the scan fails or is cancelled, a Freedom screen offers Continue with @Bio, Use password, Sign in with a different account and Cancel. Success skips password and code." },
     { id: "retry", group: "Sign in", title: "Not recognized, then works", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>", ["prompt"]], ["@Retry", ["nomatch"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
-      expect: "iOS: system alert with Try Face ID Again / Use password / Cancel. Android: the prompt stays open with “Not recognized. Try again.”" },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Fail", ["prompt"]], ["Freedom screen with your email: tap <b>Continue with @Bio</b>", ["again"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
+      expect: "iOS shows its own Face Not Recognized alert (Try Face ID Again / Cancel); Android keeps the prompt open with “Not recognized. Try again.” Cancel opens a Freedom screen with the saved email and Continue with @Bio, Use password, Sign in with a different account and Cancel. Continue with @Bio starts a new scan." },
     { id: "fallback", group: "Sign in", title: "Not recognized, use password", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["Enter your password (email is filled in)", ["signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Overview opens. Biometrics stay on", ["done"]]],
-      expect: "Password sign-in always needs the security code. Biometric settings don't change." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Fail", ["prompt"]], ["Freedom screen: tap <b>Use password</b>", ["again"]], ["Enter your password (email is filled in)", ["signin"]], ["Pick text or email for the code", ["verify"]], ["@code", ["code"]], ["Overview opens. Biometrics stay on", ["done"]]],
+      expect: "Use password opens the regular Sign in page with the saved email filled in. Password sign-in always needs the security code. Biometric settings don't change." },
     { id: "cancel", group: "Sign in", title: "Cancel the prompt", start: RET,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Cancel", ["prompt"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["cancel"]]],
-      expect: "Cancel closes the prompt and returns to the pre-login screen. It doesn't count as a failure and doesn't reopen the prompt by itself." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Fail", ["prompt"]], ["Freedom screen: tap <b>Cancel</b>", ["again"]], ["Back on the pre-login screen. Tap <b>Sign in to My Account</b> to try again", ["welcome"]]],
+      expect: "Cancel on the Freedom screen returns to the pre-login screen. It doesn't reopen the prompt by itself." },
     { id: "lockout", group: "Sign in", title: "Too many tries, biometrics paused", start: RET,
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b> 3 times, tapping <b>Try Face ID Again</b> after each", ["prompt"], "ios"], ["Tap <b>Not recognized</b> 3 times (the prompt stays open)", ["prompt"], "android"], ["Back on the pre-login screen, a message says @Bio is paused. Tap <b>Sign in with password</b>", ["locked"]], ["Sign in with password and code", ["signin", "verify", "code"]], ["Overview opens", ["done"]]],
       expect: "After 3 failed scans the app stops the prompt, returns to the pre-login screen and shows the paused message, with Sign in with password. Tapping Sign in to My Account again shows the same message. A password sign-in clears it. The Freedom account is not locked." },
@@ -479,8 +480,8 @@
       steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Recognized</b>", ["prompt"]], ["Message: no internet connection. Tap <b>Try again</b>", ["dialog"]], ["Overview opens. No new scan needed", ["done"]]],
       expect: "A network error is not an authentication failure: keep biometrics on and let them try again without scanning again." },
     { id: "switch", group: "Accounts", title: "Sign in with a different account", start: RET, offer: true,
-      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["Tap <b>Not recognized</b>, then <b>Use password</b>", ["prompt"]], ["On Sign in, clear the email and enter a different one, then the password", ["signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
-      expect: "The regular Sign in page opens with the saved email filled in, and the customer can change it. When the code is verified for a different account, the app turns off biometrics for the old account (key deleted on the phone and the server), shows a notice and offers biometrics for the new account. If they go back before finishing, nothing changes." },
+      steps: [["Unlock the phone and open Freedom", ["lock", "home"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Fail", ["prompt"]], ["Freedom screen: tap <b>Sign in with a different account</b>", ["again"]], ["Sign in opens with empty fields: enter the other email and its password", ["signin"]], ["Choose text or email, then enter the code", ["verify", "code"]], ["Offer @Bio for the new account", ["enroll"]], ["Overview opens", ["done"]]],
+      expect: "Sign in with a different account on the Freedom screen opens the regular Sign in page with empty fields (Use password keeps the saved email filled in). When the code is verified for a different account, the app turns off biometrics for the old account (key deleted on the phone and the server), shows a notice and offers biometrics for the new account. If they go back before finishing, nothing changes." },
     { id: "signout", group: "Accounts", title: "Sign out, then sign back in", start: SIGNED_IN,
       steps: [["Unlock the phone and open Freedom (still signed in)", ["lock", "home"]], ["On the Overview, tap the <b>profile settings</b> icon", ["done"]], ["Tap <b>Logout</b>", ["account"]], ["Pre-login screen: tap <b>Sign in to My Account</b>", ["welcome"]], ["@Prompt opens over the pre-login screen: tap <b>Recognized</b>", ["prompt"]], ["Overview opens", ["done"]]],
       expect: "Sign out ends the session but keeps biometrics on. Logout returns to the pre-login screen; Sign in to My Account opens the prompt. (Assumption to confirm with security.)" },
@@ -497,8 +498,7 @@
   const fill = (t) => t
     .replace("@code", state.platform === "ios" ? "Tap <b>From Messages</b> / <b>From Mail</b> above the keypad" : "Tap <b>Allow</b> (text) or the <b>From Gmail</b> code")
     .replace("@Prompt", state.platform === "ios" ? "Face ID" : "The fingerprint prompt")
-    .replace("@Cancel", state.platform === "ios" ? "Tap <b>Not recognized</b>, then <b>Cancel</b>" : "Tap outside the fingerprint prompt to cancel")
-    .replace("@Retry", state.platform === "ios" ? "Tap <b>Try Face ID Again</b>" : "The prompt stays open")
+    .replace("@Fail", state.platform === "ios" ? "Tap <b>Not recognized</b>, then <b>Cancel</b> on the iOS alert" : "Tap <b>Not recognized</b>, then <b>Cancel</b>")
     .replace(/@Bio/g, bioName());
 
   function renderScenario() {
@@ -579,6 +579,14 @@
   }
   function toPassword() { state.email = state.remembered || CICEK; go("signin"); }
   $("signin-back").addEventListener("click", () => go("welcome"));
+  function prepAgain() {
+    $("again-email").textContent = state.remembered || CICEK;
+    $("again-bio-label").textContent = `Continue with ${bioName()}`;
+  }
+  $("again-bio").addEventListener("click", () => (state.locked ? showLocked() : startBio("login", true)));
+  $("again-password").addEventListener("click", toPassword);
+  $("again-other").addEventListener("click", () => { state.email = ""; go("signin"); });
+  $("again-cancel").addEventListener("click", () => go("welcome"));
 
   /* ---------- Biometric prompt (simulated) ---------- */
   let purpose = null;
@@ -600,7 +608,7 @@
       $("bp-title").textContent = p === "login" ? "Sign in to Freedom" : "Turn on fingerprint sign-in";
       $("bp-sub").textContent = p === "login" ? state.remembered : "Confirm it's you";
       $("bp-status").textContent = "Touch the fingerprint sensor";
-      $("bp-neg").textContent = p === "login" ? "Use password" : "Not now";
+      $("bp-neg").textContent = p === "login" ? "Cancel" : "Not now";
       $("bp").className = "bp-layer";
       $("bp").hidden = false;
     }
@@ -636,9 +644,7 @@
       later(() => {
         $("fid").hidden = true;
         alertIOS({ face: true, title: "Face Not Recognized", msg: "Try Again",
-          btns: purpose === "login"
-            ? [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Use password", usePassword], ["Cancel", cancelBio]]
-            : [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Cancel", cancelBio]] });
+          btns: [["Try Face ID Again", () => startBio(purpose, true), "bold"], ["Cancel", cancelBio]] });
       }, 650);
     } else {
       $("bp").classList.remove("shake"); void $("bp").offsetWidth; $("bp").classList.add("shake", "err");
@@ -668,7 +674,7 @@
     later(showLocked, 250);
   }
   function usePassword() { closeAllPrompts(); if (purpose === "login") toPassword(); else enrollStopped(); }
-  function cancelBio() { closeAllPrompts(); if (purpose === "login") { toast("Sign in cancelled"); emit("cancel"); if (state.route !== "welcome") go("welcome"); } else enrollStopped(); }
+  function cancelBio() { closeAllPrompts(); if (purpose === "login") { emit("cancel"); go("again"); } else enrollStopped(); }
   function enrollStopped() {
     if (!state.promptFails) return bioCancelled();
     if (state.route === "settings") prepSettings();
@@ -706,7 +712,7 @@
   $("sim-nomatch").addEventListener("click", bioNoMatch);
   $("fid-hud").addEventListener("click", bioMatch);
   $("bp-fp").addEventListener("click", bioMatch);
-  $("bp-neg").addEventListener("click", usePassword);
+  $("bp-neg").addEventListener("click", () => (purpose === "login" ? cancelBio() : usePassword()));
   $("bp").addEventListener("click", (e) => { if (e.target === $("bp")) cancelBio(); });
   $("fid").addEventListener("click", (e) => { if (e.target === $("fid")) cancelBio(); });
   document.addEventListener("keydown", (e) => {

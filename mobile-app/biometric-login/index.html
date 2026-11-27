@@ -101,6 +101,20 @@
       </div>
     </section>
 
+    <!-- Biometric not recognized or cancelled (Freedom screen) -->
+    <section class="screen flow" id="scr-again" hidden>
+      <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /></header>
+      <div class="flow-body">
+        <div class="card again">
+          <div class="field filled locked"><span class="field-label">Email</span><span class="locked-value" id="again-email">cyucezeytinci@freedommobile.ca</span></div>
+          <button class="btn btn-primary btn-block" type="button" id="again-bio"><span id="again-bio-label">Continue with Face ID</span><span class="ico-face"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path d="M4 14V9a5 5 0 015-5h5M34 4h5a5 5 0 015 5v5M44 34v5a5 5 0 01-5 5h-5M14 44H9a5 5 0 01-5-5v-5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M16 17v4M32 17v4M24 18v10h-2.5M18 33c3.5 3 8.5 3 12 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ico-fp"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M12 14a16 16 0 0124 0"/><path d="M9 24a15 15 0 0130 0v3"/><path d="M15 34c1.5-3 2-6 2-10a7 7 0 0114 0c0 5-.8 9-2.5 13"/><path d="M24 24c0 6-1.5 11-4.5 15"/><path d="M33 34c-.6 2.4-1.4 4.6-2.6 6.6"/></g></svg></span></button>
+          <button class="btn btn-outline btn-block" type="button" id="again-password">Use password</button>
+          <button class="text-link chev again-link" type="button" id="again-other">Sign in with a different account</button>
+          <button class="text-link again-link again-cancel" type="button" id="again-cancel">Cancel</button>
+        </div>
+      </div>
+    </section>
+
     <!-- 3. Sign in -->
     <section class="screen flow" id="scr-signin" hidden>
       <header class="flow-head"><img src="assets/freedom-logo.svg" alt="Freedom" /><button class="back-pill" type="button" id="signin-back">Back</button></header>
@@ -495,26 +509,26 @@
     </table>
     <h3>iOS</h3>
     <ul>
-      <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). <code>localizedFallbackTitle = "Use password"</code> at sign-in. When turning it on, set <code>localizedFallbackTitle = ""</code> to hide the button, because a password can't turn on Face ID: it needs a successful scan.</li>
+      <li><code>LAContext</code> with <code>.deviceOwnerAuthenticationWithBiometrics</code> (no device passcode fallback). Set <code>localizedFallbackTitle = ""</code> at sign-in and when turning it on, so Apple's Face Not Recognized alert shows only <b>Try Face ID Again</b> and <b>Cancel</b>. iOS always shows that alert after a failed scan; an app can't replace it or add buttons. At sign-in, <b>Cancel</b> (<code>userCancel</code>) opens the Freedom screen with the saved email, <b>Continue with Face ID</b>, <b>Use password</b>, <b>Sign in with a different account</b> and <b>Cancel</b>. A password can't turn on Face ID: it needs a successful scan.</li>
       <li>Turning it on, not recognized then <b>Cancel</b>: Freedom modal “Face ID didn't recognize you” with <b>Try again</b> (new scan) / <b>Not now</b>. After 3 failed scans: “Too many tries”, turn it on later in Manage biometric login.</li>
       <li><code>NSFaceIDUsageDescription</code>: "Use Face ID to sign in to your Freedom account quickly and securely." iOS shows this permission alert once per install, the first time the app uses Face ID: when the customer taps <b>Turn on Face ID</b> on the offer or turns on <b>Biometric login</b> in Manage biometric login. <b>OK</b> continues to the scan; <b>Don't Allow</b> leads to scenario 3.</li>
       <li>Keychain item with <code>SecAccessControl .biometryCurrentSet</code>, so adding a face or finger invalidates it.</li>
       <li><b>3 tries (both platforms):</b> the phones lock biometrics after 5 fails, so Freedom keeps its own count. On the 3rd failed scan, stop the prompt (<code>LAContext.invalidate()</code> / <code>BiometricPrompt.cancelAuthentication()</code>), return to the pre-login screen and show the locked message. Message: "Face ID is paused after too many tries. Sign in with your password to use Face ID again." Only a password sign-in clears the count; unlocking the phone with its passcode does not, because the phone's own Face ID was never locked. <i>(Decision to confirm: also clear it after a time limit?)</i></li>
-      <li>Errors: <code>authenticationFailed</code> → retry alert · <code>userFallback</code> → password · <code>userCancel</code> → pre-login screen · <code>biometryLockout</code> → locked message · <code>biometryNotAvailable</code> (access denied) / <code>biometryNotEnrolled</code> → password only.</li>
+      <li>Errors: <code>authenticationFailed</code> → retry alert · <code>userCancel</code> → Freedom sign-in options screen · <code>biometryLockout</code> → locked message · <code>biometryNotAvailable</code> (access denied) / <code>biometryNotEnrolled</code> → password only.</li>
       <li>Touch ID iPhones use the same flow with "Touch ID" copy.</li>
       <li>Phone not set up / Face ID not allowed: tapping the OFF toggle in Manage biometric login opens a message with <b>Go to Settings</b>. iOS apps can only open their own page, Settings › Freedom (<code>UIApplication.openSettingsURLString</code>), which is right for "not allowed". There is no public link to Face ID &amp; Passcode, so for "not set up" the copy gives the path and the button opens Settings. <i>(Decision to confirm.)</i></li>
     </ul>
     <h3>Android</h3>
     <ul>
       <li><code>BiometricPrompt</code> with <code>BIOMETRIC_STRONG</code> and a <code>CryptoObject</code> from a Keystore key with <code>setUserAuthenticationRequired(true)</code> and <code>setInvalidatedByBiometricEnrollment(true)</code>.</li>
-      <li>Negative button: “Use password” at sign-in, “Not now” when turning it on. Not recognized then <b>Not now</b>: Freedom modal “Fingerprint not recognized” with <b>Try again</b> / <b>Not now</b>.</li>
-      <li>Negative button "Use password". Failed reads stay in the sheet ("Not recognized. Try again.").</li>
+      <li>Negative button: “Cancel” at sign-in (opens the Freedom sign-in options screen), “Not now” when turning it on. Not recognized then <b>Not now</b>: Freedom modal “Fingerprint not recognized” with <b>Try again</b> / <b>Not now</b>.</li>
+      <li>Failed reads stay in the sheet ("Not recognized. Try again.").</li>
       <li>Errors: <code>ERROR_LOCKOUT</code> / <code>ERROR_LOCKOUT_PERMANENT</code> → locked message · <code>ERROR_NEGATIVE_BUTTON</code> → password · <code>ERROR_USER_CANCELED</code> → pre-login screen · <code>KeyPermanentlyInvalidatedException</code> → biometrics changed · <code>BIOMETRIC_ERROR_NONE_ENROLLED</code> → password only.</li>
       <li>No fingerprint enrolled: the <b>Go to Settings</b> button opens enrollment with <code>Settings.ACTION_BIOMETRIC_ENROLL</code> (Android 11+, extra <code>BIOMETRIC_AUTHENTICATORS_ALLOWED = BIOMETRIC_STRONG</code>). Fall back to <code>ACTION_FINGERPRINT_ENROLL</code> (Android 9–10) or <code>ACTION_SECURITY_SETTINGS</code>.</li>
     </ul>
     <h3>Rules</h3>
     <ul>
-      <li>One account per phone can use biometrics. Password fallback opens the regular Okta Sign in page with the saved email pre-filled (<code>login_hint</code>); the customer can edit it. After the code step, compare the signed-in account (ID token <code>sub</code>) with the saved one. If it differs, turn off biometrics for the old account, delete its key on the phone and the server, show a notice and offer biometrics for the new account.</li>
+      <li>One account per phone can use biometrics. Password fallback opens the regular Okta Sign in page with the saved email pre-filled (<code>login_hint</code>); the customer can edit it. After the code step, compare the signed-in account (ID token <code>sub</code>) with the saved one. If it differs, turn off biometrics for the old account, delete its key on the phone and the server, show a notice and offer biometrics for the new account. <b>Sign in with a different account</b> on the Freedom sign-in options screen opens the same Sign in page with empty fields (no <code>login_hint</code>).</li>
       <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Manage biometric login. It shows again after biometrics change on the phone.</li>
       <li>Turning it on and off needs a scan to confirm turning it on, and a confirmation to turn it off.</li>
       <li>Sign out keeps biometrics on; the next sign-in can use it. <i>(Assumption to confirm.)</i></li>
