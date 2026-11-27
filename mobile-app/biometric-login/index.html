@@ -98,6 +98,7 @@
       <div class="welcome-foot">
         <p>I've already updated my login.</p>
         <button class="btn btn-block welcome-outline" type="button" id="open-drawer">Sign in to My Account</button>
+        <button class="welcome-alt" type="button" id="other-account" hidden>Sign in with another account</button>
       </div>
     </section>
 
@@ -514,7 +515,7 @@
     </ul>
     <h3>Rules</h3>
     <ul>
-      <li>One account per phone can use biometrics. Password fallback opens the regular Okta Sign in page with the saved email pre-filled (<code>login_hint</code>); the customer can edit it. After the code step, compare the signed-in account (ID token <code>sub</code>) with the saved one. If it differs, turn off biometrics for the old account, delete its key on the phone and the server, show a notice and offer biometrics for the new account.</li>
+      <li>One account per phone can use biometrics. <b>Use password</b> opens the regular Okta Sign in page with the saved email pre-filled (<code>login_hint</code>); the customer can edit it. After the code step, compare the signed-in account (ID token <code>sub</code>) with the saved one. If it differs, turn off biometrics for the old account, delete its key on the phone and the server, show a notice and offer biometrics for the new account. The system prompt can't take extra buttons (iOS: only <code>localizedFallbackTitle</code> and <code>localizedCancelTitle</code>; Android: one negative button), so <b>Sign in with another account</b> is a link on the pre-login screen. It opens the same Sign in page with empty fields (no <code>login_hint</code>).</li>
       <li>The offer to turn it on shows once, after the first sign-in with password + code. After "Not now", it's only in Manage biometric login. It shows again after biometrics change on the phone.</li>
       <li>Turning it on and off needs a scan to confirm turning it on, and a confirmation to turn it off.</li>
       <li>Sign out keeps biometrics on; the next sign-in can use it. <i>(Assumption to confirm.)</i></li>
